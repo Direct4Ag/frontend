@@ -2,6 +2,10 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "npm": ">=7.0.0",
+    "node": ">=16.0.0"
+  },
   "dependencies": {
     "@emotion/react": "^11.7.1",
     "@emotion/styled": "^11.6.0",
@@ -32,7 +36,11 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "lint": "eslint src --color --ext=.tsx,.js",
-    "lint:fix": "eslint --fix src --color --ext=.tsx,.js"
+    "lint:fix": "eslint --fix src --color --ext=.tsx,.js",
+    "prepare": "husky install"
+  },
+  "lint-staged": {
+    "*.{tsx,js}": "eslint --cache --fix"
   },
   "eslintConfig": {
     "extends": [
