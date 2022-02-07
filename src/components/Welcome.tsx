@@ -1,8 +1,10 @@
 import React from "react";
 
 const Welcome = () => {
-    return(
-      <div style={{marginTop: 16}}> Welcome!!! </div>
+    const welcome = "Welcome!!!";
+
+    return (
+      <div style={{marginTop: 16}}> {welcome} </div>
     );
 };
 
