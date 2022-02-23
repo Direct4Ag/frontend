@@ -13,9 +13,9 @@ Install all the npm dependencies.
 
 # Running
 
-Set deployment environment. Possible options: production, development, localhost
+[comment]: <> (Set deployment environment. Possible options: production, development, localhost)
 
-### `export REACT_APP_ENV=development`
+[comment]: <> (### `export REACT_APP_ENV=development`)
 ### `npm start`
 
 Runs the app in the development mode. Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
@@ -45,7 +45,7 @@ Copy the build folder to a web server to run the app
 Checks for eslint errors or warnings. Use `npm run lint:fix` to fix the ones that are fixable by eslint.
 Rules config available in `.eslintrc`.
 
-# Docker
+# Docker (not ready yet)
 To build the container:
 
 ```
