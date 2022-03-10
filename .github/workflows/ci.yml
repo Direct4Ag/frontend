@@ -45,7 +45,7 @@ jobs:
 
       # compile UI
       - name: build
-        run: react-scripts test --watchAll=false
+        run: npm run test --watchAll=false
 
 #  docker:
 #    runs-on: ubuntu-latest
