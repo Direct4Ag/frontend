@@ -45,7 +45,7 @@ Copy the build folder to a web server to run the app
 Checks for eslint errors or warnings. Use `npm run lint:fix` to fix the ones that are fixable by eslint.
 Rules config available in `.eslintrc`.
 
-# Docker (not ready yet)
+# Docker
 To build the container:
 
 ```
@@ -55,7 +55,7 @@ sh docker.sh
 To test docker container:
 
 ```
-docker run -p 3000:80 docker.io/farmdoc/soilecon-frontend
+docker run -p 3000:80 docker.io/direct4ag/frontend
 ```
 
 Browse to localhost:3000
