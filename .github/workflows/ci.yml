@@ -39,9 +39,9 @@ jobs:
           node-version: ${{ matrix.node }}
           check-latest: true
 
-      # install dependencies
-#      - name: install dependencies
-#        run: npm install
+       # install dependencies
+      - name: install dependencies
+        run: npm install
 
       # compile UI
       - name: build
