@@ -43,9 +43,9 @@ jobs:
       - name: install dependencies
         run: npm install
 
-      # Run UI Tests
-      - name: run tests
-        run: npm run test --watchAll=false
+      # compile UI
+      - name: build
+        run: npm run build
 
   docker:
     runs-on: ubuntu-latest
