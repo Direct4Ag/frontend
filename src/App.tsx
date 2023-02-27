@@ -20,7 +20,7 @@ const App = (): JSX.Element => {
                 <CssBaseline />
                 <StyledEngineProvider injectFirst>
                     <Suspense fallback={<Loading />}>
-                        <div className="App">
+                        <div className="app">
                             <header className="App-header">
                                 <img src={logo} alt="logo" />
                                 <Welcome />
