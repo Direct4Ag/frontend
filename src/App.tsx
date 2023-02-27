@@ -20,7 +20,7 @@ const App = (): JSX.Element => {
                 <CssBaseline />
                 <StyledEngineProvider injectFirst>
                     <Suspense fallback={<Loading />}>
-                        <div className="app">
+                        <div className="App">
                             <header className="App-header">
                                 <img src={logo} alt="logo" />
                                 <Welcome />
@@ -37,5 +37,3 @@ const rootEl = document.getElementById('root');
 if (rootEl) {
     createRoot(rootEl).render(<App />);
 }
-
-export default App;

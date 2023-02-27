@@ -2,7 +2,7 @@
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
-  "main": "src/App.tsx",
+  "main": "src/app.tsx",
   "engines": {
     "npm": ">=7.0.0",
     "node": ">=16.0.0"

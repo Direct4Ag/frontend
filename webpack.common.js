@@ -13,7 +13,7 @@ module.exports = {
 
     entry: {
         appStyle: './src/styles/main.scss',
-        app: './src/App.tsx'
+        app: './src/app.tsx'
     },
 
     output: {
@@ -81,15 +81,14 @@ module.exports = {
 
     plugins: [
         new HtmlWebpackPlugin({
-            template: 'src/index.html',
-            manifestJson: 'src/files/manifest.json'
+            template: 'src/index.html'
         }),
         new Webpack.DefinePlugin({
             PUBLIC_PATH: JSON.stringify(process.env.PUBLIC_PATH || '/'),
-            API_PATH: JSON.stringify(`${process.env.API_SERVER}`)
+            API_PATH: JSON.stringify(`${process.env.API_SERVER}`),
         }),
         new FaviconsWebpackPlugin({
-            logo: './src/images/favicon2.png',
+            logo: './src/images/favicon.ico',
             prefix: 'icons/',
             emitStats: false,
             inject: true,
