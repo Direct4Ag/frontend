@@ -42,7 +42,6 @@ Checks for eslint errors or warnings. Use `npm run lint:fix` to fix the ones tha
 Rules config available in `.eslintrc`.
 
 ## Docker
-
 To build the container:
 
 ```[bash]
