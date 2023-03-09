@@ -16,6 +16,7 @@ module.exports = merge(commonConfig, {
         host: 'localhost',
         port: 8080,
         historyApiFallback: true,
+        open: true,
         allowedHosts: JSON.parse(process.env.ALLOWED_HOSTS || '["localhost"]'),
         headers: { 'Access-Control-Allow-Origin': '*' }
     },

@@ -81,14 +81,15 @@ module.exports = {
 
     plugins: [
         new HtmlWebpackPlugin({
-            template: 'src/index.html'
+            template: 'src/index.html',
+            manifestJson: 'src/files/manifest.json'
         }),
         new Webpack.DefinePlugin({
             PUBLIC_PATH: JSON.stringify(process.env.PUBLIC_PATH || '/'),
-            API_PATH: JSON.stringify(`${process.env.API_SERVER}`),
+            API_PATH: JSON.stringify(`${process.env.API_SERVER}`)
         }),
         new FaviconsWebpackPlugin({
-            logo: './src/images/favicon.ico',
+            logo: './src/images/favicon2.png',
             prefix: 'icons/',
             emitStats: false,
             inject: true,
