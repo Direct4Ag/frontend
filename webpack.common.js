@@ -13,7 +13,7 @@ module.exports = {
 
     entry: {
         appStyle: './src/styles/main.scss',
-        app: './src/app.tsx'
+        app: './src/App.tsx'
     },
 
     output: {
