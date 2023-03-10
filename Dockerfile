@@ -12,10 +12,9 @@ ENV REACT_APP_ENV=${REACT_APP_ENV}
 COPY package.json package-lock.json ./
 RUN npm install
 
-COPY public ./public/
-COPY .eslintrc ./
+COPY .eslintrc .huskyrc .prettierrc *.js ./
 COPY src ./src/
-COPY tsconfig.json ./
+COPY tsconfig.json babel.config.json typedoc.json ./
 
 ENV PATH="./node_modules/.bin:$PATH"
 
