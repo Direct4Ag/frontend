@@ -16,7 +16,7 @@ const Footer = (): JSX.Element => {
                     display: 'flex',
                     flexDirection: 'row',
                     justifyContent: 'space-between',
-                    backgroundColor: theme.palette.primary.dark
+                    backgroundColor: theme.palette.default.dark
                 })}
             >
                 <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>

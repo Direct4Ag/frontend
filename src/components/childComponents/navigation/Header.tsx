@@ -36,7 +36,7 @@ const Header = (): JSX.Element => {
     return (
         <>
             <AppBar position="static">
-                <Container maxWidth="xl">
+                <Container maxWidth="xl" sx={(theme) => ({ backgroundColor: theme.palette.default.light })}>
                     <Toolbar disableGutters>
                         <AgricultureIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1, color: 'black' }} />
                         <Typography
@@ -48,6 +48,7 @@ const Header = (): JSX.Element => {
                                 mr: 2,
                                 display: { xs: 'none', md: 'flex' },
                                 fontWeight: 400,
+                                fontSize: '1.2em',
                                 letterSpacing: '.1rem',
                                 color: 'black',
                                 textDecoration: 'none'
@@ -87,7 +88,15 @@ const Header = (): JSX.Element => {
                             >
                                 {pages.map((page) => (
                                     <MenuItem key={page} onClick={handleCloseNavMenu}>
-                                        <Typography textAlign="center">{page}</Typography>
+                                        <Typography
+                                            textAlign="center"
+                                            sx={{
+                                                fontWeight: 400,
+                                                fontSize: '1rem'
+                                            }}
+                                        >
+                                            {page}
+                                        </Typography>
                                     </MenuItem>
                                 ))}
                             </Menu>
@@ -102,9 +111,8 @@ const Header = (): JSX.Element => {
                                 mr: 2,
                                 display: { xs: 'flex', md: 'none' },
                                 flexGrow: 1,
-                                fontFamily: 'Lexend Deca, san-serif',
-                                // fontFamily: 'monospace',
                                 fontWeight: 400,
+                                fontSize: '1em',
                                 letterSpacing: '.1rem',
                                 color: 'black',
                                 textDecoration: 'none'
@@ -117,7 +125,13 @@ const Header = (): JSX.Element => {
                                 <Button
                                     key={page}
                                     onClick={handleCloseNavMenu}
-                                    sx={{ my: 2, color: 'black', display: 'block' }}
+                                    sx={{
+                                        my: 2,
+                                        color: 'black',
+                                        display: 'block',
+                                        fontWeight: 400,
+                                        fontSize: '1.2rem'
+                                    }}
                                 >
                                     {page}
                                 </Button>

@@ -1,5 +1,24 @@
 import { createTheme } from '@mui/material/styles';
 
+declare module '@mui/material/styles' {
+    interface PaletteOptions {
+        default: {
+            dark: string;
+            main: string;
+            light: string;
+            contrastText: string;
+        };
+    }
+    interface Palette {
+        default: {
+            dark: string;
+            main: string;
+            light: string;
+            contrastText: string;
+        };
+    }
+}
+
 export const themeOptions = {
     breakpoints: {
         values: {
@@ -11,16 +30,10 @@ export const themeOptions = {
         }
     },
     palette: {
-        primary: {
+        default: {
             dark: '#d9d9d9',
             main: '#fff',
             light: '#fff',
-            contrastText: '#fff'
-        },
-        secondary: {
-            dark: '#e3e7af',
-            main: '#a2a77f',
-            light: '#eff1c5',
             contrastText: '#fff'
         }
     },
