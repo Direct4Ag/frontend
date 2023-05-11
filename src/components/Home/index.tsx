@@ -65,17 +65,6 @@ const Home = (): JSX.Element => {
 
     const onMapLoad = (map: maplibregl.Map) => {
         console.log('Map rendered');
-        map.addSource('reflayer', {
-            type: 'raster',
-            tiles: ['https://services.arcgisonline.com/arcgis/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}'],
-            tileSize: 256
-        });
-
-        map.addLayer({
-            id: 'reflayer',
-            source: 'reflayer',
-            type: 'raster'
-        } as maplibregl.RasterLayerSpecification);
     };
 
     return (
@@ -129,21 +118,6 @@ const Home = (): JSX.Element => {
                         initialBasemap: 'OSM',
                         expandDirection: 'top'
                     }}
-                    LayersControlProps={[
-                        {
-                            id: 'reflayer',
-                            label: 'Topological Layer',
-                            initialOpacity: 0.2,
-                            style: {
-                                type: 'fill',
-                                paint: {
-                                    'fill-color': '#794c5a',
-                                    'fill-opacity': 0.2
-                                }
-                            },
-                            opacityType: 'fill'
-                        }
-                    ]}
                     onLoad={onMapLoad}
                 />
             </Container>
