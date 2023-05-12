@@ -20,7 +20,7 @@ import logoBWUIUC from './logo_bw_uiuc.png';
 import logoColorUIUC from './logo_color_uiuc.png';
 import logo from './images/logo.png';
 
-const pages = ['Explore'];
+const pages = [{ pg: 'Explore', url: '/explore' }];
 
 const Header = (): JSX.Element => {
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
@@ -42,8 +42,8 @@ const Header = (): JSX.Element => {
                         <Typography
                             variant="h6"
                             noWrap
-                            component="a"
-                            href="/"
+                            component={Link}
+                            to="/"
                             sx={{
                                 mr: 2,
                                 display: { xs: 'none', md: 'flex' },
@@ -87,15 +87,18 @@ const Header = (): JSX.Element => {
                                 }}
                             >
                                 {pages.map((page) => (
-                                    <MenuItem key={page} onClick={handleCloseNavMenu}>
+                                    <MenuItem key={page.pg} onClick={handleCloseNavMenu}>
                                         <Typography
                                             textAlign="center"
+                                            component={Link}
+                                            to={page.url}
                                             sx={{
                                                 fontWeight: 400,
-                                                fontSize: '1rem'
+                                                fontSize: '1rem',
+                                                textDecoration: 'none'
                                             }}
                                         >
-                                            {page}
+                                            {page.pg}
                                         </Typography>
                                     </MenuItem>
                                 ))}
@@ -105,8 +108,8 @@ const Header = (): JSX.Element => {
                         <Typography
                             variant="h5"
                             noWrap
-                            component="a"
-                            href="/"
+                            component={Link}
+                            to="/"
                             sx={{
                                 mr: 2,
                                 display: { xs: 'flex', md: 'none' },
@@ -123,17 +126,27 @@ const Header = (): JSX.Element => {
                         <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end' }}>
                             {pages.map((page) => (
                                 <Button
-                                    key={page}
+                                    key={page.pg}
                                     onClick={handleCloseNavMenu}
                                     sx={{
                                         my: 2,
                                         color: 'black',
-                                        display: 'block',
-                                        fontWeight: 400,
-                                        fontSize: '1.2rem'
+                                        display: 'block'
                                     }}
                                 >
-                                    {page}
+                                    <Typography
+                                        textAlign="center"
+                                        component={Link}
+                                        to={page.url}
+                                        sx={{
+                                            color: 'black',
+                                            fontWeight: 400,
+                                            fontSize: '1.2rem',
+                                            textDecoration: 'none'
+                                        }}
+                                    >
+                                        {page.pg}
+                                    </Typography>
                                 </Button>
                             ))}
                         </Box>
