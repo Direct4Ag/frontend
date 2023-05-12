@@ -35,8 +35,8 @@ const Header = (): JSX.Element => {
 
     return (
         <>
-            <AppBar position="static">
-                <Container maxWidth="xl" sx={(theme) => ({ backgroundColor: theme.palette.default.light })}>
+            <AppBar position="static" sx={(theme) => ({ backgroundColor: theme.palette.default.light })}>
+                <Container maxWidth="xl">
                     <Toolbar disableGutters>
                         <AgricultureIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1, color: 'black' }} />
                         <Typography
