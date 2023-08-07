@@ -33,7 +33,7 @@ export const themeOptions = {
         default: {
             dark: '#d9d9d9',
             main: '#fff',
-            light: '#fff',
+            light: '#f2f2f2',
             contrastText: '#fff'
         }
     },
