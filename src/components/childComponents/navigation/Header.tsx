@@ -34,126 +34,124 @@ const Header = (): JSX.Element => {
     };
 
     return (
-        <>
-            <AppBar position="static" sx={(theme) => ({ backgroundColor: theme.palette.default.light })}>
-                <Container maxWidth="xl">
-                    <Toolbar disableGutters>
-                        <AgricultureIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1, color: 'black' }} />
-                        <Typography
-                            variant="h6"
-                            noWrap
-                            component={Link}
-                            to="/"
-                            sx={{
-                                mr: 2,
-                                display: { xs: 'none', md: 'flex' },
-                                fontWeight: 400,
-                                fontSize: '1.2em',
-                                letterSpacing: '.1rem',
-                                color: 'black',
-                                textDecoration: 'none'
-                            }}
-                        >
-                            Direct4Ag
-                        </Typography>
+        <AppBar position="static" sx={(theme) => ({ backgroundColor: theme.palette.default.light })}>
+            <Container maxWidth="xl">
+                <Toolbar disableGutters>
+                    <AgricultureIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1, color: 'black' }} />
+                    <Typography
+                        variant="h6"
+                        noWrap
+                        component={Link}
+                        to="/"
+                        sx={{
+                            mr: 2,
+                            display: { xs: 'none', md: 'flex' },
+                            fontWeight: 400,
+                            fontSize: '1.2em',
+                            letterSpacing: '.1rem',
+                            color: 'black',
+                            textDecoration: 'none'
+                        }}
+                    >
+                        Direct4Ag
+                    </Typography>
 
-                        <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-                            <IconButton
-                                size="large"
-                                aria-label="account of current user"
-                                aria-controls="menu-appbar"
-                                aria-haspopup="true"
-                                onClick={handleOpenNavMenu}
-                                color="inherit"
-                            >
-                                <MenuIcon sx={{ color: 'black', zIndex: 1 }} />
-                            </IconButton>
-                            <Menu
-                                id="menu-appbar"
-                                anchorEl={anchorElNav}
-                                anchorOrigin={{
-                                    vertical: 'bottom',
-                                    horizontal: 'left'
-                                }}
-                                keepMounted
-                                transformOrigin={{
-                                    vertical: 'top',
-                                    horizontal: 'left'
-                                }}
-                                open={Boolean(anchorElNav)}
-                                onClose={handleCloseNavMenu}
-                                sx={{
-                                    display: { xs: 'block', md: 'none' }
-                                }}
-                            >
-                                {pages.map((page) => (
-                                    <MenuItem key={page.pg} onClick={handleCloseNavMenu}>
-                                        <Typography
-                                            textAlign="center"
-                                            component={Link}
-                                            to={page.url}
-                                            sx={{
-                                                fontWeight: 400,
-                                                fontSize: '1rem',
-                                                textDecoration: 'none'
-                                            }}
-                                        >
-                                            {page.pg}
-                                        </Typography>
-                                    </MenuItem>
-                                ))}
-                            </Menu>
-                        </Box>
-                        <AgricultureIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1, color: 'black' }} />
-                        <Typography
-                            variant="h5"
-                            noWrap
-                            component={Link}
-                            to="/"
+                    <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+                        <IconButton
+                            size="large"
+                            aria-label="account of current user"
+                            aria-controls="menu-appbar"
+                            aria-haspopup="true"
+                            onClick={handleOpenNavMenu}
+                            color="inherit"
+                        >
+                            <MenuIcon sx={{ color: 'black', zIndex: 1 }} />
+                        </IconButton>
+                        <Menu
+                            id="menu-appbar"
+                            anchorEl={anchorElNav}
+                            anchorOrigin={{
+                                vertical: 'bottom',
+                                horizontal: 'left'
+                            }}
+                            keepMounted
+                            transformOrigin={{
+                                vertical: 'top',
+                                horizontal: 'left'
+                            }}
+                            open={Boolean(anchorElNav)}
+                            onClose={handleCloseNavMenu}
                             sx={{
-                                mr: 2,
-                                display: { xs: 'flex', md: 'none' },
-                                flexGrow: 1,
-                                fontWeight: 400,
-                                fontSize: '1em',
-                                letterSpacing: '.1rem',
-                                color: 'black',
-                                textDecoration: 'none'
+                                display: { xs: 'block', md: 'none' }
                             }}
                         >
-                            Direct4Ag
-                        </Typography>
-                        <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end' }}>
                             {pages.map((page) => (
-                                <Button
-                                    key={page.pg}
-                                    onClick={handleCloseNavMenu}
-                                    sx={{
-                                        my: 2,
-                                        color: 'black',
-                                        display: 'block'
-                                    }}
-                                >
+                                <MenuItem key={page.pg} onClick={handleCloseNavMenu}>
                                     <Typography
                                         textAlign="center"
                                         component={Link}
                                         to={page.url}
                                         sx={{
-                                            color: 'black',
                                             fontWeight: 400,
-                                            fontSize: '1.2rem',
+                                            fontSize: '1rem',
                                             textDecoration: 'none'
                                         }}
                                     >
                                         {page.pg}
                                     </Typography>
-                                </Button>
+                                </MenuItem>
                             ))}
-                        </Box>
-                    </Toolbar>
-                </Container>
-            </AppBar>
-        </>
+                        </Menu>
+                    </Box>
+                    <AgricultureIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1, color: 'black' }} />
+                    <Typography
+                        variant="h5"
+                        noWrap
+                        component={Link}
+                        to="/"
+                        sx={{
+                            mr: 2,
+                            display: { xs: 'flex', md: 'none' },
+                            flexGrow: 1,
+                            fontWeight: 400,
+                            fontSize: '1em',
+                            letterSpacing: '.1rem',
+                            color: 'black',
+                            textDecoration: 'none'
+                        }}
+                    >
+                        Direct4Ag
+                    </Typography>
+                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end' }}>
+                        {pages.map((page) => (
+                            <Button
+                                key={page.pg}
+                                onClick={handleCloseNavMenu}
+                                sx={{
+                                    my: 2,
+                                    color: 'black',
+                                    display: 'block'
+                                }}
+                            >
+                                <Typography
+                                    textAlign="center"
+                                    component={Link}
+                                    to={page.url}
+                                    sx={{
+                                        color: 'black',
+                                        fontWeight: 400,
+                                        fontSize: '1.2rem',
+                                        textDecoration: 'none'
+                                    }}
+                                >
+                                    {page.pg}
+                                </Typography>
+                            </Button>
+                        ))}
+                    </Box>
+                </Toolbar>
+            </Container>
+        </AppBar>
     );
 };
 
