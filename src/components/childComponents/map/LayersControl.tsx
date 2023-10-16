@@ -1,7 +1,7 @@
 import React from 'react';
 import Box from '@mui/material/Box';
 import Icon from '@mui/material/Icon';
-import AttributionIcon from '@mui/icons-material/Attribution';
+import { Attribution as AttributionIcon } from '@mui/icons-material';
 import IconButton from '@mui/material/IconButton';
 import Link from '@mui/material/Link';
 import Popover from '@mui/material/Popover';
@@ -55,7 +55,6 @@ const LayersControl = ({ map, layers }: Props) => {
                             step={0.1}
                             defaultValue={initialOpacity}
                             onChange={(_e, value) => {
-                                console.log(value);
                                 map?.setPaintProperty(id, `${opacityType}-opacity`, value);
                             }}
                         />

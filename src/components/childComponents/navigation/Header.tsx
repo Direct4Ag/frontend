@@ -7,10 +7,12 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import IconButton from '@mui/material/IconButton';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import {
+    KeyboardArrowDown as KeyboardArrowDownIcon,
+    KeyboardArrowRight as KeyboardArrowRightIcon,
+    Menu as MenuIcon
+} from '@mui/icons-material';
 import Menu, { MenuProps } from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';

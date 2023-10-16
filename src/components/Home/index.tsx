@@ -29,7 +29,6 @@ import droughtResistantImg from './drought_resistant.png';
 import irrigationStratImg from './irrigation_strategy.png';
 import avatar from './avatar.png';
 import collaboratorsImg from './affiliations.png';
-import { InfoRounded } from '@mui/icons-material';
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: 'transparent',
@@ -163,13 +162,8 @@ const Home = (): JSX.Element => {
         }
     ];
 
-    const [value, setValue] = React.useState('1');
-
-    const handleChange = (event: React.SyntheticEvent, newValue: string) => {
-        setValue(newValue);
-    };
-
-    const onMapLoad = (map: maplibregl.Map) => {
+    const onMapLoad = (_map: maplibregl.Map) => {
+        /* eslint-disable-next-line no-console */
         console.log('Map rendered');
     };
 
@@ -195,7 +189,7 @@ const Home = (): JSX.Element => {
                             <Item elevation={0}>
                                 <Typography
                                     variant="h3"
-                                    sx={(theme) => ({
+                                    sx={(_theme) => ({
                                         fontWeight: { xs: 400, md: 600 },
                                         fontSize: { xs: 32, md: 48 },
                                         font: 'Poppins'
@@ -207,7 +201,7 @@ const Home = (): JSX.Element => {
                             <Item elevation={0}>
                                 <Typography
                                     variant="h4"
-                                    sx={(theme) => ({
+                                    sx={(_theme) => ({
                                         fontWeight: { xs: 200, md: 400 },
                                         fontSize: { xs: 16, md: 24 },
                                         font: 'Open Sans'
@@ -243,7 +237,7 @@ const Home = (): JSX.Element => {
                                 </Button>
                             </Item>
                         </Grid>
-                        <Grid item xs={12} md={6} sx={{ alignContent: 'left' }}></Grid>
+                        <Grid item xs={12} md={6} sx={{ alignContent: 'left' }} />
                     </Grid>
                 </Container>
             </Box>
@@ -256,7 +250,7 @@ const Home = (): JSX.Element => {
                             <Item elevation={0} sx={(theme) => ({ color: theme.palette.text.primary, p: 2 })}>
                                 <Typography
                                     variant="h3"
-                                    sx={(theme) => ({
+                                    sx={(_theme) => ({
                                         fontWeight: { xs: 400, md: 600 },
                                         fontSize: { xs: 32, md: 48 },
                                         font: 'Poppins'
@@ -268,7 +262,7 @@ const Home = (): JSX.Element => {
                             <Item elevation={0} sx={(theme) => ({ color: theme.palette.text.secondary, p: 2 })}>
                                 <Typography
                                     variant="h4"
-                                    sx={(theme) => ({
+                                    sx={(_theme) => ({
                                         fontWeight: { xs: 200, md: 400 },
                                         fontSize: { xs: 16, md: 24 },
                                         font: 'Open Sans'
@@ -674,7 +668,7 @@ const Home = (): JSX.Element => {
                         </Typography>
                     </Divider>
                     <Box sx={{ textAlign: 'center', height: 104 }}>
-                        <img style={{width: "100%"}} src={collaboratorsImg} alt={'Affiliations'} />
+                        <img style={{ width: '100%' }} src={collaboratorsImg} alt="Affiliations" />
                     </Box>
                 </Container>
             </Box>
@@ -711,6 +705,7 @@ const Home = (): JSX.Element => {
                                     'linear-gradient(292.79deg, rgba(232, 245, 250, 0.75) 0%, rgba(243, 248, 253, 0.37) 100%)'
                             }}
                         >
+                            <Box sx={{overflow: 'auto'}}>
                             <CardContent sx={{ flex: '1 0 auto' }}>
                                 <Typography
                                     component="h6"
@@ -791,6 +786,7 @@ const Home = (): JSX.Element => {
                                     </Stack>
                                 </Box>
                             </CardContent>
+                            </Box>
                         </Card>
 
                         {/* Contact Us */}

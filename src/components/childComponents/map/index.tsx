@@ -1,9 +1,11 @@
 import React from 'react';
 import maplibre from 'maplibre-gl';
 import Box from '@mui/material/Box';
-import ThreeSixtyIcon from '@mui/icons-material/ThreeSixty';
-import ZoomOutMapIcon from '@mui/icons-material/ZoomOutMap';
-import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
+import {
+    ThreeSixty as ThreeSixtyIcon,
+    ZoomOutMap as ZoomOutMapIcon,
+    QuestionMark as QuestionMarkIcon
+} from '@mui/icons-material';
 import BasemapsControl, { MapLibreBasemapsControlOptions } from 'maplibre-gl-basemaps';
 
 import { MapControl } from './Control';
@@ -48,9 +50,9 @@ const Map = ({
 
     React.useEffect(() => {
         if (maplibre.supported() && mapContainerRef.current) {
-            let mapInit = {
+            const mapInit = {
                 container: mapContainerRef.current,
-                zoom: zoom,
+                zoom,
                 attributionControl: !attribution,
                 ...mapOptions
             };
@@ -129,28 +131,26 @@ const Map = ({
                             onClick={() => {
                                 if (mapRef.current) {
                                     if (center) {
-                                        mapRef.current?.flyTo({ center: center, zoom: zoom });
+                                        mapRef.current?.flyTo({ center, zoom });
                                     } else {
                                         mapRef.current?.fitBounds(initialBounds as maplibregl.LngLatBoundsLike);
                                     }
                                 }
                             }}
                         >
-                            <ZoomOutMapIcon sx={{ color: 'black' }}></ZoomOutMapIcon>
+                            <ZoomOutMapIcon sx={{ color: 'black' }} />
                         </button>
                     </Box>
                 </>
             ) : null}
 
             {help ? (
-                <>
-                    <Box ref={helpButtonRef} className="maplibre-ctrl-group">
-                        <button type="button" title="How to navigate the map" onClick={() => updateShowHelp(true)}>
-                            <QuestionMarkIcon sx={{ color: 'black' }}></QuestionMarkIcon>
-                        </button>
-                        <Help open={showHelp} onClose={() => updateShowHelp(false)} />
-                    </Box>
-                </>
+                <Box ref={helpButtonRef} className="maplibre-ctrl-group">
+                    <button type="button" title="How to navigate the map" onClick={() => updateShowHelp(true)}>
+                        <QuestionMarkIcon sx={{ color: 'black' }} />
+                    </button>
+                    <Help open={showHelp} onClose={() => updateShowHelp(false)} />
+                </Box>
             ) : null}
         </Box>
     );
