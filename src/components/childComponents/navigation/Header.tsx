@@ -1,71 +1,185 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import AgricultureIcon from '@mui/icons-material/Agriculture';
+import { styled, alpha } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
-import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Chip from '@mui/material/Chip';
 import Container from '@mui/material/Container';
 import IconButton from '@mui/material/IconButton';
-import Menu from '@mui/material/Menu';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowRightIcon from '@mui/icons-material/KeyboardArrowRight';
+import Menu, { MenuProps } from '@mui/material/Menu';
 import MenuIcon from '@mui/icons-material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
-import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
+import { HashLink } from 'react-router-hash-link';
 
-import logoBWUIUC from './logo_bw_uiuc.png';
-import logoColorUIUC from './logo_color_uiuc.png';
-import logo from './images/logo.png';
+import logo from './D4ALogo.png';
 
-const pages = [{ pg: 'Explore', url: '/explore' }];
+const StyledMenu = styled((props: MenuProps) => (
+    <Menu
+        elevation={0}
+        anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right'
+        }}
+        transformOrigin={{
+            vertical: 'top',
+            horizontal: 'right'
+        }}
+        {...props}
+    />
+))(({ theme }) => ({
+    '& .MuiPaper-root': {
+        'borderRadius': 6,
+        'marginTop': theme.spacing(1),
+        'minWidth': 180,
+        'color': theme.palette.mode === 'light' ? 'rgb(55, 65, 81)' : theme.palette.grey[300],
+        'boxShadow':
+            'rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px',
+        '& .MuiMenu-list': {
+            padding: '4px 0'
+        },
+        '& .MuiMenuItem-root': {
+            '& .MuiSvgIcon-root': {
+                fontSize: 18,
+                color: theme.palette.text.secondary,
+                marginRight: theme.spacing(1.5)
+            },
+            '&:active': {
+                backgroundColor: alpha(theme.palette.primary.main, theme.palette.action.selectedOpacity)
+            }
+        }
+    }
+}));
+
+// TODO: replace email id dynamically
+const pages = [
+    { pg: 'Email Us Questions', url: 'mailto: dir4agteam@illinois.edu' },
+    { pg: 'About Us', url: '/aboutus' },
+    { pg: 'Explore', url: '/explore' }
+];
+
+const areas = [
+    { name: 'Cover Cropping', url: '#nitrogencons' },
+    { name: 'Crop Rotation', url: '#nitrogencons' },
+    { name: 'Draught-resistant Seed Performance', url: '#waterres' },
+    { name: 'Irrigation Strategies', url: '#waterres' }
+];
 
 const Header = (): JSX.Element => {
     const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
+    const [anchorAoIEl, setAnchorAoIEl] = React.useState<null | HTMLElement>(null);
+
+    const open = Boolean(anchorAoIEl);
+
+    const handleOpenAoI = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorAoIEl(event.currentTarget);
+    };
+    const handleCloseAoI = () => {
+        setAnchorAoIEl(null);
+    };
 
     const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
         setAnchorElNav(event.currentTarget);
     };
-
     const handleCloseNavMenu = () => {
         setAnchorElNav(null);
     };
 
     return (
-        <AppBar position="static" sx={(theme) => ({ backgroundColor: theme.palette.default.light })}>
+        <AppBar position="static" sx={(theme) => ({ backgroundColor: theme.palette.default.main })}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
-                    <AgricultureIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1, color: 'black' }} />
-                    <Typography
-                        variant="h6"
-                        noWrap
-                        component={Link}
-                        to="/"
-                        sx={{
-                            mr: 2,
-                            display: { xs: 'none', md: 'flex' },
-                            fontWeight: 400,
-                            fontSize: '1.2em',
-                            letterSpacing: '.1rem',
-                            color: 'black',
-                            textDecoration: 'none'
-                        }}
-                    >
-                        Direct4Ag
-                    </Typography>
+                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+                        <img alt="Direct4Ag Logo" src={logo} />
+                    </Box>
+                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end' }}>
+                        {/* <Stack direction="row" spacing={2} sx={{display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end'}}> */}
+                        <Button
+                            id="aoi-btn"
+                            aria-controls={open ? 'aoi-menu' : undefined}
+                            aria-haspopup="true"
+                            aria-expanded={open ? 'true' : undefined}
+                            sx={(theme) => ({
+                                my: 2,
+                                mx: 1,
+                                color: theme.palette.text.primary,
+                                fontSize: theme.typography.pxToRem(14),
+                                fontWeight: theme.typography.fontWeightMedium
+                            })}
+                            variant="text"
+                            disableElevation
+                            onClick={handleOpenAoI}
+                            endIcon={<KeyboardArrowDownIcon />}
+                        >
+                            Areas of Interest
+                        </Button>
+                        <StyledMenu
+                            id="aoi-menu"
+                            MenuListProps={{
+                                'aria-labelledby': 'aoi-btn'
+                            }}
+                            anchorEl={anchorAoIEl}
+                            open={open}
+                            onClose={handleCloseAoI}
+                        >
+                            {areas.map((area) => (
+                                <MenuItem key={area.name} onClick={handleCloseAoI} disableRipple>
+                                    <HashLink smooth to={area.url} style={{ textDecoration: 'none' }}>
+                                        <Typography
+                                            textAlign="center"
+                                            sx={(theme) => ({
+                                                color: theme.palette.text.primary,
+                                                fontSize: theme.typography.pxToRem(16),
+                                                fontWeight: theme.typography.fontWeightRegular,
+                                                textDecoration: 'none'
+                                            })}
+                                        >
+                                            {area.name}
+                                        </Typography>
+                                    </HashLink>
+                                </MenuItem>
+                            ))}
+                        </StyledMenu>
+                        {pages.map((page) => (
+                            <Button
+                                key={page.pg}
+                                onClick={handleCloseNavMenu}
+                                sx={{
+                                    my: 2,
+                                    mx: 1
+                                }}
+                            >
+                                <HashLink smooth to={page.url} style={{ textDecoration: 'none' }}>
+                                    <Typography
+                                        textAlign="center"
+                                        sx={(theme) => ({
+                                            color: theme.palette.text.primary,
+                                            fontSize: theme.typography.pxToRem(14),
+                                            fontWeight: theme.typography.fontWeightMedium,
+                                            textDecoration: 'none'
+                                        })}
+                                    >
+                                        {page.pg}
+                                    </Typography>
+                                </HashLink>
+                            </Button>
+                        ))}
+                    </Box>
 
                     <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
                         <IconButton
                             size="large"
-                            aria-label="account of current user"
+                            aria-label="show menu items"
                             aria-controls="menu-appbar"
                             aria-haspopup="true"
                             onClick={handleOpenNavMenu}
                             color="inherit"
                         >
-                            <MenuIcon sx={{ color: 'black', zIndex: 1 }} />
+                            <MenuIcon sx={(theme) => ({ color: theme.palette.text.primary, zIndex: 1 })} />
                         </IconButton>
                         <Menu
                             id="menu-appbar"
@@ -85,69 +199,41 @@ const Header = (): JSX.Element => {
                                 display: { xs: 'block', md: 'none' }
                             }}
                         >
+                            <MenuItem
+                                onClick={handleOpenAoI}
+                                sx={(theme) => ({
+                                    color: theme.palette.text.primary,
+                                    fontSize: theme.typography.pxToRem(16),
+                                    fontWeight: theme.typography.fontWeightMedium,
+                                    textDecoration: 'none'
+                                })}
+                            >
+                                Areas of Interest
+                                <KeyboardArrowRightIcon />
+                            </MenuItem>
                             {pages.map((page) => (
                                 <MenuItem key={page.pg} onClick={handleCloseNavMenu}>
-                                    <Typography
-                                        textAlign="center"
-                                        component={Link}
-                                        to={page.url}
-                                        sx={{
-                                            fontWeight: 400,
-                                            fontSize: '1rem',
-                                            textDecoration: 'none'
-                                        }}
-                                    >
-                                        {page.pg}
-                                    </Typography>
+                                    <HashLink smooth to={page.url} style={{ textDecoration: 'none' }}>
+                                        <Typography
+                                            textAlign="center"
+                                            component={Link}
+                                            to={page.url}
+                                            sx={(theme) => ({
+                                                color: theme.palette.text.primary,
+                                                fontSize: theme.typography.pxToRem(16),
+                                                fontWeight: theme.typography.fontWeightMedium,
+                                                textDecoration: 'none'
+                                            })}
+                                        >
+                                            {page.pg}
+                                        </Typography>
+                                    </HashLink>
                                 </MenuItem>
                             ))}
                         </Menu>
                     </Box>
-                    <AgricultureIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1, color: 'black' }} />
-                    <Typography
-                        variant="h5"
-                        noWrap
-                        component={Link}
-                        to="/"
-                        sx={{
-                            mr: 2,
-                            display: { xs: 'flex', md: 'none' },
-                            flexGrow: 1,
-                            fontWeight: 400,
-                            fontSize: '1em',
-                            letterSpacing: '.1rem',
-                            color: 'black',
-                            textDecoration: 'none'
-                        }}
-                    >
-                        Direct4Ag
-                    </Typography>
-                    <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end' }}>
-                        {pages.map((page) => (
-                            <Button
-                                key={page.pg}
-                                onClick={handleCloseNavMenu}
-                                sx={{
-                                    my: 2,
-                                    color: 'black',
-                                    display: 'block'
-                                }}
-                            >
-                                <Typography
-                                    textAlign="center"
-                                    component={Link}
-                                    to={page.url}
-                                    sx={{
-                                        color: 'black',
-                                        fontWeight: 400,
-                                        fontSize: '1.2rem',
-                                        textDecoration: 'none'
-                                    }}
-                                >
-                                    {page.pg}
-                                </Typography>
-                            </Button>
-                        ))}
+                    <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+                        <img alt="Direct4Ag Logo" src={logo} />
                     </Box>
                 </Toolbar>
             </Container>

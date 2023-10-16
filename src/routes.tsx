@@ -18,7 +18,7 @@ const routes: { [key: string]: import('react-router-dom').RouteProps } = {
             </Suspense>
         )
     },
-    '/explore': {
+    'explore': {
         element: (
             <Suspense fallback={<Loading />}>
                 <LazyExplore />
