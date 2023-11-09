@@ -383,6 +383,7 @@ const Home = (): JSX.Element => {
                                                         display: 'flex',
                                                         flexDirection: 'column',
                                                         padding: '10px',
+                                                        width: "100%",
                                                         overflow: 'auto'
                                                     }}
                                                 >
