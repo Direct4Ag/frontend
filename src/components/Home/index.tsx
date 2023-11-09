@@ -715,7 +715,7 @@ const Home = (): JSX.Element => {
                                     width: '100%'
                                 }}
                             >
-                                <CardContent sx={{ flex: '1 0 auto'}}>
+                                <CardContent sx={{ flex: '1 0 auto' }}>
                                     <Typography
                                         component="h6"
                                         sx={(theme) => ({
