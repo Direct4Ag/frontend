@@ -1,0 +1,136 @@
+{
+    "fieldsSummary": [
+        {
+            "fieldId": "randomUUIDstring",
+            "fieldName": "Field 1",
+            "farm": {
+                "farmId": "randomUUIDstring",
+                "farmName": "Farm 1",
+                "location": "County 1"
+            },
+            "coordinates": [
+                -88.585115, 
+                39.828425
+            ],
+            "research": {
+                "researchId": "randomUUIDstring",
+                "researchArea": {
+                    "researchAreaId": "randomUUIDstring",
+                    "name": "Nitrogen Conservation"
+                },
+                "researchName": "Cover Crop"
+            },
+            "fieldDataId": "randomUUIDstring"
+        },
+        {
+            "fieldId": "randomUUIDstring",
+            "fieldName": "Field 2",
+            "farm": {
+                "farmId": "randomUUIDstring",
+                "farmName": "Farm 1",
+                "location": "County 1"
+            },
+            "coordinates": [
+                -88.585746, 
+                39.826166
+            ],
+            "research": {
+                "researchId": "randomUUIDstring",
+                "researchArea": {
+                    "researchAreaId": "randomUUIDstring",
+                    "name": "Nitrogen Conservation"
+                },
+                "researchName": "Crop Rotation"
+            },
+            "fieldDataId": "randomUUIDstring"
+        },
+        {
+            "fieldId": "randomUUIDstring",
+            "fieldName": "Field 3",
+            "farm": {
+                "farmId": "randomUUIDstring",
+                "farmName": "Farm 1",
+                "location": "County 1"
+            },
+            "coordinates": [
+                -88.591500, 
+                39.825824
+            ],
+            "research": {
+                "researchId": "randomUUIDstring",
+                "researchArea": {
+                    "researchAreaId": "randomUUIDstring",
+                    "name": "Water Resource Management"
+                },
+                "researchName": "Drought-resistant Seed Performance"
+            },
+            "fieldDataId": "randomUUIDstring"
+        },
+        {
+            "fieldId": "randomUUIDstring",
+            "fieldName": "Field 1",
+            "farm": {
+                "farmId": "randomUUIDstring",
+                "farmName": "Farm 2",
+                "location": "County 2"
+            },
+            "coordinates": [
+                -88.585746, 
+                40.126166
+            ],
+            "research": {
+                "researchId": "randomUUIDstring",
+                "researchArea": {
+                    "researchAreaId": "randomUUIDstring",
+                    "name": "Nitrogen Conservation"
+                },
+                "researchName": "Crop Rotation"
+            },
+            "fieldDataId": "randomUUIDstring"
+        },
+        {
+            "fieldId": "randomUUIDstring",
+            "fieldName": "Field 2",
+            "farm": {
+                "farmId": "randomUUIDstring",
+                "farmName": "Farm 2",
+                "location": "County 2"
+            },
+            "coordinates": [
+                -88.575746, 
+                40.226166
+            ],
+            "research": {
+                "researchId": "randomUUIDstring",
+                "researchArea": {
+                    "researchAreaId": "randomUUIDstring",
+                    "name": "Nitrogen Conservation"
+                },
+                "researchName": "Cover Crop"
+            },
+            "fieldDataId": "randomUUIDstring"
+        },
+        {
+            "fieldId": "randomUUIDstring",
+            "fieldName": "Field 1",
+            "farm": {
+                "farmId": "randomUUIDstring",
+                "farmName": "Farm 3",
+                "location": "County 3"
+            },
+            "coordinates": [
+                -87.975746, 
+                39.726166
+            ],
+            "research": {
+                "researchId": "randomUUIDstring",
+                "researchArea": {
+                    "researchAreaId": "randomUUIDstring",
+                    "name": "Water Resource Management"
+                },
+                "researchName": "Irrigation Strategies"
+            },
+            "fieldDataId": "randomUUIDstring"
+        }
+    ]
+}

@@ -96,7 +96,9 @@ const Header = (): JSX.Element => {
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                        <img alt="Direct4Ag Logo" src={logo} />
+                        <a href='/'>
+                            <img alt="Direct4Ag Logo" src={logo} />
+                        </a>
                     </Box>
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end' }}>
                         {/* <Stack direction="row" spacing={2} sx={{display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end'}}> */}

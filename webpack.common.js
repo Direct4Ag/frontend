@@ -84,8 +84,7 @@ module.exports = {
 
     plugins: [
         new HtmlWebpackPlugin({
-            template: 'src/index.html',
-            manifestJson: 'src/files/manifest.json'
+            template: 'src/index.html'
         }),
         new Webpack.DefinePlugin({
             PUBLIC_PATH: JSON.stringify(process.env.PUBLIC_PATH || '/'),

@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "outDir": "build",
     "target": "es6",
     "lib": [
       "dom",
@@ -16,7 +17,6 @@
     "moduleResolution": "node",
     "isolatedModules": true,
     "resolveJsonModule": false,
-    "noEmit": true,
     "jsx": "react",
     "sourceMap": true,
     "declaration": true,

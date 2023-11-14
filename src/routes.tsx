@@ -2,7 +2,7 @@ import React, { Suspense, lazy } from 'react';
 import Loading from './components/Loading';
 
 const LazyHome = lazy(() => import('./components/Home'));
-const LazyExplore = lazy(() => import('./components/Explore'));
+const LazyExplore = lazy(() => import('./components/childComponents/Explore'));
 
 /**
  A mapping of routes to `RouteProps`.
