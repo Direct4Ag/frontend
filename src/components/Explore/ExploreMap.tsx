@@ -1,8 +1,8 @@
 import React from "react";
 
-import { basemapsArray } from '../Map/utils';
-import Map from "../Map";
-import { mapStyle } from '../Map/styles';
+import { basemapsArray } from '../childComponents/Map/utils';
+import Map from "../childComponents/Map";
+import { mapStyle } from '../childComponents/Map/styles';
 
 const ExploreMap = (): JSX.Element => {
 

@@ -2,11 +2,12 @@ import React from 'react';
 import Box from '@mui/material/Box';
 import Container from "@mui/material/Container";
 
-import Header from '../navigation/Header';
+import Header from '../childComponents/navigation/Header';
 import LeftSidebar from './LeftSidebar';
 import ExploreMap from './ExploreMap';
 
 const Explore = (): JSX.Element => {
+
     return (
         <Box>
             <Box sx={{ pointerEvents: 'auto' }}>

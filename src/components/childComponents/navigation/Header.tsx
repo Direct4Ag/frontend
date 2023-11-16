@@ -92,7 +92,7 @@ const Header = (): JSX.Element => {
     };
 
     return (
-        <AppBar position="static" sx={(theme) => ({ backgroundColor: theme.palette.default.main })}>
+        <AppBar position="static" sx={(theme) => ({ backgroundColor: theme.palette.default.main })} elevation={0}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
