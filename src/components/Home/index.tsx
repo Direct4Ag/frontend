@@ -4,6 +4,7 @@ import { HashLink } from 'react-router-hash-link';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Container from '@mui/material/Container';
@@ -111,6 +112,13 @@ const Home = (): JSX.Element => {
                 'Precision and digital  agriculture training'
             ],
             buttonText: 'Register a webinar (Coming Soon)'
+        },
+        {
+            title: 'Web Tutorials',
+            text: 'Review tutorials about A B C and D anytime.',
+            listHeader: '',
+            listItems: ['Cover crops and soil nitrogen availability in maize and soybean systems', '?', '?'],
+            buttonText: 'Explore Tutorials (Coming Soon)'
         }
     ];
 
@@ -279,6 +287,7 @@ const Home = (): JSX.Element => {
                             <Item elevation={0} sx={{ p: 2 }}>
                                 <Button
                                     variant="contained"
+                                    href="/explore"
                                     sx={(theme) => ({
                                         color: theme.palette.default.contrastText,
                                         backgroundColor: theme.palette.primary.main,
@@ -384,7 +393,8 @@ const Home = (): JSX.Element => {
                                                         flexDirection: 'column',
                                                         padding: '10px',
                                                         width: '100%',
-                                                        overflow: 'auto'
+                                                        overflow: 'auto',
+                                                        mb: 1
                                                     }}
                                                 >
                                                     <CardContent sx={{ flex: '1 0 auto' }}>
@@ -423,6 +433,7 @@ const Home = (): JSX.Element => {
                                                     >
                                                         <Button
                                                             variant="contained"
+                                                            href="/explore"
                                                             sx={(theme) => ({
                                                                 color: theme.palette.default.contrastText,
                                                                 backgroundColor: theme.palette.primary.main,
@@ -446,7 +457,7 @@ const Home = (): JSX.Element => {
                                                                 'marginTop': theme.spacing(2),
                                                                 'marginBottom': theme.spacing(5),
                                                                 '&:hover': {
-                                                                    color: theme.palette.default.contrastText,
+                                                                    color: theme.palette.default.btnHoverText,
                                                                     backgroundColor:
                                                                         theme.palette.default.btnLightBackground
                                                                 },
@@ -495,14 +506,15 @@ const Home = (): JSX.Element => {
                                 <Card
                                     key={info.title}
                                     sx={{
-                                        // display: 'flex',
-                                        height: { xs: '450px', md: '500px' },
                                         width: { xs: '100%', md: '50%' },
+                                        display: 'flex',
+                                        flexDirection: 'column',
+                                        padding: '32px',
                                         background:
                                             'linear-gradient(292.79deg, rgba(232, 245, 250, 0.75) 0%, rgba(243, 248, 253, 0.37) 100%)'
                                     }}
                                 >
-                                    <CardContent sx={{ flex: '1 0 auto' }}>
+                                    <CardContent sx={{ flexGrow: 1 }}>
                                         <Typography
                                             component="h6"
                                             sx={(theme) => ({
@@ -563,24 +575,24 @@ const Home = (): JSX.Element => {
                                                 })}
                                             </List>
                                         </Box>
-                                        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
-                                            <Button
-                                                variant="contained"
-                                                sx={(theme) => ({
-                                                    color: theme.palette.default.contrastText,
-                                                    backgroundColor: theme.palette.primary.main,
-                                                    fontWeight: { xs: 600, md: 800 },
-                                                    fontSize: { xs: 14, md: 16 },
-                                                    font: 'Roboto',
-                                                    marginTop: theme.spacing(5),
-                                                    marginBottom: theme.spacing(5),
-                                                    padding: theme.spacing(2)
-                                                })}
-                                            >
-                                                {info.buttonText}
-                                            </Button>
-                                        </Box>
                                     </CardContent>
+                                    <CardActions sx={{ display: 'flex', justifyContent: 'center' }}>
+                                        <Button
+                                            variant="contained"
+                                            sx={(theme) => ({
+                                                color: theme.palette.default.contrastText,
+                                                backgroundColor: theme.palette.primary.main,
+                                                fontWeight: { xs: 600, md: 800 },
+                                                fontSize: { xs: 14, md: 16 },
+                                                font: 'Roboto',
+                                                marginTop: theme.spacing(1),
+                                                marginBottom: theme.spacing(1),
+                                                padding: theme.spacing(2)
+                                            })}
+                                        >
+                                            {info.buttonText}
+                                        </Button>
+                                    </CardActions>
                                 </Card>
                             );
                         })}
@@ -703,6 +715,7 @@ const Home = (): JSX.Element => {
                                 height: { xs: '400px', md: '500px' },
                                 width: { xs: '100%', md: '50%' },
                                 overflow: 'auto',
+                                padding: "32px",
                                 background:
                                     'linear-gradient(292.79deg, rgba(232, 245, 250, 0.75) 0%, rgba(243, 248, 253, 0.37) 100%)'
                             }}
@@ -711,11 +724,10 @@ const Home = (): JSX.Element => {
                                 sx={{
                                     display: 'flex',
                                     flexDirection: 'column',
-                                    padding: '10px',
                                     width: '100%'
                                 }}
                             >
-                                <CardContent sx={{ flex: '1 0 auto' }}>
+                                <CardContent sx={{ flexGrow: 1 }}>
                                     <Typography
                                         component="h6"
                                         sx={(theme) => ({
@@ -752,6 +764,8 @@ const Home = (): JSX.Element => {
                                         <br />
                                         <br />
                                     </Typography>
+                                </CardContent>
+                                <CardActions sx={{ display: 'flex', justifyContent: 'center' }}>
                                     <Box>
                                         <Stack
                                             spacing={2}
@@ -784,7 +798,7 @@ const Home = (): JSX.Element => {
                                                     'width': '100%',
                                                     'font': 'Roboto',
                                                     '&:hover': {
-                                                        color: theme.palette.default.contrastText,
+                                                        color: theme.palette.default.btnHoverText,
                                                         backgroundColor: theme.palette.default.btnLightBackground
                                                     },
                                                     'padding': theme.spacing(2)
@@ -794,7 +808,7 @@ const Home = (): JSX.Element => {
                                             </Button>
                                         </Stack>
                                     </Box>
-                                </CardContent>
+                                </CardActions>
                             </Box>
                         </Card>
 
@@ -803,11 +817,14 @@ const Home = (): JSX.Element => {
                             sx={{
                                 height: { xs: '400px', md: '500px' },
                                 width: { xs: '100%', md: '50%' },
+                                display: 'flex',
+                                flexDirection: 'column',
+                                padding: "32px",
                                 background:
                                     'linear-gradient(292.79deg, rgba(232, 245, 250, 0.75) 0%, rgba(243, 248, 253, 0.37) 100%)'
                             }}
                         >
-                            <CardContent sx={{ flex: '1 0 auto' }}>
+                            <CardContent sx={{ flexGrow: 1 }}>
                                 <Typography
                                     component="h6"
                                     sx={(theme) => ({
@@ -837,23 +854,23 @@ const Home = (): JSX.Element => {
                                     <ListItem>Introduce: what we expect you to communicate</ListItem>
                                     <ListItem>Media: Contact information</ListItem>
                                 </List>
-                                <Box>
-                                    <Button
-                                        variant="contained"
-                                        sx={(theme) => ({
-                                            color: theme.palette.default.contrastText,
-                                            backgroundColor: theme.palette.primary.main,
-                                            fontWeight: { xs: 600, md: 800 },
-                                            fontSize: { xs: 14, md: 16 },
-                                            width: '100%',
-                                            font: 'Roboto',
-                                            padding: theme.spacing(2)
-                                        })}
-                                    >
-                                        GET INVOLVED
-                                    </Button>
-                                </Box>
                             </CardContent>
+                            <CardActions sx={{ display: 'flex', justifyContent: 'center' }}>
+                                <Button
+                                    variant="contained"
+                                    sx={(theme) => ({
+                                        color: theme.palette.default.contrastText,
+                                        backgroundColor: theme.palette.primary.main,
+                                        fontWeight: { xs: 600, md: 800 },
+                                        fontSize: { xs: 14, md: 16 },
+                                        width: '100%',
+                                        font: 'Roboto',
+                                        padding: theme.spacing(2)
+                                    })}
+                                >
+                                    GET INVOLVED
+                                </Button>
+                            </CardActions>
                         </Card>
 
                         {/* Ask Questions */}
@@ -861,11 +878,14 @@ const Home = (): JSX.Element => {
                             sx={{
                                 height: { xs: '400px', md: '500px' },
                                 width: { xs: '100%', md: '50%' },
+                                display: 'flex',
+                                flexDirection: 'column',
+                                padding: "32px",
                                 background:
                                     'linear-gradient(292.79deg, rgba(232, 245, 250, 0.75) 0%, rgba(243, 248, 253, 0.37) 100%)'
                             }}
                         >
-                            <CardContent sx={{ flex: '1 0 auto' }}>
+                            <CardContent sx={{ flexGrow: 1 }}>
                                 <Typography
                                     component="h6"
                                     sx={(theme) => ({
@@ -894,23 +914,23 @@ const Home = (): JSX.Element => {
                                 >
                                     <ListItem>Question and Answer blog: future</ListItem>
                                 </List>
-                                <Box>
-                                    <Button
-                                        variant="contained"
-                                        sx={(theme) => ({
-                                            color: theme.palette.default.contrastText,
-                                            backgroundColor: theme.palette.primary.main,
-                                            fontWeight: { xs: 600, md: 800 },
-                                            fontSize: { xs: 14, md: 16 },
-                                            width: '100%',
-                                            font: 'Roboto',
-                                            padding: theme.spacing(2)
-                                        })}
-                                    >
-                                        Ask a Question (coming soon)
-                                    </Button>
-                                </Box>
                             </CardContent>
+                            <CardActions sx={{ display: 'flex', justifyContent: 'center' }}>
+                                <Button
+                                    variant="contained"
+                                    sx={(theme) => ({
+                                        color: theme.palette.default.contrastText,
+                                        backgroundColor: theme.palette.primary.main,
+                                        fontWeight: { xs: 600, md: 800 },
+                                        fontSize: { xs: 14, md: 16 },
+                                        width: '100%',
+                                        font: 'Roboto',
+                                        padding: theme.spacing(2)
+                                    })}
+                                >
+                                    Ask a Question (coming soon)
+                                </Button>
+                            </CardActions>
                         </Card>
                     </Stack>
                 </Container>

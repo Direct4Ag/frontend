@@ -7,6 +7,7 @@ declare module '@mui/material/styles' {
             main: string;
             light: string;
             contrastText: string;
+            btnHoverText: string;
             btnLightBackground: string;
             chipTextColor: string;
         };
@@ -17,6 +18,7 @@ declare module '@mui/material/styles' {
             main: string;
             light: string;
             contrastText: string;
+            btnHoverText: string;
             btnLightBackground: string;
             chipTextColor: string;
         };
@@ -41,8 +43,9 @@ const palette: PaletteOptions = {
         main: '#fff',
         light: '#f2f2f2',
         contrastText: '#fff',
-        btnLightBackground: 'rgba(166, 215, 235, 1)',
-        chipTextColor: 'rgba(13, 72, 151, 1)'
+        chipTextColor: 'rgba(13, 72, 151, 1)',
+        btnHoverText: '#0D4897',
+        btnLightBackground: 'rgba(166, 215, 235, 1)'
     },
     text: {
         primary: 'rgba(19, 41, 75, 0.87)',
