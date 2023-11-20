@@ -208,6 +208,17 @@ const LeftSidebar: FC = (): JSX.Element => {
                         </Box>
                         <Scroll key="farms">
                             <Stack direction="column" spacing={6}>
+                                {farms.length === 0 ? (
+                                    <Typography sx={{
+                                        font: 'Roboto',
+                                        fontWeight: 400,
+                                        fontSize: '14px',
+                                        lineHeight: '20.02px',
+                                        color: theme.palette.text.primary
+                                    }}>
+                                        No farms found for the selected filter
+                                    </Typography>
+                                ) : null}
                                 {((coverCropFieldCount > 0) && (selectedFilter === 'All' || selectedFilter === 'Cover Crop')) ? (
                                     <ResearchSection
                                         researchArea="Nitrogen Conservation"
