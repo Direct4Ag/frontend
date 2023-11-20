@@ -60,8 +60,7 @@ const StyledMenu = styled((props: MenuProps) => (
 // TODO: replace email id dynamically
 const pages = [
     { pg: 'Email Us Questions', url: 'mailto: dir4agteam@illinois.edu' },
-    { pg: 'About Us', url: '/aboutus' },
-    { pg: 'Explore', url: '/explore' }
+    { pg: 'About Us', url: '/aboutus' }
 ];
 
 const areas = [
