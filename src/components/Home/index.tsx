@@ -1,5 +1,6 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import { HashLink } from 'react-router-hash-link';
+import {useNavigate} from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -22,6 +23,7 @@ import Footer from '../childComponents/navigation/Footer';
 import Map from '../childComponents/Map';
 import { mapStyle } from '../childComponents/Map/styles';
 import { basemapsArray } from '../childComponents/Map/utils';
+import { DataActionDispatcherContext } from '../../store/contexts';
 
 import maizeTopImg from './maize_top.png';
 import coverCroppingImg from './cover_cropping.png';
@@ -40,6 +42,8 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 
 const Home = (): JSX.Element => {
+    const dataActionDispatcher = useContext(DataActionDispatcherContext);
+    const navigate = useNavigate();
     const resAreas = [
         {
             name: 'Nitrogen Conservation',
@@ -51,6 +55,7 @@ const Home = (): JSX.Element => {
                         "Researchers at the University of Illinois in collaboration with researchers at Purdue University have developed a web-based Cover Crop Tool that simulates cereal rye growth and provides growers visualized outputs that include total biomass, carbon-to-nitrogen ratio, nitrogen taken up by the cover crop and reductions in nitrogen lost. Ground truth measurements combined with estimates from satellite images will be used to validate the model's accuracy and functioning to improve the information provided to the producer for managing a cereal rye cover crop.",
                     researchLink: '#',
                     dataToolLink: '#',
+                    exploreFilter: 'Cover Crop',
                     image: coverCroppingImg,
                     imgAlt: 'Cover Cropping Image'
                 },
@@ -60,6 +65,7 @@ const Home = (): JSX.Element => {
                         'High crop yields and low nutrient losses are not mutually exclusive. Read our five-year economic evaluation research to see how we arrived at this conclusion.',
                     researchLink: '#',
                     dataToolLink: '#',
+                    exploreFilter: 'Crop Rotation',
                     image: cropRotationImg,
                     imgAlt: 'Crop Rotation Image'
                 }
@@ -75,6 +81,7 @@ const Home = (): JSX.Element => {
                         'As changing climate brings more uncertainty with regard to weather patterns, knowing how drought-resistant seed performs in your area is becoming more important. Researchers are growing and testing these lines scientifically to provide you with information you can trust. Location, weather, soil type and soil moisture are collected to produce a clear, unbiased picture of how these seeds perform in various conditions.',
                     researchLink: '#',
                     dataToolLink: '#',
+                    exploreFilter: 'Drought-resistant Seed',
                     image: droughtResistantImg,
                     imgAlt: 'Drought Resistant Image'
                 },
@@ -83,6 +90,7 @@ const Home = (): JSX.Element => {
                     description: 'Coming soon: here will be explanations.',
                     researchLink: '#',
                     dataToolLink: '#',
+                    exploreFilter: 'Irrigation Strategies',
                     image: irrigationStratImg,
                     imgAlt: 'Irrigation Strategies Image'
                 }
@@ -433,7 +441,10 @@ const Home = (): JSX.Element => {
                                                     >
                                                         <Button
                                                             variant="contained"
-                                                            href="/explore"
+                                                            onClick={() => {
+                                                                dataActionDispatcher({type: 'updateExploreFilter', selectedFilter: research.exploreFilter as ExploreFilter})
+                                                                navigate('/explore');
+                                                            }}
                                                             sx={(theme) => ({
                                                                 color: theme.palette.default.contrastText,
                                                                 backgroundColor: theme.palette.primary.main,

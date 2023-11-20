@@ -64,10 +64,10 @@ const pages = [
 ];
 
 const areas = [
-    { name: 'Cover Cropping', url: '#nitrogencons' },
-    { name: 'Crop Rotation', url: '#nitrogencons' },
-    { name: 'Draught-resistant Seed Performance', url: '#waterres' },
-    { name: 'Irrigation Strategies', url: '#waterres' }
+    { name: 'Cover Cropping', url: '/#nitrogencons' },
+    { name: 'Crop Rotation', url: '/#nitrogencons' },
+    { name: 'Draught-resistant Seed Performance', url: '/#waterres' },
+    { name: 'Irrigation Strategies', url: '/#waterres' }
 ];
 
 const Header = (): JSX.Element => {

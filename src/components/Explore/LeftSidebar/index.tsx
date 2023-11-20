@@ -9,7 +9,7 @@ import Typography from '@mui/material/Typography';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
-import { DataStateContext } from '../../../store/contexts';
+import { DataStateContext, DataActionDispatcherContext } from '../../../store/contexts';
 import FarmCard from './FarmCard';
 import { theme } from '../../../theme';
 
@@ -85,10 +85,10 @@ const ResearchSection: FC<{ children: ReactNode; researchArea: string; researchN
 };
 
 const LeftSidebar: FC = (): JSX.Element => {
-    const { farms } = useContext(DataStateContext);
+    const dataActionDispatcher = useContext(DataActionDispatcherContext);
+    const { farms, selectedFilter } = useContext(DataStateContext);
 
     const filters = ['All', 'Cover Crop', 'Crop Rotation', 'Drought-resistant Seed', 'Irrigation Strategies'];
-    const [selectedFilter, setSelectedFilter] = useState(filters[0]);
 
     let coverCropFieldCount = 0;
     let cropRotationFieldCount = 0;
@@ -188,7 +188,7 @@ const LeftSidebar: FC = (): JSX.Element => {
                                               }
                                             }}
                                             variant='filled'
-                                            onClick={() => setSelectedFilter(filter)}
+                                            onClick={() => dataActionDispatcher({type: 'updateExploreFilter', selectedFilter: filter as ExploreFilter})}
                                         />
                                     );
                                 })}

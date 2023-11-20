@@ -8,4 +8,9 @@ interface LoadFields {
     fields: FieldsSummary[]
 }
 
-type DataAction = LoadFarms | LoadFields
+interface UpdateExploreFilter {
+    type: 'updateExploreFilter',
+    selectedFilter: ExploreFilter
+}
+
+type DataAction = LoadFarms | LoadFields | UpdateExploreFilter

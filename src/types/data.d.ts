@@ -33,4 +33,7 @@ interface FieldDetail {
 interface DataState {
     farms: FarmDetail[];
     fields: FieldsSummary[];
+    selectedFilter: ExploreFilter;
 }
+
+type ExploreFilter = 'All' | 'Cover Crop' | 'Crop Rotation' | 'Drought-resistant Seed' | 'Irrigation Strategies';
