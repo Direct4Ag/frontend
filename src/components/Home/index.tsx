@@ -19,9 +19,9 @@ import { styled } from '@mui/material/styles';
 
 import Header from '../childComponents/navigation/Header';
 import Footer from '../childComponents/navigation/Footer';
-import Map from '../childComponents/map';
-import { mapStyle } from '../childComponents/map/styles';
-import { basemapsArray } from '../childComponents/map/utils';
+import Map from '../childComponents/Map';
+import { mapStyle } from '../childComponents/Map/styles';
+import { basemapsArray } from '../childComponents/Map/utils';
 
 import maizeTopImg from './maize_top.png';
 import coverCroppingImg from './cover_cropping.png';
@@ -877,7 +877,7 @@ const Home = (): JSX.Element => {
                         {/* Ask Questions */}
                         <Card
                             sx={{
-                                height: "228px",
+                                height: '228px',
                                 width: { xs: '100%', md: '50%' },
                                 display: 'flex',
                                 flexDirection: 'column',
