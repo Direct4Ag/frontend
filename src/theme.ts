@@ -67,7 +67,14 @@ export const themeOptions = {
     palette,
     typography: {
         fontFamily: ['Lexend Deca', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'].join(',')
-    }
+    },
+    components: {
+        MuiButton: { 
+          styleOverrides: { 
+            root: { borderRadius: 0 } 
+          } 
+        }
+      }
 } as ThemeOptions;
 
 export const theme = createTheme(themeOptions);

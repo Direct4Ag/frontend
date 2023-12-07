@@ -109,7 +109,8 @@ const Home = (): JSX.Element => {
                 'How to use the decision support tools',
                 'Other research findings and technologies'
             ],
-            buttonText: 'ASK A QUESTION (COMING SOON)'
+            buttonText: 'ASK A QUESTION (COMING SOON)',
+            cardHeight: '482px'
         },
         {
             title: 'Webinars',
@@ -119,14 +120,16 @@ const Home = (): JSX.Element => {
                 'Cover crops and soil nitrogen availability in maize and soybean systems',
                 'Precision and digital  agriculture training'
             ],
-            buttonText: 'Register a webinar (Coming Soon)'
+            buttonText: 'Register a webinar (Coming Soon)',
+            cardHeight: '388px'
         },
         {
             title: 'Web Tutorials',
             text: 'Review tutorials about A B C and D anytime.',
             listHeader: '',
             listItems: ['Cover crops and soil nitrogen availability in maize and soybean systems', '?', '?'],
-            buttonText: 'Explore Tutorials (Coming Soon)'
+            buttonText: 'Explore Tutorials (Coming Soon)',
+            cardHeight: '380px'
         }
     ];
 
@@ -517,6 +520,7 @@ const Home = (): JSX.Element => {
                                 <Card
                                     key={info.title}
                                     sx={{
+                                        height: info.cardHeight,
                                         width: { xs: '100%', md: '50%' },
                                         display: 'flex',
                                         flexDirection: 'column',
@@ -529,7 +533,7 @@ const Home = (): JSX.Element => {
                                         <Typography
                                             component="h6"
                                             sx={(theme) => ({
-                                                marginBottom: theme.spacing(3),
+                                                marginBottom: theme.spacing(2),
                                                 color: theme.palette.text.primary,
                                                 fontWeight: { xs: 600, md: 700 },
                                                 fontSize: { xs: 16, md: 20 },
@@ -538,10 +542,12 @@ const Home = (): JSX.Element => {
                                         >
                                             {info.title}
                                         </Typography>
+                                        <br />
                                         <Typography
                                             variant="body1"
                                             color="text.secondary"
                                             sx={(theme) => ({
+                                                marginBottom: theme.spacing(2),
                                                 color: theme.palette.text.secondary,
                                                 fontWeight: { xs: 300, md: 400 },
                                                 fontSize: { xs: 14, md: 16 },
@@ -549,8 +555,6 @@ const Home = (): JSX.Element => {
                                             })}
                                         >
                                             {info.text}
-                                            <br />
-                                            <br />
                                         </Typography>
                                         <Box>
                                             {info.listHeader ? (
@@ -573,7 +577,8 @@ const Home = (): JSX.Element => {
                                                     'listStyleType': 'disc',
                                                     'pl': 2,
                                                     '& .MuiListItem-root': {
-                                                        display: 'list-item'
+                                                        display: 'list-item',
+                                                        p: 0
                                                     },
                                                     'color': theme.palette.text.secondary,
                                                     'fontWeight': { xs: 300, md: 400 },
@@ -596,8 +601,7 @@ const Home = (): JSX.Element => {
                                                 fontWeight: { xs: 600, md: 800 },
                                                 fontSize: { xs: 14, md: 16 },
                                                 font: 'Roboto',
-                                                marginTop: theme.spacing(1),
-                                                marginBottom: theme.spacing(1),
+                                                width: '100%',
                                                 padding: theme.spacing(2)
                                             })}
                                         >
@@ -723,10 +727,9 @@ const Home = (): JSX.Element => {
                         {/* Participate in demonstrative plot */}
                         <Card
                             sx={{
-                                height: { xs: '400px', md: '500px' },
                                 width: { xs: '100%', md: '50%' },
                                 overflow: 'auto',
-                                padding: "32px",
+                                padding: '32px',
                                 background:
                                     'linear-gradient(292.79deg, rgba(232, 245, 250, 0.75) 0%, rgba(243, 248, 253, 0.37) 100%)'
                             }}
@@ -765,9 +768,9 @@ const Home = (): JSX.Element => {
                                         You can help others in many ways!
                                         <br />
                                         <br />
-                                        Join us and transform your field a demonstration plot in your community. Gain
-                                        practical, hands-on guidance in implementing cover crops and share these methods
-                                        with your neighbors to improve their soil health!
+                                        Join us and transform your field into a demonstration plot in your community.
+                                        Gain practical, hands-on guidance in implementing cover crops and share these
+                                        methods with your neighbors to improve their soil health!
                                         <br />
                                         <br />
                                         Or, you can become a data contribution partner to help us refine the data model,
@@ -777,48 +780,46 @@ const Home = (): JSX.Element => {
                                     </Typography>
                                 </CardContent>
                                 <CardActions sx={{ display: 'flex', justifyContent: 'center' }}>
-                                    <Box>
-                                        <Stack
-                                            spacing={2}
-                                            direction="column"
-                                            flexWrap="wrap"
-                                            justifyContent="center"
-                                            alignItems="center"
+                                    <Stack
+                                        sx={{ width: '100%' }}
+                                        spacing={2}
+                                        direction="column"
+                                        justifyContent="center"
+                                        alignItems="center"
+                                    >
+                                        <Button
+                                            variant="contained"
+                                            sx={(theme) => ({
+                                                color: theme.palette.default.contrastText,
+                                                backgroundColor: theme.palette.primary.main,
+                                                fontWeight: { xs: 600, md: 800 },
+                                                fontSize: { xs: 14, md: 16 },
+                                                width: '100%',
+                                                font: 'Roboto',
+                                                padding: theme.spacing(2)
+                                            })}
                                         >
-                                            <Button
-                                                variant="contained"
-                                                sx={(theme) => ({
-                                                    color: theme.palette.default.contrastText,
-                                                    backgroundColor: theme.palette.primary.main,
-                                                    fontWeight: { xs: 600, md: 800 },
-                                                    fontSize: { xs: 14, md: 16 },
-                                                    width: '100%',
-                                                    font: 'Roboto',
-                                                    padding: theme.spacing(2)
-                                                })}
-                                            >
-                                                GET INVOLVED
-                                            </Button>
-                                            <Button
-                                                variant="contained"
-                                                sx={(theme) => ({
-                                                    'color': theme.palette.text.primary,
-                                                    'backgroundColor': theme.palette.primary.light,
-                                                    'fontWeight': { xs: 600, md: 800 },
-                                                    'fontSize': { xs: 14, md: 16 },
-                                                    'width': '100%',
-                                                    'font': 'Roboto',
-                                                    '&:hover': {
-                                                        color: theme.palette.default.btnHoverText,
-                                                        backgroundColor: theme.palette.default.btnLightBackground
-                                                    },
-                                                    'padding': theme.spacing(2)
-                                                })}
-                                            >
-                                                Explore community partners
-                                            </Button>
-                                        </Stack>
-                                    </Box>
+                                            GET INVOLVED
+                                        </Button>
+                                        <Button
+                                            variant="contained"
+                                            sx={(theme) => ({
+                                                'color': theme.palette.text.primary,
+                                                'backgroundColor': theme.palette.primary.light,
+                                                'fontWeight': { xs: 600, md: 800 },
+                                                'fontSize': { xs: 14, md: 16 },
+                                                'width': '100%',
+                                                'font': 'Roboto',
+                                                '&:hover': {
+                                                    color: theme.palette.default.btnHoverText,
+                                                    backgroundColor: theme.palette.default.btnLightBackground
+                                                },
+                                                'padding': theme.spacing(2)
+                                            })}
+                                        >
+                                            Explore community partners
+                                        </Button>
+                                    </Stack>
                                 </CardActions>
                             </Box>
                         </Card>
@@ -826,11 +827,11 @@ const Home = (): JSX.Element => {
                         {/* Contact Us */}
                         <Card
                             sx={{
-                                height: { xs: '400px', md: '500px' },
+                                height: '252px',
                                 width: { xs: '100%', md: '50%' },
                                 display: 'flex',
                                 flexDirection: 'column',
-                                padding: "32px",
+                                padding: '32px',
                                 background:
                                     'linear-gradient(292.79deg, rgba(232, 245, 250, 0.75) 0%, rgba(243, 248, 253, 0.37) 100%)'
                             }}
@@ -839,7 +840,6 @@ const Home = (): JSX.Element => {
                                 <Typography
                                     component="h6"
                                     sx={(theme) => ({
-                                        marginBottom: theme.spacing(3),
                                         color: theme.palette.text.primary,
                                         fontWeight: { xs: 600, md: 700 },
                                         fontSize: { xs: 16, md: 20 },
@@ -854,7 +854,8 @@ const Home = (): JSX.Element => {
                                         'listStyleType': 'decimal',
                                         'pl': 2,
                                         '& .MuiListItem-root': {
-                                            display: 'list-item'
+                                            display: 'list-item',
+                                            p: 0
                                         },
                                         'color': theme.palette.text.secondary,
                                         'fontWeight': { xs: 300, md: 400 },
@@ -887,11 +888,11 @@ const Home = (): JSX.Element => {
                         {/* Ask Questions */}
                         <Card
                             sx={{
-                                height: { xs: '400px', md: '500px' },
+                                height: '228px',
                                 width: { xs: '100%', md: '50%' },
                                 display: 'flex',
                                 flexDirection: 'column',
-                                padding: "32px",
+                                padding: '32px',
                                 background:
                                     'linear-gradient(292.79deg, rgba(232, 245, 250, 0.75) 0%, rgba(243, 248, 253, 0.37) 100%)'
                             }}
@@ -900,7 +901,6 @@ const Home = (): JSX.Element => {
                                 <Typography
                                     component="h6"
                                     sx={(theme) => ({
-                                        marginBottom: theme.spacing(3),
                                         color: theme.palette.text.primary,
                                         fontWeight: { xs: 600, md: 700 },
                                         fontSize: { xs: 16, md: 20 },
@@ -915,7 +915,8 @@ const Home = (): JSX.Element => {
                                         'listStyleType': 'decimal',
                                         'pl': 2,
                                         '& .MuiListItem-root': {
-                                            display: 'list-item'
+                                            display: 'list-item',
+                                            p: 0
                                         },
                                         'color': theme.palette.text.secondary,
                                         'fontWeight': { xs: 300, md: 400 },
