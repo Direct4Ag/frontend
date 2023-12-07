@@ -1,4 +1,4 @@
-import { createTheme } from '@mui/material/styles';
+import { PaletteOptions, createTheme, ThemeOptions } from '@mui/material/styles';
 
 declare module '@mui/material/styles' {
     interface PaletteOptions {
@@ -7,6 +7,8 @@ declare module '@mui/material/styles' {
             main: string;
             light: string;
             contrastText: string;
+            btnHoverText: string;
+            btnLightBackground: string;
         };
     }
     interface Palette {
@@ -15,8 +17,38 @@ declare module '@mui/material/styles' {
             main: string;
             light: string;
             contrastText: string;
+            btnHoverText: string;
+            btnLightBackground: string;
         };
     }
+}
+
+declare module '@mui/material/Button' {
+    interface ButtonPropsVariantOverrides {
+        'explore-contained': true;
+        'explore-card-btn': true;
+    }
+}
+
+const palette: PaletteOptions = {
+    primary: {
+        main: '#1D58A7',
+        light: 'rgba(224, 241, 248, 1)'
+
+    },
+    default: {
+        dark: '#d9d9d9',
+        main: '#fff',
+        light: '#f2f2f2',
+        contrastText: '#fff',
+        btnHoverText: '#0D4897',
+        btnLightBackground: 'rgba(166, 215, 235, 1)'
+    },
+    text: {
+        primary: 'rgba(19, 41, 75, 0.87)',
+        secondary: 'rgba(19, 41, 75, 0.6)',
+        disabled: 'rgba(0, 0, 0, 0.38)'
+    },
 }
 
 export const themeOptions = {
@@ -29,18 +61,18 @@ export const themeOptions = {
             xl: 1536
         }
     },
-    palette: {
-        default: {
-            dark: '#d9d9d9',
-            main: '#fff',
-            light: '#fff',
-            contrastText: '#fff'
-        }
-    },
+    palette,
     typography: {
         fontFamily: ['Lexend Deca', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'].join(',')
-    }
-};
+    },
+    components: {
+        MuiButton: { 
+          styleOverrides: { 
+            root: { borderRadius: 0 } 
+          } 
+        }
+      }
+} as ThemeOptions;
 
 export const theme = createTheme(themeOptions);
 
