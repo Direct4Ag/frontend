@@ -203,7 +203,7 @@ const LeftSidebar: FC = (): JSX.Element => {
                                     mt: "12px",
                                 }}
                             >
-                                3 Sites fit your filter
+                                {farms.length} Sites fit your filter
                             </Typography>
                         </Box>
                         <Scroll key="farms">
