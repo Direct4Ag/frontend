@@ -6,12 +6,20 @@ import fieldImage from "./field.png"
 import { theme } from "../../../theme"
 
 type Props = {
-    farm: FarmDetail;
-    fields: FieldDetail[];
+    farm: {
+        farm: FarmSummary;
+        fields: {
+            res_id: string;
+            research_name: string;
+            field: FieldsSummary;
+        }[]
+    };
     idx: number;
 };
 
-const FarmCard: FC<Props> = ({ farm, fields, idx }): JSX.Element => {
+const FarmCard: FC<Props> = ({ farm, idx }): JSX.Element => {
+    const fields = farm.fields.map(({ field }) => field);
+
     return (
         <Card
             sx={{
@@ -48,11 +56,11 @@ const FarmCard: FC<Props> = ({ farm, fields, idx }): JSX.Element => {
                             {`NO. ${idx}`}
                         </Typography>
                         <Typography variant="caption">
-                            {farm.location}
+                            {farm.farm.location_name}
                         </Typography>
                     </Box>
                     <Typography sx={{mb: 1, font: "Roboto", fontWeight: 700, fontSize: "16px", lineHeight: "28px", color: theme.palette.text.primary }} variant="subtitle1">
-                        {farm.farmName}
+                        {farm.farm.farm_name}
                     </Typography>
                     <Box 
                         sx={(theme) => ({ 
@@ -67,7 +75,7 @@ const FarmCard: FC<Props> = ({ farm, fields, idx }): JSX.Element => {
                         })}
                     >
                         <Typography variant="body2">
-                            {fields.length > 2 ? `${fields[0].fieldName}, ${fields[1].fieldName}` : `${fields.map((field) => field.fieldName).join(' and ')}`}
+                            {fields.length > 2 ? `${fields[0].field_name}, ${fields[1].field_name}` : `${fields.map((field) => field.field_name).join(' and ')}`}
                         </Typography>
                         <Typography variant="body2">
                             {fields.length > 2 ? ` and ${fields.length - 2} more` : null}

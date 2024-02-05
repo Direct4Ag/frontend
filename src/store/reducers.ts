@@ -1,14 +1,9 @@
 export const dataReducers = (state: DataState, action: DataAction): DataState => {
     switch (action.type) {
-        case 'loadFarms':
+        case 'loadResearches':
             return {
                 ...state,
-                farms: action.farms
-            };
-        case 'loadFields':
-            return {
-                ...state,
-                fields: action.fields
+                researches: action.researches
             };
         case 'updateExploreFilter':
             return {

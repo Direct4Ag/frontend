@@ -1,11 +1,6 @@
-interface LoadFarms {
-    type: 'loadFarms',
-    farms: FarmDetail[]
-}
-
-interface LoadFields {
-    type: 'loadFields',
-    fields: FieldsSummary[]
+interface LoadReserches {
+    type: 'loadResearches',
+    farms: ResearchDetail[]
 }
 
 interface UpdateExploreFilter {
@@ -13,4 +8,4 @@ interface UpdateExploreFilter {
     selectedFilter: ExploreFilter
 }
 
-type DataAction = LoadFarms | LoadFields | UpdateExploreFilter
+type DataAction = LoadResearches | UpdateExploreFilter

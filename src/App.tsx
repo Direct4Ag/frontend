@@ -5,9 +5,8 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { StyledEngineProvider, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
-import axios from 'axios';
-
 import routes from './routes';
+import { getData } from './store/api';
 import { theme } from './theme';
 import { dataReducers } from './store/reducers';
 import { dataStateInitialValue } from './store/states';
@@ -16,21 +15,21 @@ import { DataActionDispatcherContext, DataStateContext } from './store/contexts'
 import Loading from './components/Loading';
 import './styles/main.scss';
 
-import farmsURL from './files/farms.json';
-import fieldsURL from './files/fields.json';
+window.API_PATH = `${window.API_SERVER}/api`;
 
 const App: FC = () => {
     const [dataState, dataActionDispatcher] = React.useReducer(dataReducers, dataStateInitialValue);
     const [initialized, setInitialized] = React.useState(false);
-
+    console.log(window.API_PATH)
     React.useEffect(() => {
         Promise.all([
-            axios.get(fieldsURL).then((res) => {
-                dataActionDispatcher({ type: 'loadFields', fields: res.data.fieldsSummary });
-            }),
-            axios.get(farmsURL).then((res) => {
-                dataActionDispatcher({ type: 'loadFarms', farms: res.data.farms });
-            })
+            getData<ResearchDetail[]>(
+                'research/research_details',
+                (researches) => {
+                    dataActionDispatcher({ type: 'loadResearches', researches });
+                },
+                () => undefined
+            )
         ]).then(() => {
             setInitialized(true);
         });

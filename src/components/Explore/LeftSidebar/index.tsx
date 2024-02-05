@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useState, useContext } from 'react';
+import React, { FC, ReactNode, useContext } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
@@ -10,17 +10,29 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 import { DataStateContext, DataActionDispatcherContext } from '../../../store/contexts';
+import { globals as gs } from '@app/globals';
 import FarmCard from './FarmCard';
 import { theme } from '../../../theme';
 
 const drawerWidth = 472;
 
-interface RestructuredFarm {
-    farm: FarmDetail;
-    coverCropFields: FieldDetail[];
-    cropRotationFields: FieldDetail[];
-    droughtResSeedFields: FieldDetail[];
-    irrigationStratFields: FieldDetail[];
+interface RestructuredResearches {
+    [key: string]: {
+        [key: string]: {
+            [key: string]: {
+                farm: FarmSummary;
+                fields: {
+                    res_id: string;
+                    research_name: string;
+                    field: FieldsSummary;
+                }[];
+            };
+        };
+    };
+}
+
+interface FilterCounts {
+    [key: string]: number;
 }
 
 const Scroll: FC<{ children: ReactNode }> = ({ children }) => {
@@ -62,7 +74,7 @@ const ResearchSection: FC<{ children: ReactNode; researchArea: string; researchN
             >
                 {researchArea}
             </Typography>
-            <Stack direction="row" sx={{ alignItems: "center" }} spacing={1}>
+            <Stack direction="row" sx={{ alignItems: 'center' }} spacing={1}>
                 <Typography
                     sx={{
                         font: 'Roboto',
@@ -86,44 +98,103 @@ const ResearchSection: FC<{ children: ReactNode; researchArea: string; researchN
 
 const LeftSidebar: FC = (): JSX.Element => {
     const dataActionDispatcher = useContext(DataActionDispatcherContext);
-    const { farms, selectedFilter } = useContext(DataStateContext);
+    const { researches, selectedFilter } = useContext(DataStateContext);
 
-    const filters = ['All', 'Cover Crop', 'Crop Rotation', 'Drought-resistant Seed', 'Irrigation Strategies'];
+    const filters = ['All', gs.CONSTANTS.COVERCROP, gs.CONSTANTS.CROPROT, gs.CONSTANTS.DROUGHT, gs.CONSTANTS.IRRIGATION];
 
     let coverCropFieldCount = 0;
     let cropRotationFieldCount = 0;
     let droughtResSeedFieldCount = 0;
     let irrigationStratFieldCount = 0;
 
-    const restructuredFarms: RestructuredFarm[] = [];
+    const resetructuredResearches: RestructuredResearches = {};
 
-    farms.forEach((farm) => {
-        const coverCropFields = farm.fields.filter(
-            (field) => field.researchName.toLowerCase().replace(/\s/g, '') === 'covercrop'
-        );
-        const cropRotationFields = farm.fields.filter(
-            (field) => field.researchName.toLowerCase().replace(/\s/g, '') === 'croprotation'
-        );
-        const droughtResSeedFields = farm.fields.filter(
-            (field) => field.researchName.toLowerCase().replace(/\s/g, '') === 'drought-resistantseed'
-        );
-        const irrigationStratFields = farm.fields.filter(
-            (field) => field.researchName.toLowerCase().replace(/\s/g, '') === 'irrigationstrategies'
-        );
+    researches.forEach((research) => {
+        const { id, research_name, research_type, research_area, field } = research;
+        const { farm } = field;
+        const { farm_name } = farm;
 
-        coverCropFieldCount += coverCropFields.length;
-        cropRotationFieldCount += cropRotationFields.length;
-        droughtResSeedFieldCount += droughtResSeedFields.length;
-        irrigationStratFieldCount += irrigationStratFields.length;
+        if (research_type === gs.CONSTANTS.COVERCROP) {
+            coverCropFieldCount++;
+        } else if (research_type === gs.CONSTANTS.CROPROT) {
+            cropRotationFieldCount++;
+        } else if (research_type === gs.CONSTANTS.DROUGHT) {
+            droughtResSeedFieldCount++;
+        } else if (research_type === gs.CONSTANTS.IRRIGATION) {
+            irrigationStratFieldCount++;
+        }
 
-        restructuredFarms.push({
-            farm: farm,
-            coverCropFields: coverCropFields,
-            cropRotationFields: cropRotationFields,
-            droughtResSeedFields: droughtResSeedFields,
-            irrigationStratFields: irrigationStratFields
-        });
+        if (!resetructuredResearches[research_area]) {
+            resetructuredResearches[research_area] = {
+                [research_type]: {
+                    [farm_name]: {
+                        farm: farm,
+                        fields: [
+                            {
+                                res_id: id,
+                                research_name: research_name,
+                                field: {
+                                    id: field.id,
+                                    field_name: field.field_name,
+                                    field_shape: field.field_shape
+                                }
+                            }
+                        ]
+                    }
+                }
+            };
+        } else if (!resetructuredResearches[research_area][research_type]) {
+            resetructuredResearches[research_area][research_type] = {
+                [farm_name]: {
+                    farm: farm,
+                    fields: [
+                        {
+                            res_id: id,
+                            research_name: research_name,
+                            field: {
+                                id: field.id,
+                                field_name: field.field_name,
+                                field_shape: field.field_shape
+                            }
+                        }
+                    ]
+                }
+            };
+        } else if (!resetructuredResearches[research_area][research_type][farm_name]) {
+            resetructuredResearches[research_area][research_type][farm_name] = {
+                farm: farm,
+                fields: [
+                    {
+                        res_id: id,
+                        research_name: research_name,
+                        field: {
+                            id: field.id,
+                            field_name: field.field_name,
+                            field_shape: field.field_shape
+                        }
+                    }
+                ]
+            };
+        } else {
+            resetructuredResearches[research_area][research_type][farm_name]['fields'].push({
+                res_id: id,
+                research_name: research_name,
+                field: {
+                    id: field.id,
+                    field_name: field.field_name,
+                    field_shape: field.field_shape
+                }
+            });
+        }
     });
+
+    const filterCounts: FilterCounts = {
+        'All': researches.length,
+        [gs.CONSTANTS.COVERCROP]: coverCropFieldCount,
+        [gs.CONSTANTS.CROPROT]: cropRotationFieldCount,
+        [gs.CONSTANTS.DROUGHT]: droughtResSeedFieldCount,
+        [gs.CONSTANTS.IRRIGATION]: irrigationStratFieldCount
+    };
 
     return (
         <>
@@ -141,7 +212,7 @@ const LeftSidebar: FC = (): JSX.Element => {
                         pointerEvents: 'auto'
                     }}
                 >
-                    <Stack sx={{height: "100%"}} spacing={6}>
+                    <Stack sx={{ height: '100%' }} spacing={6}>
                         <Box>
                             <Button href="/" variant="text" startIcon={<ChevronLeftIcon />}>
                                 <Typography
@@ -171,24 +242,32 @@ const LeftSidebar: FC = (): JSX.Element => {
                             </Typography>
                         </Box>
                         <Box>
-                            <Stack direction='row' flexWrap='wrap' useFlexGap spacing={2}>
+                            <Stack direction="row" flexWrap="wrap" useFlexGap spacing={2}>
                                 {filters.map((filter) => {
                                     return (
                                         <Chip
                                             key={filter}
                                             label={filter}
                                             sx={{
-                                              backgroundColor: selectedFilter === filter ? theme.palette.default.btnLightBackground : theme.palette.primary.light,
-                                              color: theme.palette.default.chipTextColor,
-                                              "&&:hover" : {
-                                                backgroundColor: theme.palette.default.btnLightBackground
-                                              },
-                                              "&&:focus" : {
-                                                backgroundColor: theme.palette.default.btnLightBackground
-                                              }
+                                                'backgroundColor':
+                                                    selectedFilter === filter
+                                                        ? theme.palette.default.btnLightBackground
+                                                        : theme.palette.primary.light,
+                                                'color': theme.palette.default.chipTextColor,
+                                                '&&:hover': {
+                                                    backgroundColor: theme.palette.default.btnLightBackground
+                                                },
+                                                '&&:focus': {
+                                                    backgroundColor: theme.palette.default.btnLightBackground
+                                                }
                                             }}
-                                            variant='filled'
-                                            onClick={() => dataActionDispatcher({type: 'updateExploreFilter', selectedFilter: filter as ExploreFilter})}
+                                            variant="filled"
+                                            onClick={() =>
+                                                dataActionDispatcher({
+                                                    type: 'updateExploreFilter',
+                                                    selectedFilter: filter as ExploreFilter
+                                                })
+                                            }
                                         />
                                     );
                                 })}
@@ -200,99 +279,121 @@ const LeftSidebar: FC = (): JSX.Element => {
                                     fontSize: '12px',
                                     fontWeight: 400,
                                     color: theme.palette.text.primary,
-                                    mt: "12px",
+                                    mt: '12px'
                                 }}
                             >
-                                {farms.length} Sites fit your filter
+                                {filterCounts[selectedFilter]} Fields fit your filter
                             </Typography>
                         </Box>
                         <Scroll key="farms">
                             <Stack direction="column" spacing={6}>
-                                {farms.length === 0 ? (
-                                    <Typography sx={{
-                                        font: 'Roboto',
-                                        fontWeight: 400,
-                                        fontSize: '14px',
-                                        lineHeight: '20.02px',
-                                        color: theme.palette.text.primary
-                                    }}>
+                                {researches.length === 0 ? (
+                                    <Typography
+                                        sx={{
+                                            font: 'Roboto',
+                                            fontWeight: 400,
+                                            fontSize: '14px',
+                                            lineHeight: '20.02px',
+                                            color: theme.palette.text.primary
+                                        }}
+                                    >
                                         No farms found for the selected filter
                                     </Typography>
                                 ) : null}
-                                {((coverCropFieldCount > 0) && (selectedFilter === 'All' || selectedFilter === 'Cover Crop')) ? (
+                                {coverCropFieldCount > 0 &&
+                                (selectedFilter === 'All' || selectedFilter === gs.CONSTANTS.COVERCROP) ? (
                                     <ResearchSection
-                                        researchArea="Nitrogen Conservation"
-                                        researchName="Cover Crop"
+                                        researchArea={gs.CONSTANTS.NITCON}
+                                        researchName={gs.CONSTANTS.COVERCROP}
                                         count={coverCropFieldCount}
                                     >
-                                        {restructuredFarms.map((farm, idx) => {
-                                          if (farm.coverCropFields.length === 0) return null;
+                                        {Object.keys(
+                                            resetructuredResearches[gs.CONSTANTS.NITCON][gs.CONSTANTS.COVERCROP]
+                                        ).map((farm_name, idx) => {
                                             return (
                                                 <FarmCard
-                                                    farm={farm.farm}
-                                                    fields={farm.coverCropFields}
+                                                    farm={
+                                                        resetructuredResearches[gs.CONSTANTS.NITCON][gs.CONSTANTS.COVERCROP][
+                                                            farm_name
+                                                        ]
+                                                    }
                                                     idx={idx + 1}
-                                                    key={farm.farm.farmName}
+                                                    key={farm_name}
                                                 />
                                             );
                                         })}
                                     </ResearchSection>
                                 ) : null}
 
-                                {((cropRotationFieldCount > 0) && (selectedFilter === 'All' || selectedFilter === 'Crop Rotation')) ? (
+                                {cropRotationFieldCount > 0 &&
+                                (selectedFilter === 'All' || selectedFilter === gs.CONSTANTS.CROPROT) ? (
                                     <ResearchSection
-                                        researchArea="Nitrogen Conservation"
-                                        researchName="Crop Rotation"
+                                        researchArea={gs.CONSTANTS.NITCON}
+                                        researchName={gs.CONSTANTS.CROPROT}
                                         count={cropRotationFieldCount}
                                     >
-                                        {restructuredFarms.map((farm, idx) => {
-                                          if (farm.cropRotationFields.length === 0) return null;
+                                        {Object.keys(
+                                            resetructuredResearches[gs.CONSTANTS.NITCON][gs.CONSTANTS.CROPROT]
+                                        ).map((farm_name, idx) => {
                                             return (
                                                 <FarmCard
-                                                    farm={farm.farm}
-                                                    fields={farm.cropRotationFields}
+                                                    farm={
+                                                        resetructuredResearches[gs.CONSTANTS.NITCON][
+                                                            gs.CONSTANTS.CROPROT
+                                                        ][farm_name]
+                                                    }
                                                     idx={idx + 1}
-                                                    key={farm.farm.farmName}
+                                                    key={farm_name}
                                                 />
                                             );
                                         })}
                                     </ResearchSection>
                                 ) : null}
 
-                                {((droughtResSeedFieldCount > 0) && (selectedFilter === 'All' || selectedFilter === 'Drought-resistant Seed')) ? (
+                                {droughtResSeedFieldCount > 0 &&
+                                (selectedFilter === 'All' || selectedFilter === gs.CONSTANTS.DROUGHT) ? (
                                     <ResearchSection
-                                        researchArea="Water Resource Management"
-                                        researchName="Drought-resistant Seed"
+                                        researchArea={gs.CONSTANTS.WATMAN}
+                                        researchName={gs.CONSTANTS.DROUGHT}
                                         count={droughtResSeedFieldCount}
                                     >
-                                        {restructuredFarms.map((farm, idx) => {
-                                          if (farm.droughtResSeedFields.length === 0) return null;
+                                        {Object.keys(
+                                            resetructuredResearches[gs.CONSTANTS.WATMAN][gs.CONSTANTS.DROUGHT]
+                                        ).map((farm_name, idx) => {
                                             return (
                                                 <FarmCard
-                                                    farm={farm.farm}
-                                                    fields={farm.droughtResSeedFields}
+                                                    farm={
+                                                        resetructuredResearches[gs.CONSTANTS.WATMAN][
+                                                            gs.CONSTANTS.DROUGHT
+                                                        ][farm_name]
+                                                    }
                                                     idx={idx + 1}
-                                                    key={farm.farm.farmName}
+                                                    key={farm_name}
                                                 />
                                             );
                                         })}
                                     </ResearchSection>
                                 ) : null}
 
-                                {((irrigationStratFieldCount > 0) && (selectedFilter === 'All' || selectedFilter === 'Irrigation Strategies')) ? (
+                                {irrigationStratFieldCount > 0 &&
+                                (selectedFilter === 'All' || selectedFilter === gs.CONSTANTS.IRRIGATION) ? (
                                     <ResearchSection
-                                        researchArea="Water Resource Management"
-                                        researchName="Irrigation Strategies"
+                                        researchArea={gs.CONSTANTS.WATMAN}
+                                        researchName={gs.CONSTANTS.IRRIGATION}
                                         count={irrigationStratFieldCount}
                                     >
-                                        {restructuredFarms.map((farm, idx) => {
-                                          if (farm.irrigationStratFields.length === 0) return null;
+                                        {Object.keys(
+                                            resetructuredResearches[gs.CONSTANTS.WATMAN][gs.CONSTANTS.IRRIGATION]
+                                        ).map((farm_name, idx) => {
                                             return (
                                                 <FarmCard
-                                                    farm={farm.farm}
-                                                    fields={farm.irrigationStratFields}
+                                                    farm={
+                                                        resetructuredResearches[gs.CONSTANTS.WATMAN][
+                                                            gs.CONSTANTS.IRRIGATION
+                                                        ][farm_name]
+                                                    }
                                                     idx={idx + 1}
-                                                    key={farm.farm.farmName}
+                                                    key={farm_name}
                                                 />
                                             );
                                         })}

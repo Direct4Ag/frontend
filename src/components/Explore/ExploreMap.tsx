@@ -5,7 +5,7 @@ import Map from '../childComponents/Map';
 import { mapStyle } from '../childComponents/Map/styles';
 
 const ExploreMap = (): JSX.Element => {
-    const [isMapLoaded, setIsMapLoaded] = React.useState(false);
+    const [, setIsMapLoaded] = React.useState(false);
 
     const onMapLoad = (map: maplibregl.Map) => {
         setIsMapLoaded(true);

@@ -827,15 +827,20 @@ const Home = (): JSX.Element => {
                         {/* Contact Us */}
                         <Card
                             sx={{
-                                height: '252px',
+                                height: '286px',
                                 width: { xs: '100%', md: '50%' },
-                                display: 'flex',
-                                flexDirection: 'column',
                                 padding: '32px',
                                 background:
                                     'linear-gradient(292.79deg, rgba(232, 245, 250, 0.75) 0%, rgba(243, 248, 253, 0.37) 100%)'
                             }}
                         >
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    width: '100%'
+                                }}
+                            >
                             <CardContent sx={{ flexGrow: 1 }}>
                                 <Typography
                                     component="h6"
@@ -883,20 +888,26 @@ const Home = (): JSX.Element => {
                                     GET INVOLVED
                                 </Button>
                             </CardActions>
+                            </Box>
                         </Card>
 
                         {/* Ask Questions */}
                         <Card
                             sx={{
-                                height: '228px',
+                                height: '286px',
                                 width: { xs: '100%', md: '50%' },
-                                display: 'flex',
-                                flexDirection: 'column',
                                 padding: '32px',
                                 background:
                                     'linear-gradient(292.79deg, rgba(232, 245, 250, 0.75) 0%, rgba(243, 248, 253, 0.37) 100%)'
                             }}
                         >
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    width: '100%'
+                                }}
+                            >
                             <CardContent sx={{ flexGrow: 1 }}>
                                 <Typography
                                     component="h6"
@@ -943,6 +954,7 @@ const Home = (): JSX.Element => {
                                     Ask a Question (coming soon)
                                 </Button>
                             </CardActions>
+                            </Box>
                         </Card>
                     </Stack>
                 </Container>
