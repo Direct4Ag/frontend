@@ -16,6 +16,7 @@ import Loading from './components/Loading';
 import './styles/main.scss';
 
 window.API_PATH = `${window.API_SERVER}/api`;
+window.API_FONTS = `${window.API_SERVER}/fonts`;
 
 const App: FC = () => {
     const [dataState, dataActionDispatcher] = React.useReducer(dataReducers, dataStateInitialValue);
@@ -27,6 +28,13 @@ const App: FC = () => {
                 'research/research_details',
                 (researches) => {
                     dataActionDispatcher({ type: 'loadResearches', researches });
+                },
+                () => undefined
+            ),
+            getData<ResearchDetail[]>(
+                'fields/all',
+                (fields) => {
+                    dataActionDispatcher({ type: 'loadFields', fields });
                 },
                 () => undefined
             )

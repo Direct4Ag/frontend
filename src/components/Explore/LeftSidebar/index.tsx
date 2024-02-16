@@ -136,7 +136,7 @@ const LeftSidebar: FC = (): JSX.Element => {
                                 field: {
                                     id: field.id,
                                     field_name: field.field_name,
-                                    field_shape: field.field_shape
+                                    coordinates: field.coordinates
                                 }
                             }
                         ]
@@ -154,7 +154,7 @@ const LeftSidebar: FC = (): JSX.Element => {
                             field: {
                                 id: field.id,
                                 field_name: field.field_name,
-                                field_shape: field.field_shape
+                                coordinates: field.coordinates
                             }
                         }
                     ]
@@ -170,7 +170,7 @@ const LeftSidebar: FC = (): JSX.Element => {
                         field: {
                             id: field.id,
                             field_name: field.field_name,
-                            field_shape: field.field_shape
+                            coordinates: field.coordinates
                         }
                     }
                 ]
@@ -182,7 +182,7 @@ const LeftSidebar: FC = (): JSX.Element => {
                 field: {
                     id: field.id,
                     field_name: field.field_name,
-                    field_shape: field.field_shape
+                    coordinates: field.coordinates
                 }
             });
         }

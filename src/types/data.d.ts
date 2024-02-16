@@ -1,7 +1,11 @@
-interface FieldsSummary {
+interface FieldSmallSummary {
     id: string;
-    field_name: string;
-    field_shape: LineCoordinates;
+    field_name?: string;
+    name?: string;
+}
+
+interface FieldsSummary extends FieldSmallSummary {
+    coordinates: PointCoordinates;
 }
 
 interface FarmSummary {
@@ -30,6 +34,9 @@ interface ResearchDetail extends ResearchSummary {
 interface DataState {
     researches: ResearchDetail[];
     selectedFilter: ExploreFilter;
+    fields: FieldsSummary[];
+    selectedField: FieldsSummary | null;
+    selectedResearch: ResearchDetail | null;
 }
 
 type ExploreFilter = 'All' | 'Cover Crop' | 'Crop Rotation' | 'Drought-resistant Seeds' | 'Irrigation Strategies';

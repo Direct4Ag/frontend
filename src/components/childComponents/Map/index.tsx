@@ -16,6 +16,7 @@ interface Props {
     mapOptions: Partial<maplibregl.MapOptions>;
     initialBounds?: maplibregl.LngLatBoundsLike;
     center?: maplibregl.LngLatLike;
+    init_zoom?: number;
     attribution?: boolean;
     help?: boolean;
     navigation?: boolean;
@@ -27,6 +28,7 @@ const Map = ({
     mapOptions,
     initialBounds,
     center,
+    init_zoom,
     attribution,
     help,
     navigation,
@@ -42,7 +44,7 @@ const Map = ({
     const helpButtonRef = React.useRef<HTMLButtonElement>(null);
     const [showHelp, updateShowHelp] = React.useState(false);
 
-    const [zoom] = React.useState(6);
+    const [zoom] = React.useState(init_zoom || 8);
 
     React.useEffect(() => {
         if (maplibre.supported() && mapContainerRef.current) {

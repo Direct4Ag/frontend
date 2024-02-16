@@ -1,66 +1,230 @@
 import React from 'react';
+import maplibregl from 'maplibre-gl';
+import {useNavigate} from 'react-router-dom';
 
-import { basemapsArray } from '../childComponents/Map/utils';
-import Map from '../childComponents/Map';
-import { mapStyle } from '../childComponents/Map/styles';
+import { basemapsArray } from '@app/components/childComponents/Map/utils';
+import { globals as gs } from '@app/globals';
+import Map from '@app/components/childComponents/Map';
+import { layerStyles, mapStyle } from '@app/components/childComponents/Map/styles';
+
+import { 
+    DataActionDispatcherContext, 
+    DataStateContext, 
+    MapContext 
+} from '@app/store/contexts';
+import { MapLayerEventType } from 'maplibre-gl';
 
 const ExploreMap = (): JSX.Element => {
-    const [, setIsMapLoaded] = React.useState(false);
+    const navigate = useNavigate();
+    const [isMapLoaded, setIsMapLoaded] = React.useState(false);
+    const { fields, selectedField, researches } = React.useContext(DataStateContext);
+    const dataActionDispatcher = React.useContext(DataActionDispatcherContext);
+    const mapRef = React.useContext(MapContext);
+
+    let hoveredFieldId: number | string | undefined = undefined;
 
     const onMapLoad = (map: maplibregl.Map) => {
-        setIsMapLoaded(true);
-        map.addSource('maine', {
+        
+        map.addSource('fields-poly', {
+            type: 'geojson',
+            data: `${window.API_PATH}/fields/geojson`
+        });
+
+        map.addSource('fields', {
             type: 'geojson',
             data: {
-                type: 'Feature',
-                geometry: {
-                    type: 'Polygon',
-                    coordinates: [
-                        [
-                            [-88.26620323, 40.025925997],
-                            [-88.26618567, 40.027128697],
-                            [-88.265998642, 40.027257323],
-                            [-88.265408073, 40.027515505],
-                            [-88.264669538, 40.027821058],
-                            [-88.264153562, 40.028089853],
-                            [-88.263717955, 40.028400581],
-                            [-88.263111703, 40.02888896],
-                            [-88.2594983, 40.026062611],
-                            [-88.258544538, 40.026805266],
-                            [-88.262125804, 40.029637211],
-                            [-88.261191544, 40.03035553],
-                            [-88.262668734, 40.031542607],
-                            [-88.262644662, 40.032735448],
-                            [-88.262568938, 40.032726598],
-                            [-88.261949138, 40.032148047],
-                            [-88.259222743, 40.032120042],
-                            [-88.257049136, 40.032096239],
-                            [-88.256946173, 40.024866049],
-                            [-88.258180338, 40.024843825],
-                            [-88.25817831, 40.02620493],
-                            [-88.258476138, 40.026213138],
-                            [-88.258508864, 40.024844392],
-                            [-88.26507484, 40.024894109],
-                            [-88.265920262, 40.024903506],
-                            [-88.265968521, 40.025928561],
-                            [-88.26620323, 40.025925997]
-                        ]
-                    ]
-                }
+                type: 'FeatureCollection',
+                features: []
             }
-        });
+        })
+        
         map.addLayer({
-            id: 'maine',
+            id: 'fields-poly-fill',
             type: 'fill',
-            source: 'maine',
+            source: 'fields-poly',
             layout: {},
             paint: {
-                'fill-color': '#088',
-                'fill-opacity': 0.8,
-                'fill-outline-color': '#000'
+                'fill-color': '#FFFFFF',
+                'fill-opacity': [
+                    'case',
+                    ['boolean', ['feature-state', 'hover'], false],
+                    1,
+                    0.5
+                ],
+                // 'fill-outline-color': '#FF5F05',
             }
         });
+
+        map.addLayer({
+            id: 'fields-line',
+            type: 'line',
+            source: 'fields-poly',
+            layout: {},
+            paint: {
+                'line-color': '#FF5F05',
+                'line-width': 2
+            }
+        });
+
+        // The layer for selected field
+        map.addLayer({
+            ...layerStyles.fields.selectedFill,
+            id: 'field-selected-fill',
+            source: 'fields-poly',
+            filter: ['==', 'name', '']
+        } as maplibregl.FillLayerSpecification);
+        
+        // The layer for selected field
+        map.addLayer({
+            ...layerStyles.fields.selectedOutline,
+            id: 'field-selected-outline',
+            source: 'fields-poly',
+            filter: ['==', 'name', '']
+        } as maplibregl.FillLayerSpecification);
+
+        map.addLayer({
+            id: 'fields-poly-data',
+            type: 'symbol',
+            source: 'fields-poly',
+            layout: {
+                'text-field': ['get', 'name'],
+                'text-font': ['Roboto Medium'],
+                'text-size': 10,
+                'text-anchor': 'center',
+                'text-offset': [0, 0]
+            },
+        })
+        
+        // When the user moves their mouse over the fields-poly-fill layer, we'll update the
+        // feature state for the feature under the mouse.
+        map.on('mousemove', 'fields-poly-fill', (e: MapLayerEventType["mousemove"]) => {
+            if (e.features && e.features.length > 0) {
+                const feature = e.features[0];
+                if (hoveredFieldId) {
+                    map.setFeatureState(
+                        {source: 'fields-poly', id: hoveredFieldId},
+                        {hover: false}
+                    );
+                }
+                hoveredFieldId = feature.id;
+                map.setFeatureState(
+                    {source: 'fields-poly', id: hoveredFieldId},
+                    {hover: true}
+                );
+            }
+        });
+
+
+        // When the mouse leaves the fields-poly-fill layer, update the feature state of the
+        // previously hovered feature.
+        // and change curser back to a pointer when it leaves.
+        map.on('mouseleave', 'fields-poly-fill', () => {
+            map.getCanvas().style.cursor = '';
+
+            if (hoveredFieldId) {
+                map.setFeatureState(
+                    {source: 'fields-poly', id: hoveredFieldId},
+                    {hover: false}
+                );
+            }
+            hoveredFieldId = undefined;
+        });
+
+         // Change the cursor to a pointer when the mouse is over the layer layer.
+         map.on('mouseenter', 'fields-poly-fill', () => {
+            map.getCanvas().style.cursor = 'pointer';
+        });
+        
+
+        mapRef.current = map;
+        setIsMapLoaded(true);
     };
+
+    React.useEffect(() => {
+        const map = mapRef.current;
+        if (map && isMapLoaded) {
+            const fieldSource = map.getSource('fields')  as maplibregl.GeoJSONSource;
+            if (fieldSource){
+                fieldSource.setData({
+                    type: 'FeatureCollection',
+                    features: fields.map((field) => ({
+                        type: 'Feature',
+                        properties: {
+                            id: field.id,
+                            name: field.field_name
+                        },
+                        geometry: {
+                            type: 'Point',
+                            coordinates: field.coordinates
+                        }
+                    }))
+                });
+            }
+            
+
+            // Update selected field on click on the following layers
+            const eventListener = (e: MapLayerEventType['click']) => {
+                if (e.features && e.features[0]) {
+                    const feature = e.features[0];
+                    const fieldProperties = feature.properties as FieldSmallSummary;
+                    let newSelectedField = fields.find(({ field_name }) => fieldProperties.name === field_name) ?? null;
+                    const researchDetail = researches.find(({ field }) => field.field_name === newSelectedField?.field_name);
+
+                    dataActionDispatcher({
+                        type: 'updateSelectedField',
+                        selectedField: newSelectedField
+                    });
+
+                    if (researchDetail && researchDetail.research_type === gs.CONSTANTS.DROUGHT) {
+                        dataActionDispatcher({
+                            type: 'updateSelectedResearch',
+                            selectedResearch: researchDetail
+                        })
+                        navigate(`/drought-resistant-seeds`);
+                    }
+                }
+            };
+            ['fields-poly-fill'].forEach((layerName) => {
+                map.on('click', layerName, eventListener);
+            });
+            return () => {
+                ['fields-poly-fill'].forEach((layerName) => {
+                    map.off('click', layerName, eventListener);
+                });
+            };
+        }
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        return () => {};
+    }, [fields, selectedField, isMapLoaded])
+
+
+    React.useEffect(() => {
+         // Update the filter on `field-selected` when selected station changes
+         const map = mapRef.current;
+         if (map && isMapLoaded) {
+            map.setFilter('field-selected-fill', ['==', 'name', selectedField?.field_name || ''])
+            map.setFilter('field-selected-outline', ['==', 'name', selectedField?.field_name || ''])
+            if (selectedField) {
+                map.easeTo({
+                    center: selectedField.coordinates,
+                    zoom: 15,
+                    duration: 1000,
+                    padding: 100
+                });
+            } else {
+                const centerCoordinates = fields.map(({ coordinates }) => coordinates)
+                
+                const bounds = centerCoordinates.reduce((bounds, coord) => {
+                    return bounds.extend(coord);
+                }, new maplibregl.LngLatBounds(centerCoordinates[0], centerCoordinates[0]))
+
+                map.fitBounds(bounds, {
+                    padding: 150
+                });
+            }
+
+         }
+    }, [selectedField, isMapLoaded])
 
     return (
         <Map
@@ -69,7 +233,8 @@ const ExploreMap = (): JSX.Element => {
                 minZoom: 1
             }}
             // initialBounds={[-180, -90, 180, 90]}
-            center={[-89, 40]}
+            center={[-88.24341191425448, 40.1164071212825]}
+            init_zoom={10}
             attribution
             help
             navigation

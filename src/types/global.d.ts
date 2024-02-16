@@ -1,6 +1,7 @@
 interface Window {
     API_SERVER: string;
     API_PATH: string;
+    API_FONTS: string;
 }
 
 declare module '*.json' {
