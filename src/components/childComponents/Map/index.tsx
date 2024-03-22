@@ -9,18 +9,18 @@ import {
 import BasemapsControl, { MapLibreBasemapsControlOptions } from 'maplibre-gl-basemaps';
 
 import { MapControl } from './Control';
-import LayersControl from './LayersControl';
 import Help from './Help';
+import { IS_WEBGL_SUPPORTED } from './utils';
 
 interface Props {
     mapOptions: Partial<maplibregl.MapOptions>;
     initialBounds?: maplibregl.LngLatBoundsLike;
     center?: maplibregl.LngLatLike;
+    init_zoom?: number;
     attribution?: boolean;
     help?: boolean;
     navigation?: boolean;
     basemaps?: MapLibreBasemapsControlOptions;
-    LayersControlProps?: LayersControlProps[];
     onLoad: (map: maplibregl.Map) => void;
 }
 
@@ -28,11 +28,11 @@ const Map = ({
     mapOptions,
     initialBounds,
     center,
+    init_zoom,
     attribution,
     help,
     navigation,
     basemaps,
-    LayersControlProps,
     onLoad
 }: Props): JSX.Element => {
     const mapContainerRef = React.useRef<HTMLDivElement>(null);
@@ -44,9 +44,7 @@ const Map = ({
     const helpButtonRef = React.useRef<HTMLButtonElement>(null);
     const [showHelp, updateShowHelp] = React.useState(false);
 
-    const [zoom] = React.useState(6);
-
-    const layersControlRef = React.useRef<HTMLDivElement>(null);
+    const [zoom] = React.useState(init_zoom || 8);
 
     React.useEffect(() => {
         if (maplibre.supported() && mapContainerRef.current) {
@@ -87,10 +85,6 @@ const Map = ({
                 map.addControl(new MapControl(helpButtonRef.current), 'bottom-right');
             }
 
-            if (LayersControlProps && layersControlRef.current) {
-                map.addControl(new MapControl(layersControlRef.current), 'top-left');
-            }
-
             map.on('load', () => {
                 onLoad(map);
             });
@@ -99,14 +93,13 @@ const Map = ({
     }, []);
 
     return (
-        <Box ref={mapContainerRef} sx={{ height: '100%', flexGrow: 1, background: 'white' }}>
-            {maplibre.supported() ? null : 'Your browser does not support the map features.'}
-
-            {LayersControlProps ? (
-                <Box ref={layersControlRef} className="maplibregl-ctrl-group">
-                    <LayersControl map={mapRef.current} layers={LayersControlProps} />
-                </Box>
-            ) : null}
+        <Box
+            ref={mapContainerRef}
+            sx={{
+                'height': '100%'
+            }}
+        >
+            {IS_WEBGL_SUPPORTED ? null : 'Your browser does not support the map features.'}
 
             {navigation ? (
                 <>

@@ -3,6 +3,7 @@ import Loading from './components/Loading';
 
 const LazyHome = lazy(() => import('./components/Home'));
 const LazyExplore = lazy(() => import('./components/Explore'));
+const LazyDroughtResistantSeed = lazy(() => import('./components/DroughtResistantSeed'));
 
 /**
  A mapping of routes to `RouteProps`.
@@ -22,6 +23,13 @@ const routes: { [key: string]: import('react-router-dom').RouteProps } = {
         element: (
             <Suspense fallback={<Loading />}>
                 <LazyExplore />
+            </Suspense>
+        )
+    },
+    'drought-resistant-seeds': {
+        element: (
+            <Suspense fallback={<Loading />}>
+                <LazyDroughtResistantSeed />
             </Suspense>
         )
     }

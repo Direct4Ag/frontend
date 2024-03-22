@@ -1,4 +1,5 @@
 const path = require('path');
+require('dotenv').config();
 const Webpack = require('webpack');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
@@ -14,25 +15,31 @@ module.exports = {
     entry: {
         maplibre: 'maplibre-gl/dist/maplibre-gl.css',
         maplibreBasemapsControl: 'maplibre-gl-basemaps/lib/basemaps.css',
-        polyfill: './src/polyfill.js',
         appStyle: './src/styles/main.scss',
-        app: './src/App.tsx'
+        config: './src/config.js',
+        app: './src/App.tsx',
     },
 
     output: {
         path: path.resolve(__dirname, 'build'),
         publicPath: process.env.PUBLIC_PATH || '/',
-        filename: 'js/[name]-[fullhash].js',
+        filename: (pathData) => {
+            if (pathData.chunk.name === 'config') {
+                return 'js/config.js';
+            }
+            return `js/${pathData.chunk.name}-${pathData.chunk.hash}.js`;
+        },
+        assetModuleFilename: 'files/[name]-[hash].[ext]',
         crossOriginLoading: 'anonymous'
     },
 
     module: {
         rules: [
             {
-                // Use babel-loader for ts, tsx, js, and jsx files
+                // Use ts-loader for ts, tsx, js, and jsx files
                 test: /\.[tj]sx?$/,
                 exclude: /node_modules/,
-                use: 'babel-loader'
+                use: 'ts-loader'
             },
             {
                 test: /\.(s[ac]ss|css)$/,
@@ -79,17 +86,15 @@ module.exports = {
 
     resolve: {
         modules: ['node_modules', 'src'],
-        extensions: ['.ts', '.tsx', '.js', '.jsx']
+        extensions: ['.ts', '.tsx', '.js', '.jsx'],
+        alias: {
+            '@app': path.resolve(__dirname, 'src/')
+        }
     },
 
     plugins: [
         new HtmlWebpackPlugin({
-            template: 'src/index.html',
-            manifestJson: 'src/files/manifest.json'
-        }),
-        new Webpack.DefinePlugin({
-            PUBLIC_PATH: JSON.stringify(process.env.PUBLIC_PATH || '/'),
-            API_PATH: JSON.stringify(`${process.env.API_SERVER}`)
+            template: 'src/index.html'
         }),
         new FaviconsWebpackPlugin({
             logo: './src/images/favicon2.png',

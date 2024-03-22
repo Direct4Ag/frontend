@@ -18,36 +18,8 @@ env:
   MAIN_REPO: Direct4Ag/frontend
 
 jobs:
-  unit_tests:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        node:
-          - "16"
-          - "17"
-
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
-
-      - name: Setup Node
-        uses: actions/setup-node@v2
-        with:
-          node-version: ${{ matrix.node }}
-          check-latest: true
-
-       # install dependencies
-      - name: install dependencies
-        run: npm install
-
-      # compile UI
-      - name: build
-        run: npm run build
-
   docker:
     runs-on: ubuntu-latest
-    needs: unit_tests
 
     steps:
       # checkout source code

@@ -64,10 +64,10 @@ const pages = [
 ];
 
 const areas = [
-    { name: 'Cover Cropping', url: '#nitrogencons' },
-    { name: 'Crop Rotation', url: '#nitrogencons' },
-    { name: 'Draught-resistant Seed Performance', url: '#waterres' },
-    { name: 'Irrigation Strategies', url: '#waterres' }
+    { name: 'Cover Cropping', url: '/#nitrogencons' },
+    { name: 'Crop Rotation', url: '/#nitrogencons' },
+    { name: 'Draught-resistant Seed Performance', url: '/#waterres' },
+    { name: 'Irrigation Strategies', url: '/#waterres' }
 ];
 
 const Header = (): JSX.Element => {
@@ -91,11 +91,13 @@ const Header = (): JSX.Element => {
     };
 
     return (
-        <AppBar position="static" sx={(theme) => ({ backgroundColor: theme.palette.default.main })}>
+        <AppBar position="static" sx={(theme) => ({ backgroundColor: theme.palette.default.main })} elevation={0}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                        <img alt="Direct4Ag Logo" src={logo} />
+                        <a href='/'>
+                            <img alt="Direct4Ag Logo" src={logo} />
+                        </a>
                     </Box>
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end' }}>
                         {/* <Stack direction="row" spacing={2} sx={{display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end'}}> */}
