@@ -25,6 +25,21 @@ export const dataReducers = (state: DataState, action: DataAction): DataState =>
                 ...state,
                 selectedResearch: action.selectedResearch
             }
+        case 'updateSoilData':
+            return {
+                ...state,
+                soilData: action.soilData
+            }
+        case 'updateDRSYieldData':
+            return {
+                ...state,
+                drsYieldData: action.drsYieldData
+            }
+        case 'updateDepthSoilMoistureData':
+            return {
+                ...state,
+                depthSoilMoistureData: action.depthSoilMoistureData
+            }
     }
     throw Error(`Received invalid action: ${action}`);
 }

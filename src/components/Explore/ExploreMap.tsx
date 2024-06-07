@@ -232,8 +232,8 @@ const ExploreMap = (): JSX.Element => {
                 style: mapStyle,
                 minZoom: 1
             }}
-            // initialBounds={[-180, -90, 180, 90]}
-            center={[-88.24341191425448, 40.1164071212825]}
+            initialBounds={[-180, -90, 180, 90]}
+            // center={[-88.24341191425448, 40.1164071212825]}
             init_zoom={10}
             attribution
             help

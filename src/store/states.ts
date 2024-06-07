@@ -4,5 +4,8 @@ export const dataStateInitialValue: DataState = {
     selectedFilter: 'All',
     fields: [],
     selectedField: null,
-    selectedResearch: null
+    selectedResearch: null,
+    soilData: null,
+    drsYieldData: null,
+    depthSoilMoistureData: null
 }

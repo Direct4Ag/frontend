@@ -31,12 +31,48 @@ interface ResearchDetail extends ResearchSummary {
     field: FieldDetail;
 }
 
+interface SoilData {
+    [key: string]: string | number;
+}
+
+interface DRSYieldData {
+    id: string;
+    replicate: number;
+    line: string;
+    planting_date: string;
+    harvest_date: string;
+    crop_yield: number;
+}
+
+interface SoilMoistureData {
+    average: number;
+    year: number;
+    month: number;
+    day: number;
+    label: string;
+}
+
+interface DepthSoilMoistureData {
+    [key: string]: {
+        data: SoilMoistureData[];
+    }
+}
+
+interface FieldSensors {
+    id: string;
+    depth: string;
+    sensor_id: number;
+}
+
 interface DataState {
     researches: ResearchDetail[];
     selectedFilter: ExploreFilter;
     fields: FieldsSummary[];
     selectedField: FieldsSummary | null;
     selectedResearch: ResearchDetail | null;
+    soilData: SoilData[] | null;
+    drsYieldData: DRSYieldData[] | null;
+    depthSoilMoistureData: DepthSoilMoistureData | null;
 }
 
 type ExploreFilter = 'All' | 'Cover Crop' | 'Crop Rotation' | 'Drought-resistant Seeds' | 'Irrigation Strategies';

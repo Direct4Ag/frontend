@@ -9,10 +9,10 @@ import Typography from '@mui/material/Typography';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
-import { DataStateContext, DataActionDispatcherContext } from '../../../store/contexts';
+import { DataStateContext, DataActionDispatcherContext } from '@app/store/contexts';
 import { globals as gs } from '@app/globals';
 import FarmCard from './FarmCard';
-import { theme } from '../../../theme';
+import { theme } from '@app/theme';
 
 const drawerWidth = 472;
 
