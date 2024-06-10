@@ -24,7 +24,6 @@ import {
     Typography
 } from '@mui/material';
 import { alpha, styled } from '@mui/material/styles';
-import { makeStyles } from '@mui/styles';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { BarChart, BarPlot } from '@mui/x-charts/BarChart';
 import { axisClasses } from '@mui/x-charts/ChartsAxis';
@@ -116,71 +115,7 @@ const DepthSwitch = styled(Switch)(({ theme }) => ({
     }
 }));
 
-let bodyText = {
-    font: 'Roboto',
-    fontWeight: 400,
-    fontSize: '12px',
-    lineHeight: '19.92px',
-    letterSpacing: '0.4px'
-};
-
-const useStyles = makeStyles({
-    headingText: {
-        font: 'Poppins',
-        fontWeight: 700,
-        fontSize: '20px',
-        lineHeight: '32px',
-        letterSpacing: '0.15px',
-        color: theme.palette.text.primary,
-        textTransform: 'capitalize'
-    },
-    subText: {
-        font: 'Poppins',
-        fontWeight: 400,
-        fontSize: '16px',
-        lineHeight: '25.6px',
-        letterSpacing: '0.15px',
-        marginRight: '5px',
-        color: theme.palette.text.primary
-    },
-    tableHeadText: {
-        font: 'Roboto',
-        fontWeight: 500,
-        fontSize: '12px',
-        lineHeight: '20px',
-        letterSpacing: '0.14px',
-        color: theme.palette.text.primary,
-        textTransform: 'capitalize'
-    },
-    tableBodyText: {
-        ...bodyText,
-        color: theme.palette.text.primary
-    },
-    yieldSeedText: {
-        ...bodyText,
-        color: theme.palette.text.secondary
-    },
-    yieldDataText: {
-        font: 'Poppins',
-        fontWeight: 600,
-        fontSize: '36px',
-        lineHeight: '54px',
-        letterSpacing: '0.15px',
-        color: theme.palette.text.primary
-    },
-    soilDepthMonthSelectorHeadingText: {
-        font: 'Roboto',
-        fontWeight: 500,
-        fontSize: '14px',
-        lineHeight: '24px',
-        letterSpacing: '0.1px',
-        color: theme.palette.text.primary,
-        marginBottom: '10px'
-    }
-});
-
 const DroughtResistantSeedYield = (): JSX.Element => {
-    const classes = useStyles();
     const { selectedField, selectedResearch } = React.useContext(DataStateContext);
     // const dataActionDispatcher = React.useContext(DataActionDispatcherContext);
     const soilData = useSoilTextureData(selectedField?.coordinates);
@@ -224,17 +159,7 @@ const DroughtResistantSeedYield = (): JSX.Element => {
     const [availableMonths, setAvailableMonths] = React.useState<number[]>([]);
     const [selectedMonth, setSelectedMonth] = React.useState<number | null>(null);
 
-    let colors = [
-        '#FFC220',
-        '#2ADE96',
-        '#FF3855',
-        '#273BE2',
-        '#4e79a7',
-        '#f28e2c',
-        '#e15759',
-        '#76b7b2',
-        '#59a14f'
-    ];
+    let colors = ['#FFC220', '#2ADE96', '#FF3855', '#273BE2', '#4e79a7', '#f28e2c', '#e15759', '#76b7b2', '#59a14f'];
 
     React.useEffect(() => {
         if (drsYieldData) {
@@ -480,11 +405,11 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                     avgVpd: avgVpdData[idx],
                     day: label
                 });
-            })
+            });
             return dataset;
         }
         return [];
-    }
+    };
     let vpdDataSeries: any = [
         {
             type: 'line',
@@ -493,8 +418,8 @@ const DroughtResistantSeedYield = (): JSX.Element => {
             label: 'Average Vapor Pressure Deficit',
             yAxisKey: 'avg-vpd',
             valueFormatter: (value: number) => `${value} kPa`
-        },
-    ]
+        }
+    ];
 
     return (
         <Container disableGutters>
@@ -507,7 +432,18 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                 }}
             >
                 <Box>
-                    <Typography variant="h6" className={classes.headingText}>
+                    <Typography
+                        variant="h6"
+                        sx={{
+                            font: 'Poppins',
+                            fontWeight: 700,
+                            fontSize: '20px',
+                            lineHeight: '32px',
+                            letterSpacing: '0.15px',
+                            color: theme.palette.text.primary,
+                            textTransform: 'capitalize'
+                        }}
+                    >
                         Drought-resistant Seed Yields
                     </Typography>
                 </Box>
@@ -598,7 +534,18 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                         <DRSYieldCard elevation={0}>
                             <Box justifyContent="space-between" alignItems="center" display="flex" flexDirection="row">
                                 <Box alignItems="center" display="flex" flexDirection="row">
-                                    <Typography variant="h6" className={classes.subText}>
+                                    <Typography
+                                        variant="h6"
+                                        sx={{
+                                            font: 'Poppins',
+                                            fontWeight: 400,
+                                            fontSize: '16px',
+                                            lineHeight: '25.6px',
+                                            letterSpacing: '0.15px',
+                                            marginRight: '5px',
+                                            color: theme.palette.text.primary
+                                        }}
+                                    >
                                         Yield
                                     </Typography>
                                     <IconButton size="small" aria-label="info">
@@ -635,7 +582,14 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                                                           >
                                                               <Typography
                                                                   variant="caption"
-                                                                  className={classes.yieldSeedText}
+                                                                  sx={{
+                                                                      font: 'Roboto',
+                                                                      fontWeight: 400,
+                                                                      fontSize: '12px',
+                                                                      lineHeight: '19.92px',
+                                                                      letterSpacing: '0.4px',
+                                                                      color: theme.palette.text.secondary
+                                                                  }}
                                                               >
                                                                   {seed.label}
                                                               </Typography>
@@ -645,7 +599,14 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                                                               yieldData[selectedCrop][selectedYear].heighestAvgYield ? (
                                                                   <Typography
                                                                       variant="caption"
-                                                                      className={classes.yieldSeedText}
+                                                                      sx={{
+                                                                          font: 'Roboto',
+                                                                          fontWeight: 400,
+                                                                          fontSize: '12px',
+                                                                          lineHeight: '19.92px',
+                                                                          letterSpacing: '0.4px',
+                                                                          color: theme.palette.text.secondary
+                                                                      }}
                                                                   >
                                                                       🏆
                                                                   </Typography>
@@ -654,7 +615,14 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                                                           <Box alignItems="baseline" display="flex" flexDirection="row">
                                                               <Typography
                                                                   variant="h6"
-                                                                  className={classes.yieldDataText}
+                                                                  sx={{
+                                                                      font: 'Poppins',
+                                                                      fontWeight: 600,
+                                                                      fontSize: '36px',
+                                                                      lineHeight: '54px',
+                                                                      letterSpacing: '0.15px',
+                                                                      color: theme.palette.text.primary
+                                                                  }}
                                                               >
                                                                   {
                                                                       yieldData[selectedCrop][selectedYear].byLine[
@@ -664,8 +632,15 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                                                               </Typography>
                                                               <Typography
                                                                   variant="caption"
-                                                                  className={classes.yieldSeedText}
-                                                                  sx={{ ml: 1 }}
+                                                                  sx={{
+                                                                      font: 'Roboto',
+                                                                      fontWeight: 400,
+                                                                      fontSize: '12px',
+                                                                      lineHeight: '19.92px',
+                                                                      letterSpacing: '0.4px',
+                                                                      color: theme.palette.text.secondary,
+                                                                      ml: 1
+                                                                  }}
                                                               >
                                                                   lb/acre
                                                               </Typography>
@@ -702,7 +677,18 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                         <DRSYieldCard elevation={0}>
                             <Box justifyContent="space-between" alignItems="center" display="flex" flexDirection="row">
                                 <Box alignItems="center" display="flex" flexDirection="row">
-                                    <Typography variant="h6" className={classes.subText}>
+                                    <Typography
+                                        variant="h6"
+                                        sx={{
+                                            font: 'Poppins',
+                                            fontWeight: 400,
+                                            fontSize: '16px',
+                                            lineHeight: '25.6px',
+                                            letterSpacing: '0.15px',
+                                            marginRight: '5px',
+                                            color: theme.palette.text.primary
+                                        }}
+                                    >
                                         Soil Type
                                     </Typography>
                                     <IconButton size="small" aria-label="info">
@@ -711,7 +697,18 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                                 </Box>
                             </Box>
                             <Box sx={{ mb: '17.5px' }}>
-                                <Typography variant="h6" className={classes.headingText}>
+                                <Typography
+                                    variant="h6"
+                                    sx={{
+                                        font: 'Poppins',
+                                        fontWeight: 700,
+                                        fontSize: '20px',
+                                        lineHeight: '32px',
+                                        letterSpacing: '0.15px',
+                                        color: theme.palette.text.primary,
+                                        textTransform: 'capitalize'
+                                    }}
+                                >
                                     {soilData ? soilData[0].taxgrtgroup : 'Unknown'}
                                 </Typography>
                             </Box>
@@ -724,7 +721,18 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                                 flexDirection="row"
                             >
                                 <Box alignItems="center" display="flex" flexDirection="row">
-                                    <Typography variant="h6" className={classes.subText}>
+                                    <Typography
+                                        variant="h6"
+                                        sx={{
+                                            font: 'Poppins',
+                                            fontWeight: 400,
+                                            fontSize: '16px',
+                                            lineHeight: '25.6px',
+                                            letterSpacing: '0.15px',
+                                            marginRight: '5px',
+                                            color: theme.palette.text.primary
+                                        }}
+                                    >
                                         Soil Texture
                                     </Typography>
                                     <IconButton size="small" aria-label="info">
@@ -733,7 +741,18 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                                 </Box>
                             </Box>
                             <Box sx={{ mb: '10px' }}>
-                                <Typography variant="h6" className={classes.headingText}>
+                                <Typography
+                                    variant="h6"
+                                    sx={{
+                                        font: 'Poppins',
+                                        fontWeight: 700,
+                                        fontSize: '20px',
+                                        lineHeight: '32px',
+                                        letterSpacing: '0.15px',
+                                        color: theme.palette.text.primary,
+                                        textTransform: 'capitalize'
+                                    }}
+                                >
                                     {soilData ? soilData[0].taxpartsize : 'Unknown'}
                                 </Typography>
                             </Box>
@@ -746,7 +765,18 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                                                 return (
                                                     <TableRow key={row}>
                                                         <TableCell>
-                                                            <Typography variant="h6" className={classes.tableHeadText}>
+                                                            <Typography
+                                                                variant="h6"
+                                                                sx={{
+                                                                    font: 'Roboto',
+                                                                    fontWeight: 500,
+                                                                    fontSize: '12px',
+                                                                    lineHeight: '20px',
+                                                                    letterSpacing: '0.14px',
+                                                                    color: theme.palette.text.primary,
+                                                                    textTransform: 'capitalize'
+                                                                }}
+                                                            >
                                                                 {rowNameMap[row]}
                                                             </Typography>
                                                         </TableCell>
@@ -755,7 +785,14 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                                                                 <TableCell>
                                                                     <Typography
                                                                         variant="caption"
-                                                                        className={classes.tableBodyText}
+                                                                        sx={{
+                                                                            font: 'Roboto',
+                                                                            fontWeight: 400,
+                                                                            fontSize: '12px',
+                                                                            lineHeight: '19.92px',
+                                                                            letterSpacing: '0.4px',
+                                                                            color: theme.palette.text.primary
+                                                                        }}
                                                                     >
                                                                         {Math.ceil(
                                                                             parseFloat(data[row] as string) / 2.54
@@ -769,7 +806,18 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                                                 );
                                             })
                                         ) : (
-                                            <Typography variant="h6" className={classes.subText}>
+                                            <Typography
+                                                variant="h6"
+                                                sx={{
+                                                    font: 'Poppins',
+                                                    fontWeight: 400,
+                                                    fontSize: '16px',
+                                                    lineHeight: '25.6px',
+                                                    letterSpacing: '0.15px',
+                                                    marginRight: '5px',
+                                                    color: theme.palette.text.primary
+                                                }}
+                                            >
                                                 No data available
                                             </Typography>
                                         )}
@@ -782,13 +830,35 @@ const DroughtResistantSeedYield = (): JSX.Element => {
             </Container>
             <Container>
                 <Box sx={{ marginTop: '40px', marginBottom: '30px' }}>
-                    <Typography variant="h6" className={classes.headingText}>
+                    <Typography
+                        variant="h6"
+                        sx={{
+                            font: 'Poppins',
+                            fontWeight: 700,
+                            fontSize: '20px',
+                            lineHeight: '32px',
+                            letterSpacing: '0.15px',
+                            color: theme.palette.text.primary,
+                            textTransform: 'capitalize'
+                        }}
+                    >
                         Water Data for Drought-resistant Performances
                     </Typography>
                 </Box>
                 <Box>
                     <Box sx={{ marginBottom: '30px' }}>
-                        <Typography variant="subtitle2" className={classes.soilDepthMonthSelectorHeadingText}>
+                        <Typography
+                            variant="subtitle2"
+                            sx={{
+                                font: 'Roboto',
+                                fontWeight: 500,
+                                fontSize: '14px',
+                                lineHeight: '24px',
+                                letterSpacing: '0.1px',
+                                color: theme.palette.text.primary,
+                                marginBottom: '10px'
+                            }}
+                        >
                             Choose a Month
                         </Typography>
                         <Stack direction="row" flexWrap="wrap" useFlexGap spacing={2}>
@@ -836,9 +906,7 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                                     label: 'Day'
                                 }
                             ]}
-                            yAxis={[
-                                { id: 'avg-vpd', label: 'Vapor Pressure Deficit (kPa)' },
-                            ]}
+                            yAxis={[{ id: 'avg-vpd', label: 'Vapor Pressure Deficit (kPa)' }]}
                         >
                             <ChartsGrid horizontal />
                             <LinePlot />
@@ -884,7 +952,18 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                     </Box>
                     <Box alignItems="center" justifyContent="space-between" display="flex" flexDirection="row">
                         <Box>
-                            <Typography variant="caption" className={classes.subText}>
+                            <Typography
+                                variant="caption"
+                                sx={{
+                                    font: 'Poppins',
+                                    fontWeight: 400,
+                                    fontSize: '16px',
+                                    lineHeight: '25.6px',
+                                    letterSpacing: '0.15px',
+                                    marginRight: '5px',
+                                    color: theme.palette.text.primary
+                                }}
+                            >
                                 Soil Moisture
                             </Typography>
                         </Box>
