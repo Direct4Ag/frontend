@@ -26,7 +26,7 @@ import {
 import { alpha, styled } from '@mui/material/styles';
 import { makeStyles } from '@mui/styles';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import { BarChart } from '@mui/x-charts/BarChart';
+import { BarChart, BarPlot } from '@mui/x-charts/BarChart';
 import { axisClasses } from '@mui/x-charts/ChartsAxis';
 import { chartsGridClasses } from '@mui/x-charts/ChartsGrid';
 import { ChartsGrid } from '@mui/x-charts/ChartsGrid';
@@ -43,7 +43,7 @@ import {
     DataStateContext
 } from '@app/store/contexts';
 
-import { useSoilTextureData, useDRSYieldData, useDepthSoilMoistureData } from '@app/utils/hooks';
+import { useSoilTextureData, useDRSYieldData, useDepthSoilMoistureData, useWeatherData } from '@app/utils/hooks';
 
 import { theme } from '@app/theme';
 
@@ -219,9 +219,22 @@ const DroughtResistantSeedYield = (): JSX.Element => {
     };
 
     const soilDepthData = useDepthSoilMoistureData(selectedYear, selectedField?.id);
+    const weatherData = useWeatherData(selectedYear, selectedField?.id);
     const [showSoilDepthData, setShowSoilDepthData] = React.useState<ShowSoilDepthData | null>(null);
     const [availableMonths, setAvailableMonths] = React.useState<number[]>([]);
     const [selectedMonth, setSelectedMonth] = React.useState<number | null>(null);
+
+    let colors = [
+        '#FFC220',
+        '#2ADE96',
+        '#FF3855',
+        '#273BE2',
+        '#4e79a7',
+        '#f28e2c',
+        '#e15759',
+        '#76b7b2',
+        '#59a14f'
+    ];
 
     React.useEffect(() => {
         if (drsYieldData) {
@@ -311,11 +324,6 @@ const DroughtResistantSeedYield = (): JSX.Element => {
     }, [yieldData, selectedCrop, selectedYear, selectedSeed]);
 
     React.useEffect(() => {
-        console.log(selectedField, selectedResearch, yieldData);
-        console.log(soilDepthData);
-    }, [selectedField, selectedResearch, yieldData, soilDepthData]);
-
-    React.useEffect(() => {
         if (soilDepthData) {
             let monthSet = new Set<number>();
             let soilDepthDataTemp: ShowSoilDepthData = {};
@@ -365,14 +373,13 @@ const DroughtResistantSeedYield = (): JSX.Element => {
             Object.keys(soilDepthData).forEach((depth) => {
                 if (showSoilDepthData[depth]) {
                     soilDepthData[depth].data.forEach((data) => {
-                        if (data.month === selectedMonth) {
+                        if (data.month === selectedMonth && data.year === parseInt(selectedYear)) {
                             xAxisLabels.add(data.label);
                         }
                     });
                 }
             });
             let xAxisLabelsSortedArray = Array.from(xAxisLabels).sort();
-            console.log(xAxisLabelsSortedArray);
             return xAxisLabelsSortedArray;
         }
         return [];
@@ -393,26 +400,101 @@ const DroughtResistantSeedYield = (): JSX.Element => {
     };
 
     const getLineSeries = () => {
-        let series: any[] = [];
+        let series: any = [];
         if (soilDepthData && showSoilDepthData) {
             Object.keys(showSoilDepthData)
                 .sort((a, b) => parseInt(a.replace('cm', '')) - parseInt(b.replace('cm', '')))
-                .forEach((depth) => {
+                .forEach((depth, idx) => {
                     if (showSoilDepthData[depth]) {
                         let xLabels = getXAxisLabels();
                         let data = getYAxisData(depth, xLabels);
-                        console.log(depth, data);
                         series.push({
                             type: 'line',
-                            data: data.length !== 0 ? data : [],
+                            data: data,
                             label: depth,
-                            valueFormatter: (value: number) => soilMoistureValueFormatter(value, 'y')
+                            valueFormatter: (value: number) => soilMoistureValueFormatter(value, 'y'),
+                            color: colors[idx % colors.length]
                         });
                     }
                 });
         }
         return series;
     };
+
+    const getWeatherYAxisData = (data: GeostreamsData[], xAxisLabels: string[]) => {
+        if (data && xAxisLabels.length !== 0) {
+            let yAxisData = new Array<number>(xAxisLabels.length).fill(0);
+            data.forEach((data) => {
+                if (data.month === selectedMonth) {
+                    let index = xAxisLabels.indexOf(data.label);
+                    yAxisData[index] = data.average;
+                }
+            });
+            return yAxisData;
+        }
+        return [];
+    };
+
+    const getCompositionWeatherData = () => {
+        let dataset: any = [];
+        if (weatherData) {
+            let xAxisLabels = getXAxisLabels();
+            let avgAirTempData = getWeatherYAxisData(weatherData.avg_air_temp, xAxisLabels);
+            let avgPrecipitationData = getWeatherYAxisData(weatherData.precipitation, xAxisLabels);
+            xAxisLabels.forEach((label, idx) => {
+                dataset.push({
+                    avgAirTemp: avgAirTempData[idx],
+                    avgPrecipitation: avgPrecipitationData[idx],
+                    day: label
+                });
+            });
+        }
+        return dataset;
+    };
+    let weatherDataSeries: any = [
+        {
+            type: 'line',
+            dataKey: 'avgAirTemp',
+            color: '#fe5f55',
+            label: 'Average Air Temp',
+            yAxisKey: 'avg-air-temp',
+            valueFormatter: (value: number) => `${value} °F`
+        },
+        {
+            type: 'bar',
+            dataKey: 'avgPrecipitation',
+            color: '#28D0DE',
+            label: 'Precipitation',
+            yAxisKey: 'avg-precipitation',
+            valueFormatter: (value: number) => `${value} mm`
+        }
+    ];
+
+    const getVPDData = () => {
+        let dataset: any = [];
+        if (weatherData) {
+            let xAxisLabels = getXAxisLabels();
+            let avgVpdData = getWeatherYAxisData(weatherData.avg_vpd, xAxisLabels);
+            xAxisLabels.forEach((label, idx) => {
+                dataset.push({
+                    avgVpd: avgVpdData[idx],
+                    day: label
+                });
+            })
+            return dataset;
+        }
+        return [];
+    }
+    let vpdDataSeries: any = [
+        {
+            type: 'line',
+            dataKey: 'avgVpd',
+            color: '#76b7b2',
+            label: 'Average Vapor Pressure Deficit',
+            yAxisKey: 'avg-vpd',
+            valueFormatter: (value: number) => `${value} kPa`
+        },
+    ]
 
     return (
         <Container disableGutters>
@@ -741,6 +823,65 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                     </Box>
                 </Box>
                 <Box>
+                    <Box sx={{ width: '100%', marginTop: '20px', marginBottom: '20px' }}>
+                        <ResponsiveChartContainer
+                            height={400}
+                            dataset={getVPDData()}
+                            series={vpdDataSeries}
+                            xAxis={[
+                                {
+                                    scaleType: 'point',
+                                    data: getXAxisLabels(),
+                                    valueFormatter: (value: string) => soilMoistureValueFormatter(value, 'x'),
+                                    label: 'Day'
+                                }
+                            ]}
+                            yAxis={[
+                                { id: 'avg-vpd', label: 'Vapor Pressure Deficit (kPa)' },
+                            ]}
+                        >
+                            <ChartsGrid horizontal />
+                            <LinePlot />
+                            <MarkPlot />
+                            <LineHighlightPlot />
+                            <ChartsTooltip trigger="axis" />
+                            <ChartsAxisHighlight x="line" />
+                            <ChartsXAxis />
+                            <ChartsYAxis axisId="avg-vpd" position="left" />
+                            <ChartsLegend />
+                        </ResponsiveChartContainer>
+                    </Box>
+                    <Box sx={{ width: '100%', marginTop: '20px', marginBottom: '20px' }}>
+                        <ResponsiveChartContainer
+                            height={400}
+                            dataset={getCompositionWeatherData()}
+                            series={weatherDataSeries}
+                            xAxis={[
+                                {
+                                    scaleType: 'band',
+                                    data: getXAxisLabels(),
+                                    valueFormatter: (value: string) => soilMoistureValueFormatter(value, 'x'),
+                                    label: 'Day'
+                                }
+                            ]}
+                            yAxis={[
+                                { id: 'avg-air-temp', label: 'Temperature (°F)' },
+                                { id: 'avg-precipitation', label: 'Precipitation (mm)' }
+                            ]}
+                        >
+                            <ChartsGrid horizontal />
+                            <BarPlot />
+                            <LinePlot />
+                            <MarkPlot />
+                            <LineHighlightPlot />
+                            <ChartsTooltip trigger="axis" />
+                            <ChartsAxisHighlight x="line" />
+                            <ChartsXAxis />
+                            <ChartsYAxis axisId="avg-air-temp" position="right" />
+                            <ChartsYAxis axisId="avg-precipitation" position="left" />
+                            <ChartsLegend />
+                        </ResponsiveChartContainer>
+                    </Box>
                     <Box alignItems="center" justifyContent="space-between" display="flex" flexDirection="row">
                         <Box>
                             <Typography variant="caption" className={classes.subText}>
@@ -794,7 +935,7 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                             <ChartsXAxis />
                             <ChartsYAxis />
                             <ChartsLegend />
-                            <ChartsGrid horizontal vertical />
+                            <ChartsGrid horizontal />
                         </ResponsiveChartContainer>
                     </Box>
                 </Box>

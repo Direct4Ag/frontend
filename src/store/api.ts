@@ -28,3 +28,10 @@ export const asyncGetData = async (endpoint: string) => {
         console.error(error)
     }
 }
+
+export const getMultiData = (endpoints: string[], err?: (error: Error | AxiosError) => void) => {
+    axios.all(endpoints.map(endpoint => axios.get(endpoint))).then((d => console.log(d))).catch((error) => {
+        console.error(error)
+        err?.(error)
+    })
+}

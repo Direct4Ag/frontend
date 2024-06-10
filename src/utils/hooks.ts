@@ -1,7 +1,7 @@
 import React from 'react';
 // import axios from 'axios';
 
-import { getData, asyncGetData } from '@app/store/api';
+import { getData } from '@app/store/api';
 import { DataActionDispatcherContext, DataStateContext } from '@app/store/contexts';
 
 export const useSoilTextureData = (coordinates: PointCoordinates | undefined): SoilData[] | null => {
@@ -49,54 +49,54 @@ export const useDRSYieldData = (researchId: string | undefined): DRSYieldData[] 
     return researchId ? drsYieldData ?? null : null;
 };
 
+
+
 export const useDepthSoilMoistureData = (
     year: string | undefined,
     field_id: string | undefined
-): DepthSoilMoistureData | null => {
+) => {
     const dataActionDispather = React.useContext(DataActionDispatcherContext);
     const { depthSoilMoistureData } = React.useContext(DataStateContext);
-    const [fieldSensors, setFieldSensors] = React.useState<FieldSensors[]>([]);
 
     React.useEffect(() => {
-        if (field_id) {
-            getData<FieldSensors[]>(
-                `fields/${field_id}/sensors`,
+        if (field_id && year && !depthSoilMoistureData) {
+            getData<{depth_soil_moisture_data: DepthSoilMoistureData}>(
+                `fields/${field_id}/sensors/get-geostreams-data/soil-moisture/${year}`,
                 (data) => {
-                    setFieldSensors(data);
+                    dataActionDispather({
+                        type: 'updateDepthSoilMoistureData',
+                        depthSoilMoistureData: data.depth_soil_moisture_data
+                    });
                 },
                 () => undefined
             );
         }
-    }, [field_id]);
+    }, [year, field_id]);
+
+    return depthSoilMoistureData
+};
+
+export const useWeatherData = (
+    year: string | undefined,
+    field_id: string | undefined
+) => {
+    const dataActionDispather = React.useContext(DataActionDispatcherContext);
+    const { weatherData } = React.useContext(DataStateContext);
 
     React.useEffect(() => {
-        if (year && !depthSoilMoistureData && fieldSensors.length !== 0) {
-            let data = null
-            let depthMoistureData = {}
-            fieldSensors.forEach(async ({ depth, sensor_id }) => {
-                // TODO: Replace this with variable once we have the API endpoint deployed
-                data = await asyncGetData(`https://direct4ag.ncsa.illinois.edu/geostreams/api/cache/day/${sensor_id}?since=${year}-01-01T00:00:00&until=${year}-12-31T00:00:00`)
-                depthMoistureData = {
-                    ...depthMoistureData,
-                    [depth]: {
-                        data: data.properties.soil_moisture.map((sm: any) => {
-                            return {
-                                average: sm.average,
-                                year: sm.year,
-                                month: sm.month,
-                                day: sm.day,
-                                label: sm.label
-                            };
-                        })
-                    }
-                };
-                // update the depthSoilMoistureData in datastate context
-                dataActionDispather({
-                    type: 'updateDepthSoilMoistureData',
-                    depthSoilMoistureData: depthMoistureData
-                });
-            });
+        if (field_id && year && !weatherData) {
+            getData<{weather_data: DepthSoilMoistureData}>(
+                `fields/${field_id}/sensors/get-geostreams-data/weather/${year}`,
+                (data) => {
+                    dataActionDispather({
+                        type: 'updateWeatherData',
+                        weatherData: data.weather_data
+                    });
+                },
+                () => undefined
+            );
         }
-    }, [year, fieldSensors]);
-    return (year && field_id) ? depthSoilMoistureData ?? null : null;
+    }, [year, field_id]);
+
+    return weatherData
 };

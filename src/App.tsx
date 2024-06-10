@@ -21,7 +21,6 @@ window.API_FONTS = `${window.API_SERVER}/fonts`;
 const App: FC = () => {
     const [dataState, dataActionDispatcher] = React.useReducer(dataReducers, dataStateInitialValue);
     const [initialized, setInitialized] = React.useState(false);
-    console.log(window.API_PATH)
     React.useEffect(() => {
         Promise.all([
             getData<ResearchDetail[]>(

@@ -33,10 +33,14 @@ interface UpdateDRSYieldData {
     drsYieldData: DRSYieldData[] | null;
 }
 
-
 interface UpdateDepthSoilMoistureData {
     type: 'updateDepthSoilMoistureData';
     depthSoilMoistureData: DepthSoilMoistureData;
+}
+
+interface UpdateWeatherData {
+    type: 'updateWeatherData';
+    weatherData: WeatherData;
 }
 
 type DataAction =
@@ -47,4 +51,5 @@ type DataAction =
     | UpdateSelectedResearch
     | UpdateSoilData
     | UpdateDRSYieldData
-    | UpdateDepthSoilMoistureData;
+    | UpdateDepthSoilMoistureData
+    | UpdateWeatherData;
