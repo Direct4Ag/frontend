@@ -14,7 +14,11 @@ import {
 } from '@app/store/contexts';
 import { MapLayerEventType } from 'maplibre-gl';
 
-const ExploreMap = (): JSX.Element => {
+interface Props {
+    handleInfoOpen: (newInfo: {message: string, severity: 'success' | 'info' | 'warning' | 'error'}) => void;
+}
+
+const ExploreMap = ({handleInfoOpen}: Props): JSX.Element => {
     const navigate = useNavigate();
     const [isMapLoaded, setIsMapLoaded] = React.useState(false);
     const { fields, selectedField, researches } = React.useContext(DataStateContext);
@@ -181,6 +185,11 @@ const ExploreMap = (): JSX.Element => {
                             selectedResearch: researchDetail
                         })
                         navigate(`/drought-resistant-seeds`);
+                    } else {
+                        handleInfoOpen({
+                            message: 'No research data available for this field',
+                            severity: 'info'
+                        })
                     }
                 }
             };

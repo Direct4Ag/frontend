@@ -133,7 +133,7 @@ const FarmCard: FC<Props> = ({ farm, idx }): JSX.Element => {
                     <Typography variant="h6" gutterBottom component="div">
                         Fields
                     </Typography>
-                    <Stack direction="row" spacing={2}>
+                    <Stack direction="row" flexWrap='wrap' useFlexGap spacing={{ xs: 1, sm: 2 }}>
                         {fields.map((field, idx) => (
                             <Button
                                 key={idx}
@@ -145,6 +145,7 @@ const FarmCard: FC<Props> = ({ farm, idx }): JSX.Element => {
                                     fontWeight: { xs: 300, md: 400 },
                                     fontSize: { xs: 11, md: 13 },
                                     font: 'Roboto',
+                                    minWidth: '90px',
                                     transition: '0.2s all ease-out'
                                 })}
                                 onClick={() => {

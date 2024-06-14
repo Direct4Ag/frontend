@@ -300,7 +300,6 @@ const DroughtResistantSeedYield = (): JSX.Element => {
     const [xAxisLabels, setXAxisLabels] = React.useState<string[]>([]);
     const [series, setSeries] = React.useState<any[]>([]);
     const [compositionWeatherData, setCompositionWeatherData] = React.useState<any[]>([]);
-    const [vpdData, setVpdData] = React.useState<any[]>([]);
 
     React.useEffect(() => {
         if (selectedMonth !== null && soilDepthData && showSoilDepthData && weatherData) {
@@ -319,6 +318,15 @@ const DroughtResistantSeedYield = (): JSX.Element => {
             setXAxisLabels(xAxisLabelsSortedArray);
 
             let series: any = [];
+            let avgPrecipitationData = getWeatherYAxisData(weatherData.precipitation, xAxisLabelsSortedArray);
+            series.push({
+                type: 'bar',
+                data: avgPrecipitationData,
+                label: 'Precipitation',
+                valueFormatter: (value: number) => `${value} mm`,
+                color: '#28D0DE',
+                yAxisKey: 'avg-precipitation'
+            })
             Object.keys(showSoilDepthData)
                 .sort((a, b) => parseInt(a.replace('cm', '')) - parseInt(b.replace('cm', '')))
                 .forEach((depth, idx) => {
@@ -338,7 +346,8 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                             data: yAxisData,
                             label: depth,
                             valueFormatter: (value: number) => soilMoistureValueFormatter(value, 'y'),
-                            color: colors[idx % colors.length]
+                            color: colors[idx % colors.length],
+                            yAxisKey: `depth`,
                         });
                     }
                 });
@@ -347,25 +356,15 @@ const DroughtResistantSeedYield = (): JSX.Element => {
 
             let dataset: any = [];
             let avgAirTempData = getWeatherYAxisData(weatherData.avg_air_temp, xAxisLabelsSortedArray);
-            let avgPrecipitationData = getWeatherYAxisData(weatherData.precipitation, xAxisLabelsSortedArray);
+            let avgVpdData = getWeatherYAxisData(weatherData.avg_vpd, xAxisLabelsSortedArray);
             xAxisLabelsSortedArray.forEach((label, idx) => {
                 dataset.push({
                     avgAirTemp: avgAirTempData[idx],
-                    avgPrecipitation: avgPrecipitationData[idx],
-                    day: label
-                });
-            });
-            setCompositionWeatherData(dataset);
-
-            let vpdDataset: any = [];
-            let avgVpdData = getWeatherYAxisData(weatherData.avg_vpd, xAxisLabelsSortedArray);
-            xAxisLabelsSortedArray.forEach((label, idx) => {
-                vpdDataset.push({
                     avgVpd: avgVpdData[idx],
                     day: label
                 });
             });
-            setVpdData(vpdDataset);
+            setCompositionWeatherData(dataset);
         }
     }, [selectedMonth, selectedYear, soilDepthData, showSoilDepthData, weatherData]);
 
@@ -392,17 +391,6 @@ const DroughtResistantSeedYield = (): JSX.Element => {
             yAxisKey: 'avg-air-temp',
             valueFormatter: (value: number) => `${value} °F`
         },
-        {
-            type: 'bar',
-            dataKey: 'avgPrecipitation',
-            color: '#28D0DE',
-            label: 'Precipitation',
-            yAxisKey: 'avg-precipitation',
-            valueFormatter: (value: number) => `${value} mm`
-        }
-    ];
-
-    let vpdDataSeries: any = [
         {
             type: 'line',
             dataKey: 'avgVpd',
@@ -943,55 +931,7 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                                     </Box>
                                 ) : weatherDataLoadError === null ? (
                                     <ResponsiveChartContainer
-                                        height={400}
-                                        dataset={vpdData}
-                                        series={vpdDataSeries}
-                                        xAxis={[
-                                            {
-                                                scaleType: 'band',
-                                                data: xAxisLabels,
-                                                valueFormatter: (value: string) =>
-                                                    soilMoistureValueFormatter(value, 'x'),
-                                                label: 'Day'
-                                            }
-                                        ]}
-                                        yAxis={[{ id: 'avg-vpd', label: 'Vapor Pressure Deficit (kPa)' }]}
-                                    >
-                                        <ChartsGrid horizontal />
-                                        <LinePlot />
-                                        <MarkPlot />
-                                        <LineHighlightPlot />
-                                        <ChartsTooltip trigger="axis" />
-                                        <ChartsAxisHighlight x="line" />
-                                        <ChartsXAxis />
-                                        <ChartsYAxis axisId="avg-vpd" position="left" />
-                                        <ChartsLegend />
-                                    </ResponsiveChartContainer>
-                                ) : (
-                                    <Typography
-                                        variant="h6"
-                                        sx={{
-                                            font: 'Poppins',
-                                            fontWeight: 400,
-                                            fontSize: '16px',
-                                            lineHeight: '25.6px',
-                                            letterSpacing: '0.15px',
-                                            marginRight: '5px',
-                                            color: theme.palette.text.primary
-                                        }}
-                                    >
-                                        {weatherDataLoadError}
-                                    </Typography>
-                                )}
-                            </Box>
-                            <Box sx={{ width: '100%', marginTop: '20px', marginBottom: '20px' }}>
-                                {weatherDataLoading ? (
-                                    <Box display="flex" justifyContent="center" justifyItems="center">
-                                        <CircularProgress />
-                                    </Box>
-                                ) : weatherDataLoadError === null ? (
-                                    <ResponsiveChartContainer
-                                        height={400}
+                                        height={380}
                                         dataset={compositionWeatherData}
                                         series={weatherDataSeries}
                                         xAxis={[
@@ -1000,16 +940,15 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                                                 data: xAxisLabels,
                                                 valueFormatter: (value: string) =>
                                                     soilMoistureValueFormatter(value, 'x'),
-                                                label: 'Day'
+                                                label: 'Date'
                                             }
                                         ]}
                                         yAxis={[
                                             { id: 'avg-air-temp', label: 'Temperature (°F)' },
-                                            { id: 'avg-precipitation', label: 'Precipitation (mm)' }
+                                            { id: 'avg-vpd', label: 'Vapor Pressure Deficit (kPa)' }
                                         ]}
                                     >
                                         <ChartsGrid horizontal />
-                                        <BarPlot />
                                         <LinePlot />
                                         <MarkPlot />
                                         <LineHighlightPlot />
@@ -1017,7 +956,7 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                                         <ChartsAxisHighlight x="line" />
                                         <ChartsXAxis />
                                         <ChartsYAxis axisId="avg-air-temp" position="right" />
-                                        <ChartsYAxis axisId="avg-precipitation" position="left" />
+                                        <ChartsYAxis axisId="avg-vpd" position="left" />
                                         <ChartsLegend />
                                     </ResponsiveChartContainer>
                                 ) : (
@@ -1104,7 +1043,7 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                                     </Box>
                                 ) : soilMoistureLoadError === null ? (
                                     <ResponsiveChartContainer
-                                        height={400}
+                                        height={380}
                                         series={series}
                                         xAxis={[
                                             {
@@ -1112,18 +1051,23 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                                                 data: xAxisLabels,
                                                 valueFormatter: (value: string) =>
                                                     soilMoistureValueFormatter(value, 'x'),
-                                                label: 'Day'
+                                                label: 'Date'
                                             }
                                         ]}
-                                        yAxis={[{ label: 'Soil Moisture (%)' }]}
+                                        yAxis={[
+                                            { id: 'depth', label: 'Soil Moisture (%)' },
+                                            { id: 'avg-precipitation', label: 'Precipitation (mm)' }
+                                        ]}
                                     >
                                         <LinePlot />
+                                        <BarPlot />
                                         <MarkPlot />
                                         <LineHighlightPlot />
                                         <ChartsTooltip trigger="axis" />
                                         <ChartsAxisHighlight x="line" />
                                         <ChartsXAxis />
-                                        <ChartsYAxis />
+                                        <ChartsYAxis axisId="depth" position="right" />
+                                        <ChartsYAxis axisId="avg-precipitation" position="left" />
                                         <ChartsLegend />
                                         <ChartsGrid horizontal />
                                     </ResponsiveChartContainer>
