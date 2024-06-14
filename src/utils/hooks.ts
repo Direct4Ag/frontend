@@ -4,9 +4,10 @@ import React from 'react';
 import { getData } from '@app/store/api';
 import { DataActionDispatcherContext, DataStateContext } from '@app/store/contexts';
 
-export const useSoilTextureData = (coordinates: PointCoordinates | undefined): SoilData[] | null => {
+export const useSoilTextureData = (coordinates: PointCoordinates | undefined): [SoilData[] | null, boolean, string | null] => {
     const dataActionDispatcher = React.useContext(DataActionDispatcherContext);
     const { soilData } = React.useContext(DataStateContext);
+    const [state, setState] = React.useState<{loading: boolean, error: null | string}>({loading: true, error: null});
 
     React.useEffect(() => {
         if (coordinates && !soilData) {
@@ -18,18 +19,24 @@ export const useSoilTextureData = (coordinates: PointCoordinates | undefined): S
                         type: 'updateSoilData',
                         soilData: data
                     });
+                    setState({loading: false, error: null});
                 },
-                () => undefined
+                () => setState({loading: false, error: 'Failed to fetch soil texture data'})
             );
+        } else if (soilData) {
+            setState({loading: false, error: null});
         }
     }, [coordinates]);
 
-    return coordinates ? soilData ?? null : null;
+    const { loading, error } = state;
+
+    return coordinates ? [soilData, loading, error] ?? [null, loading, error] : [null, loading, error];
 };
 
-export const useDRSYieldData = (researchId: string | undefined): DRSYieldData[] | null => {
+export const useDRSYieldData = (researchId: string | undefined): [DRSYieldData[] | null, boolean, string | null] => {
     const dataActionDispatcher = React.useContext(DataActionDispatcherContext);
     const { drsYieldData } = React.useContext(DataStateContext);
+    const [state, setState] = React.useState<{loading: boolean, error: null | string}>({loading: true, error: null});
 
     React.useEffect(() => {
         if (researchId && !drsYieldData) {
@@ -40,13 +47,19 @@ export const useDRSYieldData = (researchId: string | undefined): DRSYieldData[] 
                         type: 'updateDRSYieldData',
                         drsYieldData: data
                     });
+                    setState({loading: false, error: null});
                 },
-                () => undefined
+                () => setState({loading: false, error: 'Failed to fetch Yield data'})
             );
+        }
+        else if (drsYieldData) {
+            setState({loading: false, error: null});
         }
     }, [researchId]);
 
-    return researchId ? drsYieldData ?? null : null;
+    const { loading, error } = state;
+
+    return researchId ? [drsYieldData, loading, error] ?? [null, loading, error] : [null, loading, error];
 };
 
 
@@ -54,9 +67,10 @@ export const useDRSYieldData = (researchId: string | undefined): DRSYieldData[] 
 export const useDepthSoilMoistureData = (
     year: string | undefined,
     field_id: string | undefined
-) => {
+): [DepthSoilMoistureData | null, boolean, string | null] => {
     const dataActionDispather = React.useContext(DataActionDispatcherContext);
     const { depthSoilMoistureData } = React.useContext(DataStateContext);
+    const [state, setState] = React.useState<{loading: boolean, error: null | string}>({loading: true, error: null});
 
     React.useEffect(() => {
         if (field_id && year && !depthSoilMoistureData) {
@@ -67,21 +81,27 @@ export const useDepthSoilMoistureData = (
                         type: 'updateDepthSoilMoistureData',
                         depthSoilMoistureData: data.depth_soil_moisture_data
                     });
+                    setState({loading: false, error: null});
                 },
-                () => undefined
+                () => setState({loading: false, error: 'Failed to fetch soil data'})
             );
+        } else if (depthSoilMoistureData) {
+            setState({loading: false, error: null});
         }
     }, [year, field_id]);
 
-    return depthSoilMoistureData
+    const { loading, error } = state;
+
+    return [depthSoilMoistureData, loading, error]
 };
 
 export const useWeatherData = (
     year: string | undefined,
     field_id: string | undefined
-) => {
+): [WeatherData | null, boolean, string | null] => {
     const dataActionDispather = React.useContext(DataActionDispatcherContext);
     const { weatherData } = React.useContext(DataStateContext);
+    const [state, setState] = React.useState<{loading: boolean, error: null | string}>({loading: true, error: null});
 
     React.useEffect(() => {
         if (field_id && year && !weatherData) {
@@ -92,11 +112,16 @@ export const useWeatherData = (
                         type: 'updateWeatherData',
                         weatherData: data.weather_data
                     });
+                    setState({loading: false, error: null});
                 },
-                () => undefined
+                () => setState({loading: false, error: 'Failed to fetch weather data'})
             );
+        } else if (weatherData) {
+            setState({loading: false, error: null});
         }
     }, [year, field_id]);
 
-    return weatherData
+    const { loading, error } = state;
+
+    return [weatherData, loading, error]
 };

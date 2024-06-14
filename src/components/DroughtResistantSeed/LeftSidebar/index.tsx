@@ -49,8 +49,6 @@ const LeftSidebar: FC = (): JSX.Element => {
                         p: '24px',
                         pointerEvents: 'auto',
                         scrollBehavior: 'smooth',
-                        // 'overflow': 'scroll',
-
                         background:
                             'linear-gradient(292.79deg, rgba(232, 245, 250, 0.75) 0%, rgba(243, 248, 253, 0.37) 100%)'
                     }}
