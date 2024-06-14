@@ -96,7 +96,7 @@ const Map = ({
         <Box
             ref={mapContainerRef}
             sx={{
-                'height': '100%'
+                height: '100%'
             }}
         >
             {IS_WEBGL_SUPPORTED ? null : 'Your browser does not support the map features.'}

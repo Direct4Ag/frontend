@@ -1,6 +1,6 @@
 import React from 'react';
 import Box from '@mui/material/Box';
-import Container from "@mui/material/Container";
+import Container from '@mui/material/Container';
 import Snackbar from '@mui/material/Snackbar';
 import Alert from '@mui/material/Alert';
 
@@ -15,7 +15,7 @@ interface InfoSnackbar {
 
 const Explore = (): JSX.Element => {
     const [open, setOpen] = React.useState(false);
-    const [openInfo, setOpenInfo] = React.useState<InfoSnackbar>({message: '', severity: 'info'});
+    const [openInfo, setOpenInfo] = React.useState<InfoSnackbar>({ message: '', severity: 'info' });
 
     const handleInfoOpen = (newInfo: InfoSnackbar) => {
         setOpen(true);
@@ -36,26 +36,23 @@ const Explore = (): JSX.Element => {
                 <Header />
             </Box>
             <Box sx={{ display: 'flex' }}>
-            <Snackbar open={open} autoHideDuration={6000} onClose={handleInfoClose}>
-                <Alert
-                    onClose={handleInfoClose}
-                    severity={openInfo.severity}
-                    variant="filled"
-                    sx={{ width: '100%' }}
-                >
-                    {openInfo.message}
+                <Snackbar open={open} autoHideDuration={6000} onClose={handleInfoClose}>
+                    <Alert
+                        onClose={handleInfoClose}
+                        severity={openInfo.severity}
+                        variant="filled"
+                        sx={{ width: '100%' }}
+                    >
+                        {openInfo.message}
                     </Alert>
                 </Snackbar>
                 <LeftSidebar />
-                <Container
-                    disableGutters
-                    sx={{ flexGrow: 1, width: '100vw', height: '92vh' }}
-                >
+                <Container disableGutters sx={{ flexGrow: 1, width: '100vw', height: '92vh' }}>
                     <ExploreMap handleInfoOpen={handleInfoOpen} />
                 </Container>
             </Box>
         </Box>
-    )
+    );
 };
 
 export default Explore;

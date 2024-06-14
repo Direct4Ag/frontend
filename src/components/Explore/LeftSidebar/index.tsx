@@ -11,8 +11,8 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 
 import { DataStateContext, DataActionDispatcherContext } from '@app/store/contexts';
 import { globals as gs } from '@app/globals';
-import FarmCard from './FarmCard';
 import { theme } from '@app/theme';
+import FarmCard from './FarmCard';
 
 const drawerWidth = 472;
 
@@ -100,7 +100,13 @@ const LeftSidebar: FC = (): JSX.Element => {
     const dataActionDispatcher = useContext(DataActionDispatcherContext);
     const { researches, selectedFilter } = useContext(DataStateContext);
 
-    const filters = ['All', gs.CONSTANTS.COVERCROP, gs.CONSTANTS.CROPROT, gs.CONSTANTS.DROUGHT, gs.CONSTANTS.IRRIGATION];
+    const filters = [
+        'All',
+        gs.CONSTANTS.COVERCROP,
+        gs.CONSTANTS.CROPROT,
+        gs.CONSTANTS.DROUGHT,
+        gs.CONSTANTS.IRRIGATION
+    ];
 
     let coverCropFieldCount = 0;
     let cropRotationFieldCount = 0;
@@ -128,11 +134,11 @@ const LeftSidebar: FC = (): JSX.Element => {
             resetructuredResearches[research_area] = {
                 [research_type]: {
                     [farm_name]: {
-                        farm: farm,
+                        farm,
                         fields: [
                             {
                                 res_id: id,
-                                research_name: research_name,
+                                research_name,
                                 field: {
                                     id: field.id,
                                     field_name: field.field_name,
@@ -146,11 +152,11 @@ const LeftSidebar: FC = (): JSX.Element => {
         } else if (!resetructuredResearches[research_area][research_type]) {
             resetructuredResearches[research_area][research_type] = {
                 [farm_name]: {
-                    farm: farm,
+                    farm,
                     fields: [
                         {
                             res_id: id,
-                            research_name: research_name,
+                            research_name,
                             field: {
                                 id: field.id,
                                 field_name: field.field_name,
@@ -162,11 +168,11 @@ const LeftSidebar: FC = (): JSX.Element => {
             };
         } else if (!resetructuredResearches[research_area][research_type][farm_name]) {
             resetructuredResearches[research_area][research_type][farm_name] = {
-                farm: farm,
+                farm,
                 fields: [
                     {
                         res_id: id,
-                        research_name: research_name,
+                        research_name,
                         field: {
                             id: field.id,
                             field_name: field.field_name,
@@ -176,9 +182,9 @@ const LeftSidebar: FC = (): JSX.Element => {
                 ]
             };
         } else {
-            resetructuredResearches[research_area][research_type][farm_name]['fields'].push({
+            resetructuredResearches[research_area][research_type][farm_name].fields.push({
                 res_id: id,
-                research_name: research_name,
+                research_name,
                 field: {
                     id: field.id,
                     field_name: field.field_name,
@@ -189,7 +195,7 @@ const LeftSidebar: FC = (): JSX.Element => {
     });
 
     const filterCounts: FilterCounts = {
-        'All': researches.length,
+        All: researches.length,
         [gs.CONSTANTS.COVERCROP]: coverCropFieldCount,
         [gs.CONSTANTS.CROPROT]: cropRotationFieldCount,
         [gs.CONSTANTS.DROUGHT]: droughtResSeedFieldCount,
@@ -313,9 +319,9 @@ const LeftSidebar: FC = (): JSX.Element => {
                                             return (
                                                 <FarmCard
                                                     farm={
-                                                        resetructuredResearches[gs.CONSTANTS.NITCON][gs.CONSTANTS.COVERCROP][
-                                                            farm_name
-                                                        ]
+                                                        resetructuredResearches[gs.CONSTANTS.NITCON][
+                                                            gs.CONSTANTS.COVERCROP
+                                                        ][farm_name]
                                                     }
                                                     idx={idx + 1}
                                                     key={farm_name}

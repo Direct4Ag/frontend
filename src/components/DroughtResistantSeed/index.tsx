@@ -13,12 +13,12 @@ const DroughtResistantSeed = (): JSX.Element => {
             <Box sx={{ pointerEvents: 'auto' }}>
                 <Header />
             </Box>
-            <Box sx={{display: "flex"}}>
+            <Box sx={{ display: 'flex' }}>
                 <LeftSidebar />
                 <DroughtResistantSeedYield />
             </Box>
         </Box>
-    )
-}
+    );
+};
 
 export default DroughtResistantSeed;

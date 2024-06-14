@@ -29,8 +29,7 @@ import { alpha, styled } from '@mui/material/styles';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { BarChart, BarPlot } from '@mui/x-charts/BarChart';
 import { axisClasses } from '@mui/x-charts/ChartsAxis';
-import { chartsGridClasses } from '@mui/x-charts/ChartsGrid';
-import { ChartsGrid } from '@mui/x-charts/ChartsGrid';
+import { chartsGridClasses, ChartsGrid } from '@mui/x-charts/ChartsGrid';
 import { ResponsiveChartContainer } from '@mui/x-charts/ResponsiveChartContainer';
 import { LinePlot, MarkPlot, LineHighlightPlot } from '@mui/x-charts/LineChart';
 import { ChartsTooltip } from '@mui/x-charts/ChartsTooltip';
@@ -38,6 +37,8 @@ import { ChartsAxisHighlight } from '@mui/x-charts/ChartsAxisHighlight';
 import { ChartsLegend } from '@mui/x-charts/ChartsLegend';
 import { ChartsXAxis } from '@mui/x-charts/ChartsXAxis';
 import { ChartsYAxis } from '@mui/x-charts/ChartsYAxis';
+import { AllSeriesType } from '@mui/x-charts';
+import { DatasetType } from '@mui/x-charts/models/seriesType/config';
 
 import {
     // DataActionDispatcherContext,
@@ -86,18 +87,18 @@ interface ChartData {
     [key: string]: number | string;
 }
 
-let colors = ['#FFC220', '#2ADE96', '#FF3855', '#273BE2', '#4e79a7', '#f28e2c', '#e15759', '#76b7b2', '#59a14f'];
+const colors = ['#FFC220', '#2ADE96', '#FF3855', '#273BE2', '#4e79a7', '#f28e2c', '#e15759', '#76b7b2', '#59a14f'];
 
-const DRSYieldCard = styled(Paper)(({ theme }) => ({
+const DRSYieldCard = styled(Paper)({
     ...theme.typography.body2,
     backgroundColor: 'white',
     height: '392px',
     width: '433px',
     padding: '32px',
     borderRadius: '24px'
-}));
+});
 
-const DRSYieldDisplay = styled(Paper)(({ theme }) => ({
+const DRSYieldDisplay = styled(Paper)({
     ...theme.typography.body2,
     backgroundColor: 'white',
     height: '106px',
@@ -105,9 +106,9 @@ const DRSYieldDisplay = styled(Paper)(({ theme }) => ({
     padding: '16px 24px 16px 24px',
     borderRadius: '12px',
     border: '1px solid #1D58A71F'
-}));
+});
 
-const DepthSwitch = styled(Switch)(({ theme }) => ({
+const DepthSwitch = styled(Switch)({
     '& .MuiSwitch-switchBase.Mui-checked': {
         'color': theme.palette.primary.main,
         '&:hover': {
@@ -117,7 +118,7 @@ const DepthSwitch = styled(Switch)(({ theme }) => ({
     '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
         backgroundColor: theme.palette.primary.main
     }
-}));
+});
 
 const DroughtResistantSeedYield = (): JSX.Element => {
     const { selectedField, selectedResearch } = React.useContext(DataStateContext);
@@ -177,7 +178,7 @@ const DroughtResistantSeedYield = (): JSX.Element => {
             setYearsSelect(years);
             setSelectedYear(years[0]);
 
-            let seeds = Array.from(
+            const seeds = Array.from(
                 new Set(
                     drsYieldData
                         .filter((data) => data.planting_date.split('-')[0] === years[0])
@@ -186,15 +187,15 @@ const DroughtResistantSeedYield = (): JSX.Element => {
             );
             setSelectedSeed(seeds.map((seed) => ({ label: seed, value: true })));
 
-            let yieldDataTemp: YeildData = {};
+            const yieldDataTemp: YeildData = {};
             yieldDataTemp[crops[0]] = {};
             let largestYeild = 0;
 
             years.forEach((year) => {
-                let filteredData = drsYieldData.filter((data) => data.planting_date.split('-')[0] === year);
-                let avgByLineArr: { [key: string]: number[] } = {};
-                let avgByLine: { [key: string]: number } = {};
-                let byLineReplicates: { [key: string]: { [key: number]: number } } = {};
+                const filteredData = drsYieldData.filter((data) => data.planting_date.split('-')[0] === year);
+                const avgByLineArr: { [key: string]: number[] } = {};
+                const avgByLine: { [key: string]: number } = {};
+                const byLineReplicates: { [key: string]: { [key: number]: number } } = {};
 
                 filteredData.forEach((data) => {
                     if (avgByLineArr[data.line] === undefined) {
@@ -212,18 +213,18 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                     }
                 });
 
-                for (const line in avgByLineArr) {
+                Object.keys(avgByLineArr).forEach((line) => {
                     avgByLine[line] = avgByLineArr[line].reduce((a, b) => a + b, 0) / avgByLineArr[line].length;
                     avgByLine[line] = Math.ceil(avgByLine[line]);
                     if (avgByLine[line] >= largestYeild) {
                         largestYeild = avgByLine[line];
                     }
-                }
+                });
 
                 yieldDataTemp[crops[0]][year] = {
                     byLine: avgByLine,
                     heighestAvgYield: largestYeild,
-                    byLineReplicates: byLineReplicates,
+                    byLineReplicates,
                     planting_date: filteredData[0].planting_date,
                     harvest_date: filteredData[0].harvest_date
                 };
@@ -235,7 +236,7 @@ const DroughtResistantSeedYield = (): JSX.Element => {
 
     React.useEffect(() => {
         if (yieldData[selectedCrop] !== undefined) {
-            let seedYieldChartDataTemp: ChartData[] = [
+            const seedYieldChartDataTemp: ChartData[] = [
                 {
                     name: '',
                     value: 0
@@ -255,15 +256,15 @@ const DroughtResistantSeedYield = (): JSX.Element => {
 
     React.useEffect(() => {
         if (soilDepthData) {
-            let monthSet = new Set<number>();
-            let soilDepthDataTemp: ShowSoilDepthData = {};
+            const monthSet = new Set<number>();
+            const soilDepthDataTemp: ShowSoilDepthData = {};
             Object.keys(soilDepthData).forEach((depth) => {
                 soilDepthDataTemp[depth] = true;
                 soilDepthData[depth].data.forEach((data) => {
                     monthSet.add(data.month);
                 });
             });
-            let monthSortedArray = Array.from(monthSet).sort((a, b) => a - b);
+            const monthSortedArray = Array.from(monthSet).sort((a, b) => a - b);
             setAvailableMonths(monthSortedArray);
             setSelectedMonth(monthSortedArray[0]);
             setShowSoilDepthData(soilDepthDataTemp);
@@ -271,11 +272,15 @@ const DroughtResistantSeedYield = (): JSX.Element => {
     }, [soilDepthData]);
 
     const valueFormatter = (value: number | null) => `${value} lb/acre`;
-    const options = { year: 'numeric', month: 'short', day: 'numeric' };
-    const soilMoistureValueFormatter = (value: string | number, axis: string) =>
-        axis === 'y'
-            ? `${Math.round((value as number) * 1000) / 1000} %`
-            : `${new Date(value).toLocaleDateString('en-US', options as any)}`;
+    const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' };
+    const soilMoistureValueFormatter = (value: string | number | null, axis: string) => {
+        if (value !== null) {
+            return axis === 'y'
+                ? `${Math.round((value as number) * 1000) / 1000} %`
+                : `${new Date(value).toLocaleDateString('en-US', options)}`;
+        }
+        return '';
+    };
 
     const getMonthName = (monthNumber: number): string => {
         const months = [
@@ -298,65 +303,65 @@ const DroughtResistantSeedYield = (): JSX.Element => {
     };
 
     const [xAxisLabels, setXAxisLabels] = React.useState<string[]>([]);
-    const [series, setSeries] = React.useState<any[]>([]);
-    const [compositionWeatherData, setCompositionWeatherData] = React.useState<any[]>([]);
+    const [series, setSeries] = React.useState<AllSeriesType[]>([]);
+    const [compositionWeatherData, setCompositionWeatherData] = React.useState<DatasetType>([]);
 
     React.useEffect(() => {
         if (selectedMonth !== null && soilDepthData && showSoilDepthData && weatherData) {
-            let xAxisLabels = new Set<string>();
+            const xAxisLabelsTemp = new Set<string>();
             Object.keys(soilDepthData).forEach((depth) => {
                 if (showSoilDepthData[depth]) {
                     soilDepthData[depth].data.forEach((data) => {
                         if (data.month === selectedMonth && data.year === parseInt(selectedYear)) {
-                            xAxisLabels.add(data.label);
+                            xAxisLabelsTemp.add(data.label);
                         }
                     });
                 }
             });
-            let xAxisLabelsSortedArray = Array.from(xAxisLabels).sort();
+            const xAxisLabelsSortedArray = Array.from(xAxisLabelsTemp).sort();
             // set xAxis State value
             setXAxisLabels(xAxisLabelsSortedArray);
 
-            let series: any = [];
-            let avgPrecipitationData = getWeatherYAxisData(weatherData.precipitation, xAxisLabelsSortedArray);
-            series.push({
+            const seriesTemp: AllSeriesType[] = [];
+            const avgPrecipitationData = getWeatherYAxisData(weatherData.precipitation, xAxisLabelsSortedArray);
+            seriesTemp.push({
                 type: 'bar',
                 data: avgPrecipitationData,
                 label: 'Precipitation',
-                valueFormatter: (value: number) => `${value} mm`,
+                valueFormatter: (value: number | null) => `${value} mm`,
                 color: '#28D0DE',
                 yAxisKey: 'avg-precipitation'
-            })
+            });
             Object.keys(showSoilDepthData)
                 .sort((a, b) => parseInt(a.replace('cm', '')) - parseInt(b.replace('cm', '')))
                 .forEach((depth, idx) => {
                     if (showSoilDepthData[depth]) {
-                        let yAxisData: number[] = []
+                        let yAxisData: number[] = [];
                         if (xAxisLabelsSortedArray.length !== 0) {
                             yAxisData = new Array<number>(xAxisLabelsSortedArray.length).fill(0);
                             soilDepthData[depth].data.forEach((data) => {
                                 if (data.month === selectedMonth) {
-                                    let index = xAxisLabelsSortedArray.indexOf(data.label);
+                                    const index = xAxisLabelsSortedArray.indexOf(data.label);
                                     yAxisData[index] = data.average;
                                 }
                             });
                         }
-                        series.push({
+                        seriesTemp.push({
                             type: 'line',
                             data: yAxisData,
                             label: depth,
-                            valueFormatter: (value: number) => soilMoistureValueFormatter(value, 'y'),
+                            valueFormatter: (value: number | null) => soilMoistureValueFormatter(value, 'y'),
                             color: colors[idx % colors.length],
-                            yAxisKey: `depth`,
+                            yAxisKey: 'depth'
                         });
                     }
                 });
             // set series state value
-            setSeries(series);
+            setSeries(seriesTemp);
 
-            let dataset: any = [];
-            let avgAirTempData = getWeatherYAxisData(weatherData.avg_air_temp, xAxisLabelsSortedArray);
-            let avgVpdData = getWeatherYAxisData(weatherData.avg_vpd, xAxisLabelsSortedArray);
+            const dataset: DatasetType = [];
+            const avgAirTempData = getWeatherYAxisData(weatherData.avg_air_temp, xAxisLabelsSortedArray);
+            const avgVpdData = getWeatherYAxisData(weatherData.avg_vpd, xAxisLabelsSortedArray);
             xAxisLabelsSortedArray.forEach((label, idx) => {
                 dataset.push({
                     avgAirTemp: avgAirTempData[idx],
@@ -370,10 +375,10 @@ const DroughtResistantSeedYield = (): JSX.Element => {
 
     const getWeatherYAxisData = (data: GeostreamsData[], xAxisLabels: string[]) => {
         if (data && xAxisLabels.length !== 0) {
-            let yAxisData = new Array<number>(xAxisLabels.length).fill(0);
+            const yAxisData = new Array<number>(xAxisLabels.length).fill(0);
             data.forEach((data) => {
                 if (data.month === selectedMonth) {
-                    let index = xAxisLabels.indexOf(data.label);
+                    const index = xAxisLabels.indexOf(data.label);
                     yAxisData[index] = data.average;
                 }
             });
@@ -382,14 +387,14 @@ const DroughtResistantSeedYield = (): JSX.Element => {
         return [];
     };
 
-    let weatherDataSeries: any = [
+    const weatherDataSeries: AllSeriesType[] = [
         {
             type: 'line',
             dataKey: 'avgAirTemp',
             color: '#fe5f55',
             label: 'Average Air Temp',
             yAxisKey: 'avg-air-temp',
-            valueFormatter: (value: number) => `${value} °F`
+            valueFormatter: (value: number | null) => `${value} °F`
         },
         {
             type: 'line',
@@ -397,7 +402,7 @@ const DroughtResistantSeedYield = (): JSX.Element => {
             color: '#76b7b2',
             label: 'Average Vapor Pressure Deficit',
             yAxisKey: 'avg-vpd',
-            valueFormatter: (value: number) => `${value} kPa`
+            valueFormatter: (value: number | null) => `${value} kPa`
         }
     ];
 
@@ -448,7 +453,7 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                                         label="Choose a Year"
                                         onChange={(e) => {
                                             setSelectedYear(e.target.value);
-                                            let seeds = Array.from(
+                                            const seeds = Array.from(
                                                 new Set(
                                                     drsYieldData
                                                         ?.filter(
@@ -593,8 +598,8 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                                                                     yieldData[selectedCrop][selectedYear]
                                                                         .heighestAvgYield ? (
                                                                         <Typography
-                                                                            variant="caption"
-                                                                            sx={{
+                                                                                variant="caption"
+                                                                                sx={{
                                                                                 font: 'Roboto',
                                                                                 fontWeight: 400,
                                                                                 fontSize: '12px',
@@ -603,7 +608,7 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                                                                                 color: theme.palette.text.secondary
                                                                             }}
                                                                         >
-                                                                            🏆
+                                                                                🏆
                                                                         </Typography>
                                                                     ) : null}
                                                                 </Box>
@@ -938,7 +943,7 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                                             {
                                                 scaleType: 'band',
                                                 data: xAxisLabels,
-                                                valueFormatter: (value: string) =>
+                                                valueFormatter: (value: string | null) =>
                                                     soilMoistureValueFormatter(value, 'x'),
                                                 label: 'Date'
                                             }
@@ -1018,17 +1023,19 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                                                                       });
                                                                   }}
                                                                   sx={{
-                                                                    display: 'flex',
-                                                                    alignItems: 'center',
+                                                                      display: 'flex',
+                                                                      alignItems: 'center'
                                                                   }}
                                                               />
                                                           }
                                                           label={
-                                                              <>
-                                                              <Box display='flex' alignItems='center'>
-                                                                  <FiberManualRecordIcon fontSize='small' sx={{color: colors[idx % colors.length]}} /> Depth {depthValue}
+                                                              <Box display="flex" alignItems="center">
+                                                                  <FiberManualRecordIcon
+                                                                      fontSize="small"
+                                                                      sx={{ color: colors[idx % colors.length] }}
+                                                                  />{' '}
+                                                                  Depth {depthValue}
                                                               </Box>
-                                                              </>
                                                           }
                                                       />
                                                   );

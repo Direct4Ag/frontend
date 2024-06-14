@@ -5,9 +5,9 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 
+import { DataActionDispatcherContext } from '@app/store/contexts';
 import fieldImage from './field.png';
 import { theme } from '../../../theme';
-import { DataActionDispatcherContext } from '@app/store/contexts';
 
 type Props = {
     farm: {
@@ -123,7 +123,7 @@ const FarmCard: FC<Props> = ({ farm, idx }): JSX.Element => {
                             }}
                             endIcon={isExpanded ? <ExpandLessIcon /> : <ExpandMoreIcon />}
                         >
-                            {'View ' + (isExpanded ? 'Less' : 'More')}
+                            {`View ${isExpanded ? 'Less' : 'More'}`}
                         </Button>
                     </Box>
                 </Box>
@@ -133,7 +133,7 @@ const FarmCard: FC<Props> = ({ farm, idx }): JSX.Element => {
                     <Typography variant="h6" gutterBottom component="div">
                         Fields
                     </Typography>
-                    <Stack direction="row" flexWrap='wrap' useFlexGap spacing={{ xs: 1, sm: 2 }}>
+                    <Stack direction="row" flexWrap="wrap" useFlexGap spacing={{ xs: 1, sm: 2 }}>
                         {fields.map((field, idx) => (
                             <Button
                                 key={idx}
