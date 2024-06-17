@@ -1,30 +1,28 @@
 import React from 'react';
-import maplibregl from 'maplibre-gl';
-import {useNavigate} from 'react-router-dom';
+import maplibregl, { MapLayerEventType } from 'maplibre-gl';
+import { useNavigate } from 'react-router-dom';
 
 import { basemapsArray } from '@app/components/childComponents/Map/utils';
 import { globals as gs } from '@app/globals';
 import Map from '@app/components/childComponents/Map';
 import { layerStyles, mapStyle } from '@app/components/childComponents/Map/styles';
 
-import { 
-    DataActionDispatcherContext, 
-    DataStateContext, 
-    MapContext 
-} from '@app/store/contexts';
-import { MapLayerEventType } from 'maplibre-gl';
+import { DataActionDispatcherContext, DataStateContext, MapContext } from '@app/store/contexts';
 
-const ExploreMap = (): JSX.Element => {
+interface Props {
+    handleInfoOpen: (newInfo: { message: string; severity: 'success' | 'info' | 'warning' | 'error' }) => void;
+}
+
+const ExploreMap = ({ handleInfoOpen }: Props): JSX.Element => {
     const navigate = useNavigate();
     const [isMapLoaded, setIsMapLoaded] = React.useState(false);
     const { fields, selectedField, researches } = React.useContext(DataStateContext);
     const dataActionDispatcher = React.useContext(DataActionDispatcherContext);
     const mapRef = React.useContext(MapContext);
 
-    let hoveredFieldId: number | string | undefined = undefined;
+    let hoveredFieldId: number | string | undefined;
 
     const onMapLoad = (map: maplibregl.Map) => {
-        
         map.addSource('fields-poly', {
             type: 'geojson',
             data: `${window.API_PATH}/fields/geojson`
@@ -36,8 +34,8 @@ const ExploreMap = (): JSX.Element => {
                 type: 'FeatureCollection',
                 features: []
             }
-        })
-        
+        });
+
         map.addLayer({
             id: 'fields-poly-fill',
             type: 'fill',
@@ -45,12 +43,7 @@ const ExploreMap = (): JSX.Element => {
             layout: {},
             paint: {
                 'fill-color': '#FFFFFF',
-                'fill-opacity': [
-                    'case',
-                    ['boolean', ['feature-state', 'hover'], false],
-                    1,
-                    0.5
-                ],
+                'fill-opacity': ['case', ['boolean', ['feature-state', 'hover'], false], 1, 0.5]
                 // 'fill-outline-color': '#FF5F05',
             }
         });
@@ -73,7 +66,7 @@ const ExploreMap = (): JSX.Element => {
             source: 'fields-poly',
             filter: ['==', 'name', '']
         } as maplibregl.FillLayerSpecification);
-        
+
         // The layer for selected field
         map.addLayer({
             ...layerStyles.fields.selectedOutline,
@@ -92,28 +85,21 @@ const ExploreMap = (): JSX.Element => {
                 'text-size': 10,
                 'text-anchor': 'center',
                 'text-offset': [0, 0]
-            },
-        })
-        
-        // When the user moves their mouse over the fields-poly-fill layer, we'll update the
-        // feature state for the feature under the mouse.
-        map.on('mousemove', 'fields-poly-fill', (e: MapLayerEventType["mousemove"]) => {
-            if (e.features && e.features.length > 0) {
-                const feature = e.features[0];
-                if (hoveredFieldId) {
-                    map.setFeatureState(
-                        {source: 'fields-poly', id: hoveredFieldId},
-                        {hover: false}
-                    );
-                }
-                hoveredFieldId = feature.id;
-                map.setFeatureState(
-                    {source: 'fields-poly', id: hoveredFieldId},
-                    {hover: true}
-                );
             }
         });
 
+        // When the user moves their mouse over the fields-poly-fill layer, we'll update the
+        // feature state for the feature under the mouse.
+        map.on('mousemove', 'fields-poly-fill', (e: MapLayerEventType['mousemove']) => {
+            if (e.features && e.features.length > 0) {
+                const feature = e.features[0];
+                if (hoveredFieldId) {
+                    map.setFeatureState({ source: 'fields-poly', id: hoveredFieldId }, { hover: false });
+                }
+                hoveredFieldId = feature.id;
+                map.setFeatureState({ source: 'fields-poly', id: hoveredFieldId }, { hover: true });
+            }
+        });
 
         // When the mouse leaves the fields-poly-fill layer, update the feature state of the
         // previously hovered feature.
@@ -122,19 +108,15 @@ const ExploreMap = (): JSX.Element => {
             map.getCanvas().style.cursor = '';
 
             if (hoveredFieldId) {
-                map.setFeatureState(
-                    {source: 'fields-poly', id: hoveredFieldId},
-                    {hover: false}
-                );
+                map.setFeatureState({ source: 'fields-poly', id: hoveredFieldId }, { hover: false });
             }
             hoveredFieldId = undefined;
         });
 
-         // Change the cursor to a pointer when the mouse is over the layer layer.
-         map.on('mouseenter', 'fields-poly-fill', () => {
+        // Change the cursor to a pointer when the mouse is over the layer layer.
+        map.on('mouseenter', 'fields-poly-fill', () => {
             map.getCanvas().style.cursor = 'pointer';
         });
-        
 
         mapRef.current = map;
         setIsMapLoaded(true);
@@ -143,8 +125,8 @@ const ExploreMap = (): JSX.Element => {
     React.useEffect(() => {
         const map = mapRef.current;
         if (map && isMapLoaded) {
-            const fieldSource = map.getSource('fields')  as maplibregl.GeoJSONSource;
-            if (fieldSource){
+            const fieldSource = map.getSource('fields') as maplibregl.GeoJSONSource;
+            if (fieldSource) {
                 fieldSource.setData({
                     type: 'FeatureCollection',
                     features: fields.map((field) => ({
@@ -160,15 +142,17 @@ const ExploreMap = (): JSX.Element => {
                     }))
                 });
             }
-            
 
             // Update selected field on click on the following layers
             const eventListener = (e: MapLayerEventType['click']) => {
                 if (e.features && e.features[0]) {
                     const feature = e.features[0];
                     const fieldProperties = feature.properties as FieldSmallSummary;
-                    let newSelectedField = fields.find(({ field_name }) => fieldProperties.name === field_name) ?? null;
-                    const researchDetail = researches.find(({ field }) => field.field_name === newSelectedField?.field_name);
+                    const newSelectedField =
+                        fields.find(({ field_name }) => fieldProperties.name === field_name) ?? null;
+                    const researchDetail = researches.find(
+                        ({ field }) => field.field_name === newSelectedField?.field_name
+                    );
 
                     dataActionDispatcher({
                         type: 'updateSelectedField',
@@ -179,8 +163,13 @@ const ExploreMap = (): JSX.Element => {
                         dataActionDispatcher({
                             type: 'updateSelectedResearch',
                             selectedResearch: researchDetail
-                        })
-                        navigate(`/drought-resistant-seeds`);
+                        });
+                        navigate('/drought-resistant-seeds');
+                    } else {
+                        handleInfoOpen({
+                            message: 'No research data available for this field',
+                            severity: 'info'
+                        });
                     }
                 }
             };
@@ -195,15 +184,14 @@ const ExploreMap = (): JSX.Element => {
         }
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         return () => {};
-    }, [fields, selectedField, isMapLoaded])
-
+    }, [fields, selectedField, isMapLoaded]);
 
     React.useEffect(() => {
-         // Update the filter on `field-selected` when selected station changes
-         const map = mapRef.current;
-         if (map && isMapLoaded) {
-            map.setFilter('field-selected-fill', ['==', 'name', selectedField?.field_name || ''])
-            map.setFilter('field-selected-outline', ['==', 'name', selectedField?.field_name || ''])
+        // Update the filter on `field-selected` when selected station changes
+        const map = mapRef.current;
+        if (map && isMapLoaded) {
+            map.setFilter('field-selected-fill', ['==', 'name', selectedField?.field_name || '']);
+            map.setFilter('field-selected-outline', ['==', 'name', selectedField?.field_name || '']);
             if (selectedField) {
                 map.easeTo({
                     center: selectedField.coordinates,
@@ -212,19 +200,21 @@ const ExploreMap = (): JSX.Element => {
                     padding: 100
                 });
             } else {
-                const centerCoordinates = fields.map(({ coordinates }) => coordinates)
-                
-                const bounds = centerCoordinates.reduce((bounds, coord) => {
-                    return bounds.extend(coord);
-                }, new maplibregl.LngLatBounds(centerCoordinates[0], centerCoordinates[0]))
+                const centerCoordinates = fields.map(({ coordinates }) => coordinates);
+
+                const bounds = centerCoordinates.reduce(
+                    (bounds, coord) => {
+                        return bounds.extend(coord);
+                    },
+                    new maplibregl.LngLatBounds(centerCoordinates[0], centerCoordinates[0])
+                );
 
                 map.fitBounds(bounds, {
                     padding: 150
                 });
             }
-
-         }
-    }, [selectedField, isMapLoaded])
+        }
+    }, [selectedField, isMapLoaded]);
 
     return (
         <Map
@@ -232,8 +222,8 @@ const ExploreMap = (): JSX.Element => {
                 style: mapStyle,
                 minZoom: 1
             }}
-            // initialBounds={[-180, -90, 180, 90]}
-            center={[-88.24341191425448, 40.1164071212825]}
+            initialBounds={[-180, -90, 180, 90]}
+            // center={[-88.24341191425448, 40.1164071212825]}
             init_zoom={10}
             attribution
             help

@@ -66,7 +66,7 @@ const pages = [
 const areas = [
     { name: 'Cover Cropping', url: '/#nitrogencons' },
     { name: 'Crop Rotation', url: '/#nitrogencons' },
-    { name: 'Draught-resistant Seed Performance', url: '/#waterres' },
+    { name: 'Drought-resistant Seed Performance', url: '/#waterres' },
     { name: 'Irrigation Strategies', url: '/#waterres' }
 ];
 
@@ -95,7 +95,7 @@ const Header = (): JSX.Element => {
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
                     <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                        <a href='/'>
+                        <a href="/">
                             <img alt="Direct4Ag Logo" src={logo} />
                         </a>
                     </Box>

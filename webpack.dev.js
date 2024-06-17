@@ -14,7 +14,7 @@ module.exports = merge(commonConfig, {
     devServer: {
         hot: true,
         host: 'localhost',
-        port: 8080,
+        port: 3000,
         historyApiFallback: true,
         open: true,
         allowedHosts: JSON.parse(process.env.ALLOWED_HOSTS || '["localhost"]'),

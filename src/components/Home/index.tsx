@@ -1,6 +1,6 @@
-import React, {useContext} from 'react';
+import React, { useContext } from 'react';
 import { HashLink } from 'react-router-hash-link';
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -18,12 +18,13 @@ import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/material/styles';
 
-import Header from '../childComponents/navigation/Header';
-import Footer from '../childComponents/navigation/Footer';
-import Map from '../childComponents/Map';
-import { mapStyle } from '../childComponents/Map/styles';
-import { basemapsArray } from '../childComponents/Map/utils';
-import { DataActionDispatcherContext } from '../../store/contexts';
+import Header from '@app/components/childComponents/navigation/Header';
+import Footer from '@app/components/childComponents/navigation/Footer';
+import Map from '@app/components/childComponents/Map';
+import { mapStyle } from '@app/components/childComponents/Map/styles';
+import { basemapsArray } from '@app/components/childComponents/Map/utils';
+import { DataActionDispatcherContext } from '@app/store/contexts';
+import { globals as gs } from '@app/globals';
 
 import maizeTopImg from './maize_top.png';
 import coverCroppingImg from './cover_cropping.png';
@@ -46,7 +47,7 @@ const Home = (): JSX.Element => {
     const navigate = useNavigate();
     const resAreas = [
         {
-            name: 'Nitrogen Conservation',
+            name: gs.CONSTANTS.NITCON,
             resId: 'nitrogencons',
             research: [
                 {
@@ -55,7 +56,7 @@ const Home = (): JSX.Element => {
                         "Researchers at the University of Illinois in collaboration with researchers at Purdue University have developed a web-based Cover Crop Tool that simulates cereal rye growth and provides growers visualized outputs that include total biomass, carbon-to-nitrogen ratio, nitrogen taken up by the cover crop and reductions in nitrogen lost. Ground truth measurements combined with estimates from satellite images will be used to validate the model's accuracy and functioning to improve the information provided to the producer for managing a cereal rye cover crop.",
                     researchLink: '#',
                     dataToolLink: '#',
-                    exploreFilter: 'Cover Crop',
+                    exploreFilter: gs.CONSTANTS.COVERCROP,
                     image: coverCroppingImg,
                     imgAlt: 'Cover Cropping Image'
                 },
@@ -65,14 +66,14 @@ const Home = (): JSX.Element => {
                         'High crop yields and low nutrient losses are not mutually exclusive. Read our five-year economic evaluation research to see how we arrived at this conclusion.',
                     researchLink: '#',
                     dataToolLink: '#',
-                    exploreFilter: 'Crop Rotation',
+                    exploreFilter: gs.CONSTANTS.CROPROT,
                     image: cropRotationImg,
                     imgAlt: 'Crop Rotation Image'
                 }
             ]
         },
         {
-            name: 'Water Resource Management',
+            name: gs.CONSTANTS.WATMAN,
             resId: 'waterres',
             research: [
                 {
@@ -81,7 +82,7 @@ const Home = (): JSX.Element => {
                         'As changing climate brings more uncertainty with regard to weather patterns, knowing how drought-resistant seed performs in your area is becoming more important. Researchers are growing and testing these lines scientifically to provide you with information you can trust. Location, weather, soil type and soil moisture are collected to produce a clear, unbiased picture of how these seeds perform in various conditions.',
                     researchLink: '#',
                     dataToolLink: '#',
-                    exploreFilter: 'Drought-resistant Seed',
+                    exploreFilter: gs.CONSTANTS.DROUGHT,
                     image: droughtResistantImg,
                     imgAlt: 'Drought Resistant Image'
                 },
@@ -90,7 +91,7 @@ const Home = (): JSX.Element => {
                     description: 'Coming soon: here will be explanations.',
                     researchLink: '#',
                     dataToolLink: '#',
-                    exploreFilter: 'Irrigation Strategies',
+                    exploreFilter: gs.CONSTANTS.IRRIGATION,
                     image: irrigationStratImg,
                     imgAlt: 'Irrigation Strategies Image'
                 }
@@ -445,7 +446,11 @@ const Home = (): JSX.Element => {
                                                         <Button
                                                             variant="contained"
                                                             onClick={() => {
-                                                                dataActionDispatcher({type: 'updateExploreFilter', selectedFilter: research.exploreFilter as ExploreFilter})
+                                                                dataActionDispatcher({
+                                                                    type: 'updateExploreFilter',
+                                                                    selectedFilter:
+                                                                        research.exploreFilter as ExploreFilter
+                                                                });
                                                                 navigate('/explore');
                                                             }}
                                                             sx={(theme) => ({
@@ -841,53 +846,53 @@ const Home = (): JSX.Element => {
                                     width: '100%'
                                 }}
                             >
-                            <CardContent sx={{ flexGrow: 1 }}>
-                                <Typography
-                                    component="h6"
-                                    sx={(theme) => ({
-                                        color: theme.palette.text.primary,
-                                        fontWeight: { xs: 600, md: 700 },
-                                        fontSize: { xs: 16, md: 20 },
-                                        textAlign: 'center',
-                                        font: 'Poppins'
-                                    })}
-                                >
-                                    Contact Us
-                                </Typography>
-                                <List
-                                    sx={(theme) => ({
-                                        'listStyleType': 'decimal',
-                                        'pl': 2,
-                                        '& .MuiListItem-root': {
-                                            display: 'list-item',
-                                            p: 0
-                                        },
-                                        'color': theme.palette.text.secondary,
-                                        'fontWeight': { xs: 300, md: 400 },
-                                        'fontSize': { xs: 14, md: 16 },
-                                        'font': 'Roboto'
-                                    })}
-                                >
-                                    <ListItem>Introduce: what we expect you to communicate</ListItem>
-                                    <ListItem>Media: Contact information</ListItem>
-                                </List>
-                            </CardContent>
-                            <CardActions sx={{ display: 'flex', justifyContent: 'center' }}>
-                                <Button
-                                    variant="contained"
-                                    sx={(theme) => ({
-                                        color: theme.palette.default.contrastText,
-                                        backgroundColor: theme.palette.primary.main,
-                                        fontWeight: { xs: 600, md: 800 },
-                                        fontSize: { xs: 14, md: 16 },
-                                        width: '100%',
-                                        font: 'Roboto',
-                                        padding: theme.spacing(2)
-                                    })}
-                                >
-                                    GET INVOLVED
-                                </Button>
-                            </CardActions>
+                                <CardContent sx={{ flexGrow: 1 }}>
+                                    <Typography
+                                        component="h6"
+                                        sx={(theme) => ({
+                                            color: theme.palette.text.primary,
+                                            fontWeight: { xs: 600, md: 700 },
+                                            fontSize: { xs: 16, md: 20 },
+                                            textAlign: 'center',
+                                            font: 'Poppins'
+                                        })}
+                                    >
+                                        Contact Us
+                                    </Typography>
+                                    <List
+                                        sx={(theme) => ({
+                                            'listStyleType': 'decimal',
+                                            'pl': 2,
+                                            '& .MuiListItem-root': {
+                                                display: 'list-item',
+                                                p: 0
+                                            },
+                                            'color': theme.palette.text.secondary,
+                                            'fontWeight': { xs: 300, md: 400 },
+                                            'fontSize': { xs: 14, md: 16 },
+                                            'font': 'Roboto'
+                                        })}
+                                    >
+                                        <ListItem>Introduce: what we expect you to communicate</ListItem>
+                                        <ListItem>Media: Contact information</ListItem>
+                                    </List>
+                                </CardContent>
+                                <CardActions sx={{ display: 'flex', justifyContent: 'center' }}>
+                                    <Button
+                                        variant="contained"
+                                        sx={(theme) => ({
+                                            color: theme.palette.default.contrastText,
+                                            backgroundColor: theme.palette.primary.main,
+                                            fontWeight: { xs: 600, md: 800 },
+                                            fontSize: { xs: 14, md: 16 },
+                                            width: '100%',
+                                            font: 'Roboto',
+                                            padding: theme.spacing(2)
+                                        })}
+                                    >
+                                        GET INVOLVED
+                                    </Button>
+                                </CardActions>
                             </Box>
                         </Card>
 
@@ -908,52 +913,52 @@ const Home = (): JSX.Element => {
                                     width: '100%'
                                 }}
                             >
-                            <CardContent sx={{ flexGrow: 1 }}>
-                                <Typography
-                                    component="h6"
-                                    sx={(theme) => ({
-                                        color: theme.palette.text.primary,
-                                        fontWeight: { xs: 600, md: 700 },
-                                        fontSize: { xs: 16, md: 20 },
-                                        textAlign: 'center',
-                                        font: 'Poppins'
-                                    })}
-                                >
-                                    Ask questions of the researchers
-                                </Typography>
-                                <List
-                                    sx={(theme) => ({
-                                        'listStyleType': 'decimal',
-                                        'pl': 2,
-                                        '& .MuiListItem-root': {
-                                            display: 'list-item',
-                                            p: 0
-                                        },
-                                        'color': theme.palette.text.secondary,
-                                        'fontWeight': { xs: 300, md: 400 },
-                                        'fontSize': { xs: 14, md: 16 },
-                                        'font': 'Roboto'
-                                    })}
-                                >
-                                    <ListItem>Question and Answer blog: future</ListItem>
-                                </List>
-                            </CardContent>
-                            <CardActions sx={{ display: 'flex', justifyContent: 'center' }}>
-                                <Button
-                                    variant="contained"
-                                    sx={(theme) => ({
-                                        color: theme.palette.default.contrastText,
-                                        backgroundColor: theme.palette.primary.main,
-                                        fontWeight: { xs: 600, md: 800 },
-                                        fontSize: { xs: 14, md: 16 },
-                                        width: '100%',
-                                        font: 'Roboto',
-                                        padding: theme.spacing(2)
-                                    })}
-                                >
-                                    Ask a Question (coming soon)
-                                </Button>
-                            </CardActions>
+                                <CardContent sx={{ flexGrow: 1 }}>
+                                    <Typography
+                                        component="h6"
+                                        sx={(theme) => ({
+                                            color: theme.palette.text.primary,
+                                            fontWeight: { xs: 600, md: 700 },
+                                            fontSize: { xs: 16, md: 20 },
+                                            textAlign: 'center',
+                                            font: 'Poppins'
+                                        })}
+                                    >
+                                        Ask questions of the researchers
+                                    </Typography>
+                                    <List
+                                        sx={(theme) => ({
+                                            'listStyleType': 'decimal',
+                                            'pl': 2,
+                                            '& .MuiListItem-root': {
+                                                display: 'list-item',
+                                                p: 0
+                                            },
+                                            'color': theme.palette.text.secondary,
+                                            'fontWeight': { xs: 300, md: 400 },
+                                            'fontSize': { xs: 14, md: 16 },
+                                            'font': 'Roboto'
+                                        })}
+                                    >
+                                        <ListItem>Question and Answer blog: future</ListItem>
+                                    </List>
+                                </CardContent>
+                                <CardActions sx={{ display: 'flex', justifyContent: 'center' }}>
+                                    <Button
+                                        variant="contained"
+                                        sx={(theme) => ({
+                                            color: theme.palette.default.contrastText,
+                                            backgroundColor: theme.palette.primary.main,
+                                            fontWeight: { xs: 600, md: 800 },
+                                            fontSize: { xs: 14, md: 16 },
+                                            width: '100%',
+                                            font: 'Roboto',
+                                            padding: theme.spacing(2)
+                                        })}
+                                    >
+                                        Ask a Question (coming soon)
+                                    </Button>
+                                </CardActions>
                             </Box>
                         </Card>
                     </Stack>
