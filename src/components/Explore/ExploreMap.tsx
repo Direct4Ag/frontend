@@ -164,7 +164,13 @@ const ExploreMap = ({ handleInfoOpen }: Props): JSX.Element => {
                             type: 'updateSelectedResearch',
                             selectedResearch: researchDetail
                         });
-                        navigate('/drought-resistant-seeds');
+                        navigate(`/drought-resistant-seeds/${researchDetail.id}`);
+                    } else if (researchDetail && researchDetail.research_type === gs.CONSTANTS.CROPROT) {
+                        dataActionDispatcher({
+                            type: 'updateSelectedResearch',
+                            selectedResearch: researchDetail
+                        });
+                        navigate(`/crop-rotation/${researchDetail.id}`);
                     } else {
                         handleInfoOpen({
                             message: 'No research data available for this field',

@@ -43,6 +43,16 @@ interface UpdateWeatherData {
     weatherData: WeatherData;
 }
 
+interface UpdateNitrateConcentrationData {
+    type: 'updateNitrateConcentrationData';
+    nitrateConcentrationData: GeostreamsData[];
+}
+
+interface UpdateCropRotationYieldData {
+    type: 'updateCropRotationYieldData';
+    cropRotationYield: CropRotationYieldData;
+}
+
 type DataAction =
     | LoadResearches
     | UpdateExploreFilter
@@ -52,4 +62,6 @@ type DataAction =
     | UpdateSoilData
     | UpdateDRSYieldData
     | UpdateDepthSoilMoistureData
+    | UpdateNitrateConcentrationData
+    | UpdateCropRotationYieldData
     | UpdateWeatherData;

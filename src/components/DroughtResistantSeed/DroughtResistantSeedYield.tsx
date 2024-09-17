@@ -1,4 +1,5 @@
 import React from 'react';
+import { useParams } from 'react-router-dom';
 
 import {
     Box,
@@ -120,11 +121,12 @@ const DepthSwitch = styled(Switch)({
     }
 });
 
+
 const DroughtResistantSeedYield = (): JSX.Element => {
     const { selectedField, selectedResearch } = React.useContext(DataStateContext);
-    // const dataActionDispatcher = React.useContext(DataActionDispatcherContext);
+    const { research_id } = useParams<{ research_id: string }>();
     const [soilData, soilLoading, soilError] = useSoilTextureData(selectedField?.coordinates);
-    const [drsYieldData, drsYieldDataLoading, drsYieldDataLoadingError] = useDRSYieldData(selectedResearch?.id);
+    const [drsYieldData, drsYieldDataLoading, drsYieldDataLoadingError] = useDRSYieldData(selectedResearch ? selectedResearch.id : research_id);
 
     const yearsSelectDefault = ['2022'];
 

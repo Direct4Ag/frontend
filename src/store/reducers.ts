@@ -45,6 +45,17 @@ export const dataReducers = (state: DataState, action: DataAction): DataState =>
                 ...state,
                 weatherData: action.weatherData
             };
+        case 'updateNitrateConcentrationData':
+            return {
+                ...state,
+                nitrateConcentrationData: action.nitrateConcentrationData
+            };
+
+        case 'updateCropRotationYieldData':
+            return {
+                ...state,
+                cropRotationYield: action.cropRotationYield
+            };
     }
     throw Error(`Received invalid action: ${action}`);
 };
