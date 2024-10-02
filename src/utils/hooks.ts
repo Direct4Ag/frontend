@@ -5,7 +5,7 @@ import { getData } from '@app/store/api';
 import { DataActionDispatcherContext, DataStateContext } from '@app/store/contexts';
 
 export const useNitrateConcentrationData = (
-    year: string | undefined,
+    year: string | undefined | null,
     field_id: string | undefined
 ): [NitrateConcData | null, boolean, string | null] => {
     const dataActionDispatcher = React.useContext(DataActionDispatcherContext);
@@ -16,7 +16,7 @@ export const useNitrateConcentrationData = (
     });
 
     React.useEffect(() => {
-        if (field_id && year && nitrateConcentrationData?.year !== Number(year)) {
+        if (field_id && year !== '' && nitrateConcentrationData?.year !== Number(year)) {
             getData<NitrateConcData>(
                 `fields/${field_id}/sensors/get-geostreams-data/nitrate-conc/${year}`,
                 (data) => {
@@ -207,7 +207,7 @@ export const useDepthSoilMoistureData = (
 };
 
 export const useWeatherData = (
-    year: string | undefined,
+    year: string | undefined | null,
     field_id: string | undefined
 ): [WeatherData | null, boolean, string | null] => {
     const dataActionDispather = React.useContext(DataActionDispatcherContext);
@@ -218,7 +218,7 @@ export const useWeatherData = (
     });
 
     React.useEffect(() => {
-        if (field_id && year && weatherData?.year !== Number(year)) {
+        if (field_id && year !== '' && weatherData?.year !== Number(year)) {
             console.log('fetching weather data');
             getData<{ weather_data: DepthSoilMoistureData }>(
                 `fields/${field_id}/sensors/get-geostreams-data/weather/${year}`,

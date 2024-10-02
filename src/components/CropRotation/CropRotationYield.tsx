@@ -2,6 +2,7 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 
 import {
+    Alert,
     Box,
     Chip,
     CircularProgress,
@@ -11,10 +12,18 @@ import {
     FormControl,
     Select,
     InputLabel,
+    Table,
+    TableBody,
+    TableCell,
+    TableContainer,
+    TableHead,
+    TableRow,
+    Paper,
     MenuItem
 } from '@mui/material';
 
 import { DatasetType } from '@mui/x-charts/models/seriesType/config';
+import { axisClasses } from '@mui/x-charts/ChartsAxis';
 import { BarPlot } from '@mui/x-charts/BarChart';
 import { ChartsGrid } from '@mui/x-charts/ChartsGrid';
 import { ResponsiveChartContainer } from '@mui/x-charts/ResponsiveChartContainer';
@@ -24,12 +33,41 @@ import { ChartsAxisHighlight } from '@mui/x-charts/ChartsAxisHighlight';
 import { ChartsLegend } from '@mui/x-charts/ChartsLegend';
 import { ChartsXAxis } from '@mui/x-charts/ChartsXAxis';
 import { ChartsYAxis } from '@mui/x-charts/ChartsYAxis';
-import { AllSeriesType } from '@mui/x-charts';
+import { AllSeriesType, AxisConfig } from '@mui/x-charts';
 
 import { useCropRotationYieldData, useNitrateConcentrationData, useWeatherData } from '@app/utils/hooks';
 
 import { DataStateContext } from '@app/store/contexts';
 import { theme } from '@app/theme';
+
+interface CropYeildInfo {
+    crop: string;
+    cropYield: {
+        xLabels: string[];
+        values: number[];
+    };
+}
+
+interface CropInfoTable {
+    [key: string]: {
+        plantingDate: string;
+        harvestDate: string;
+        seedingRate: string;
+        totalFertilizer: string;
+    }[];
+}
+
+interface CropFertilizerInfoTable {
+    [key: string]: {
+        year: string;
+        fertilizer: {
+            fertilizerApplicationDate: string;
+            fertilizerRate: string;
+            fertilizerType: string;
+            fertilizerMethod: string;
+        }[];
+    }[];
+}
 
 const CropRotationYield = (): JSX.Element => {
     const { selectedField, selectedResearch } = React.useContext(DataStateContext);
@@ -38,10 +76,9 @@ const CropRotationYield = (): JSX.Element => {
         selectedResearch ? selectedResearch.id : research_id
     );
 
-    const yearsSelectDefault = ['2021'];
-    const [yearsSelect, setYearsSelect] = React.useState<string[]>(yearsSelectDefault);
+    const [yearsSelect, setYearsSelect] = React.useState<string[]>(['']);
 
-    const [selectedYear, setSelectedYear] = React.useState<string>(yearsSelectDefault[0]);
+    const [selectedYear, setSelectedYear] = React.useState<string>('');
 
     const [nitrateConcentrationData, nitrateConcentrationDataLoading, nitrateConcentrationDataError] =
         useNitrateConcentrationData(selectedYear, selectedField?.id);
@@ -50,44 +87,113 @@ const CropRotationYield = (): JSX.Element => {
     const [availableMonths, setAvailableMonths] = React.useState<number[]>([]);
     const [selectedMonth, setSelectedMonth] = React.useState<number | null>(null);
     const [series, setSeries] = React.useState<AllSeriesType[]>([]);
+    const [nitrateDataFound, setNitrateDataFound] = React.useState<boolean>(false);
+
+    const [cropYieldDataset, setCropYieldDataset] = React.useState<CropYeildInfo[]>([]);
+    const [cropInfoTable, setCropInfoTable] = React.useState<CropInfoTable>({});
+    const [cropFertilizerInfoTable, setCropFertilizerInfoTable] = React.useState<CropFertilizerInfoTable>({});
+
+    const cropInfoTableHeaders = ['Planting Date', 'Harvest Date', 'Seeding Rate', 'Total Fertilizer'];
+    const cropFertilizerInfoTableHeaders = [
+        'Year',
+        'Fertilizer Application Date',
+        'Fertilizer Rate',
+        'Fertilizer Type',
+        'Fertilizer Method'
+    ];
 
     React.useEffect(() => {
         if (cropRotationYieldData) {
             let years = Array.from(new Set(cropRotationYieldData.map((data) => data.planting_date.split('-')[0])));
+            // TODO: remove this when everything is fixed
             years.push('2023');
+            console.log(cropRotationYieldData);
+
+            let crops = Array.from(new Set(cropRotationYieldData.map((data) => data.crop)));
+            let tempDataset: CropYeildInfo[] = [];
+            let tempCropInfoTable: CropInfoTable = {};
+            let tempCropFertilizerInfoTable: CropFertilizerInfoTable = {};
+            crops.forEach((crop) => {
+                let cropData = cropRotationYieldData.filter((data) => data.crop === crop);
+                let years = Array.from(new Set(cropData.map((data) => data.planting_date.split('-')[0]))).sort();
+                let values = new Array<number>(years.length).fill(0);
+                tempCropInfoTable[crop] = new Array(years.length).fill({});
+                tempCropFertilizerInfoTable[crop] = new Array(years.length);
+                console.log(tempCropFertilizerInfoTable);
+                cropData.forEach((data) => {
+                    const index = years.indexOf(data.planting_date.split('-')[0]);
+                    values[index] = data.crop_yield;
+                    tempCropInfoTable[crop][index] = {
+                        plantingDate: data.planting_date,
+                        harvestDate: data.harvest_date,
+                        seedingRate: `${data.seeding_rate} ${data.seeding_rate_unit}`,
+                        totalFertilizer: `${data.total_fertilizer_applied} ${data.total_fertilizer_applied_unit}`
+                    };
+                    console.log(index, years[index]);
+                    tempCropFertilizerInfoTable[crop][index] = {
+                        year: years[index],
+                        fertilizer: data.fertilizers.map((fertilizer) => {
+                            return {
+                                fertilizerApplicationDate: fertilizer.fertilizer_date,
+                                fertilizerRate: `${fertilizer.fertilizer_rate} ${fertilizer.fertilizer_rate_unit}`,
+                                fertilizerType: fertilizer.fertilizer_type,
+                                fertilizerMethod: fertilizer.fertilizer_application_description
+                            };
+                        })
+                    };
+                    console.log(tempCropFertilizerInfoTable);
+                });
+                tempDataset.push({
+                    crop: crop,
+                    cropYield: {
+                        xLabels: years,
+                        values: values
+                    }
+                });
+            });
+            console.log(tempCropFertilizerInfoTable);
+            setCropInfoTable(tempCropInfoTable);
+            setCropFertilizerInfoTable(tempCropFertilizerInfoTable);
+            setCropYieldDataset(tempDataset);
             setYearsSelect(years);
             setSelectedYear(years[0]);
         }
     }, [cropRotationYieldData]);
 
+    const months = [
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December'
+    ];
+
     React.useEffect(() => {
-        if (nitrateConcentrationData) {
+        if (nitrateConcentrationData?.nitrate_concentration_data.length !== 0) {
             const monthSet = new Set<number>();
-            nitrateConcentrationData.nitrate_concentration_data.forEach((data) => {
+            nitrateConcentrationData?.nitrate_concentration_data.forEach((data) => {
                 monthSet.add(data.month);
             });
             const monthSortedArray = Array.from(monthSet).sort((a, b) => a - b);
             setAvailableMonths(monthSortedArray);
             setSelectedMonth(monthSortedArray[0]);
+            setNitrateDataFound(true);
+        } else {
+            //fallback to default months
+            setNitrateDataFound(false);
+            setAvailableMonths(months.map((_, idx) => idx + 1));
+            setSelectedMonth(1);
         }
     }, [nitrateConcentrationData]);
 
     const getMonthName = (monthNumber: number): string => {
-        const months = [
-            'January',
-            'February',
-            'March',
-            'April',
-            'May',
-            'June',
-            'July',
-            'August',
-            'September',
-            'October',
-            'November',
-            'December'
-        ];
-
         // Adjust for zero-based index (subtract 1 from the month number)
         return months[monthNumber - 1];
     };
@@ -99,15 +205,29 @@ const CropRotationYield = (): JSX.Element => {
     const [compositionWeatherData, setCompositionWeatherData] = React.useState<DatasetType>([]);
 
     React.useEffect(() => {
-        if (selectedMonth !== null && weatherData && nitrateConcentrationData) {
-            console.log(weatherData);
-            console.log(nitrateConcentrationData);
-            const xAxisLabelsTemp = new Set<string>();
-            nitrateConcentrationData.nitrate_concentration_data.forEach((data) => {
-                if (data.month === selectedMonth && data.year === parseInt(selectedYear)) {
-                    xAxisLabelsTemp.add(data.label);
-                }
-            });
+        if (selectedMonth !== null && selectedYear !== null && weatherData && nitrateConcentrationData) {
+            let xAxisLabelsTemp = new Set<string>();
+            if (nitrateConcentrationData.nitrate_concentration_data.length === 0) {
+                // JavaScript months are 0-indexed (0 = January, 11 = December)
+                let date = new Date(parseInt(selectedYear), selectedMonth - 1, 0).getDate(); // Get last day of the previous month (from month + 1)
+
+                // Generate an array from 1 to the number of days in the month
+                let days = Array.from({ length: date }, (_, k) => k + 1);
+
+                days.forEach((day) => {
+                    xAxisLabelsTemp.add(
+                        `${selectedYear}-${selectedMonth < 10 ? `0${selectedMonth}` : selectedMonth}-${
+                            day < 10 ? `0${day}` : day
+                        }`
+                    );
+                });
+            } else {
+                nitrateConcentrationData.nitrate_concentration_data.forEach((data) => {
+                    if (data.month === selectedMonth && data.year === parseInt(selectedYear)) {
+                        xAxisLabelsTemp.add(data.label);
+                    }
+                });
+            }
             const xAxisLabelsSortedArray = Array.from(xAxisLabelsTemp).sort();
             // set xAxis State value
             setXAxisLabels(xAxisLabelsSortedArray);
@@ -123,22 +243,24 @@ const CropRotationYield = (): JSX.Element => {
                 yAxisKey: 'avg-precipitation'
             });
 
-            let nitrateConcLinePlotData: number[] = [];
-            nitrateConcentrationData.nitrate_concentration_data.forEach((data) => {
-                if (data.month === selectedMonth) {
-                    const index = xAxisLabelsSortedArray.indexOf(data.label);
-                    nitrateConcLinePlotData[index] = data.average;
-                }
-            });
+            if (nitrateConcentrationData.nitrate_concentration_data.length !== 0) {
+                let nitrateConcLinePlotData: number[] = [];
+                nitrateConcentrationData.nitrate_concentration_data.forEach((data) => {
+                    if (data.month === selectedMonth) {
+                        const index = xAxisLabelsSortedArray.indexOf(data.label);
+                        nitrateConcLinePlotData[index] = data.average;
+                    }
+                });
 
-            seriesTemp.push({
-                type: 'line',
-                data: nitrateConcLinePlotData,
-                label: 'Nitrate Concentration',
-                valueFormatter: (value: number | null) => `${value} mg/L`,
-                color: '#FFA500',
-                yAxisKey: 'nitrate-concentration'
-            });
+                seriesTemp.push({
+                    type: 'line',
+                    data: nitrateConcLinePlotData,
+                    label: 'Nitrate Concentration',
+                    valueFormatter: (value: number | null) => `${value} mg/L`,
+                    color: '#FFA500',
+                    yAxisKey: 'nitrate-concentration'
+                });
+            }
 
             setSeries(seriesTemp);
 
@@ -162,7 +284,9 @@ const CropRotationYield = (): JSX.Element => {
             data.forEach((data) => {
                 if (data.month === selectedMonth) {
                     const index = xAxisLabels.indexOf(data.label);
-                    yAxisData[index] = data.average;
+                    if (index !== -1) {
+                        yAxisData[index] = data.average;
+                    }
                 }
             });
             return yAxisData;
@@ -190,15 +314,204 @@ const CropRotationYield = (): JSX.Element => {
     ];
 
     return (
-        <div>
-            <h1>Crop Rotation Yield</h1>
-            <p>Research ID: {research_id}</p>
+        <Box sx={{ marginLeft: '20px' }}>
+            <Box sx={{ my: '10px' }}>
+                <Typography
+                    variant="h6"
+                    sx={{
+                        font: 'Poppins',
+                        fontWeight: 700,
+                        fontSize: '20px',
+                        lineHeight: '32px',
+                        letterSpacing: '0.15px',
+                        color: theme.palette.text.primary
+                    }}
+                >
+                    Crop Rotation
+                </Typography>
+            </Box>
             {cropRotationYieldDataLoading ? (
                 <Box display="flex" justifyContent="center" justifyItems="center" sx={{ height: '100vh' }}>
                     <CircularProgress />
                 </Box>
             ) : cropRotationYieldDataError === null ? (
                 <Container disableGutters>
+                    <Box sx={{ mt: '20px' }}>
+                        {cropYieldDataset.map((cropData) => {
+                            return (
+                                <>
+                                    <Box sx={{ mb: '20px' }}>
+                                        <Typography
+                                            variant="h6"
+                                            sx={{
+                                                font: 'Poppins',
+                                                fontWeight: 700,
+                                                fontSize: '20px',
+                                                lineHeight: '32px',
+                                                letterSpacing: '0.15px',
+                                                color: theme.palette.text.primary
+                                            }}
+                                        >
+                                            {cropData.crop} Yield
+                                        </Typography>
+                                        <ResponsiveChartContainer
+                                            height={380}
+                                            series={[
+                                                {
+                                                    type: 'bar',
+                                                    data: cropData.cropYield.values,
+                                                    label: 'Crop Yield',
+                                                    valueFormatter: (value: number | null) =>
+                                                        `${value} ${
+                                                            cropData.cropYield.values[0] > 1
+                                                                ? 'bushels/acre'
+                                                                : 'bushel/acre'
+                                                        }`,
+                                                    color: '#FF5F05'
+                                                }
+                                            ]}
+                                            xAxis={[
+                                                {
+                                                    scaleType: 'band',
+                                                    data: cropData.cropYield.xLabels,
+                                                    // valueFormatter: xAxisValueFormatter,
+                                                    label: 'Year',
+                                                    categoryGapRatio: 0.7
+                                                } as AxisConfig<'band'>
+                                            ]}
+                                            yAxis={[{ id: 'crop-yield', label: 'Yield bushels/acre' }]}
+                                            sx={{
+                                                [`.${axisClasses.left} .${axisClasses.label}`]: {
+                                                    // Move the y-axis label with CSS
+                                                    transform: 'translateX(-6px)'
+                                                }
+                                            }}
+                                        >
+                                            <BarPlot />
+                                            <MarkPlot />
+                                            <ChartsTooltip trigger="axis" />
+                                            <ChartsAxisHighlight x="line" />
+                                            <ChartsXAxis categoryGapRatio={0.7} />
+                                            <ChartsYAxis axisId="crop-yield" position="left" />
+                                            <ChartsLegend />
+                                            <ChartsGrid horizontal />
+                                        </ResponsiveChartContainer>
+                                    </Box>
+                                    <Box sx={{ mb: '20px', padding: '24px' }}>
+                                        <Typography
+                                            variant="h6"
+                                            sx={{
+                                                font: 'Poppins',
+                                                fontWeight: 500,
+                                                fontSize: '16px',
+                                                lineHeight: '28px',
+                                                letterSpacing: '0.15px',
+                                                color: theme.palette.text.primary,
+                                                mb: '10px'
+                                            }}
+                                        >
+                                            Crop Information
+                                        </Typography>
+                                        <TableContainer component={Paper}>
+                                            <Table sx={{ minWidth: 650 }} aria-label="crop info table">
+                                                <TableHead>
+                                                    <TableRow>
+                                                        {cropInfoTableHeaders.map((header) => (
+                                                            <TableCell key={header} align="center">
+                                                                {header}
+                                                            </TableCell>
+                                                        ))}
+                                                    </TableRow>
+                                                </TableHead>
+                                                <TableBody>
+                                                    {cropInfoTable[cropData.crop].map((row) => (
+                                                        <TableRow key={row.plantingDate}>
+                                                            <TableCell align="center">{row.plantingDate}</TableCell>
+                                                            <TableCell align="center">{row.harvestDate}</TableCell>
+                                                            <TableCell align="center">{row.seedingRate}</TableCell>
+                                                            <TableCell align="center">{row.totalFertilizer}</TableCell>
+                                                        </TableRow>
+                                                    ))}
+                                                </TableBody>
+                                            </Table>
+                                        </TableContainer>
+                                    </Box>
+                                    <Box sx={{ mb: '20px', padding: '24px' }}>
+                                        <Typography
+                                            variant="h6"
+                                            sx={{
+                                                font: 'Poppins',
+                                                fontWeight: 500,
+                                                fontSize: '16px',
+                                                lineHeight: '28px',
+                                                letterSpacing: '0.15px',
+                                                color: theme.palette.text.primary,
+                                                mb: '10px'
+                                            }}
+                                        >
+                                            Crop Fertilizer Information
+                                        </Typography>
+                                        <TableContainer component={Paper}>
+                                            <Table sx={{ minWidth: 650 }} aria-label="crop fertilizer info table">
+                                                <TableHead>
+                                                    <TableRow>
+                                                        {cropFertilizerInfoTableHeaders.map((header) => (
+                                                            <TableCell key={header} align="center">
+                                                                {header}
+                                                            </TableCell>
+                                                        ))}
+                                                    </TableRow>
+                                                </TableHead>
+                                                <TableBody>
+                                                    {cropFertilizerInfoTable[cropData.crop].map((row) => {
+                                                        return row.fertilizer.map((fertilizer, index) => (
+                                                            <TableRow key={row.year}>
+                                                                {index === 0 ? (
+                                                                    <TableCell
+                                                                        rowSpan={row.fertilizer.length}
+                                                                        align="center"
+                                                                    >
+                                                                        {row.year}
+                                                                    </TableCell>
+                                                                ) : null}
+                                                                <TableCell align="center">
+                                                                    {fertilizer.fertilizerApplicationDate}
+                                                                </TableCell>
+                                                                <TableCell align="center">
+                                                                    {fertilizer.fertilizerRate}
+                                                                </TableCell>
+                                                                <TableCell align="center">
+                                                                    {fertilizer.fertilizerType}
+                                                                </TableCell>
+                                                                <TableCell align="center">
+                                                                    {fertilizer.fertilizerMethod}
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        ));
+                                                    })}
+                                                </TableBody>
+                                            </Table>
+                                        </TableContainer>
+                                    </Box>
+                                </>
+                            );
+                        })}
+                    </Box>
+                    <Box sx={{ my: '40px' }}>
+                        <Typography
+                            variant="h6"
+                            sx={{
+                                font: 'Poppins',
+                                fontWeight: 700,
+                                fontSize: '20px',
+                                lineHeight: '32px',
+                                letterSpacing: '0.15px',
+                                color: theme.palette.text.primary
+                            }}
+                        >
+                            Nitrogen Loss
+                        </Typography>
+                    </Box>
                     <FormControl>
                         <InputLabel id="year-select-label">Choose a Year</InputLabel>
                         <Select
@@ -207,7 +520,6 @@ const CropRotationYield = (): JSX.Element => {
                             value={selectedYear}
                             label="Choose a Year"
                             onChange={(e) => {
-                                console.log(e.target.value);
                                 setSelectedYear(e.target.value);
                             }}
                             sx={{
@@ -219,7 +531,7 @@ const CropRotationYield = (): JSX.Element => {
                             ))}
                         </Select>
                     </FormControl>
-                    <Box>
+                    <Box sx={{ marginTop: '20px' }}>
                         <Box sx={{ marginBottom: '30px' }}>
                             <Typography
                                 variant="subtitle2"
@@ -284,39 +596,71 @@ const CropRotationYield = (): JSX.Element => {
                         </Box>
                     </Box>
                     <Box sx={{ width: '100%', marginTop: '20px', marginBottom: '20px' }}>
+                        {!nitrateDataFound ? (
+                            <Box sx={{ my: '10px' }}>
+                                <Alert severity="info">
+                                    No Nitrate Concentration data found for the selected year and month.
+                                </Alert>
+                            </Box>
+                        ) : null}
                         {weatherDataLoading && nitrateConcentrationDataLoading ? (
                             <Box display="flex" justifyContent="center" justifyItems="center">
                                 <CircularProgress />
                             </Box>
                         ) : weatherDataLoadError === null && nitrateConcentrationDataError === null ? (
-                            <ResponsiveChartContainer
-                                height={380}
-                                series={series}
-                                xAxis={[
-                                    {
-                                        scaleType: 'band',
-                                        data: xAxisLabels,
-                                        valueFormatter: xAxisValueFormatter,
-                                        label: 'Date'
-                                    }
-                                ]}
-                                yAxis={[
-                                    { id: 'nitrate-concentration', label: 'Nitrate Concentration (mg/L)' },
-                                    { id: 'avg-precipitation', label: 'Precipitation (mm)' }
-                                ]}
-                            >
-                                <LinePlot />
-                                <BarPlot />
-                                <MarkPlot />
-                                <LineHighlightPlot />
-                                <ChartsTooltip trigger="axis" />
-                                <ChartsAxisHighlight x="line" />
-                                <ChartsXAxis />
-                                <ChartsYAxis axisId="nitrate-concentration" position="right" />
-                                <ChartsYAxis axisId="avg-precipitation" position="left" />
-                                <ChartsLegend />
-                                <ChartsGrid horizontal />
-                            </ResponsiveChartContainer>
+                            nitrateDataFound ? (
+                                <ResponsiveChartContainer
+                                    height={380}
+                                    series={series}
+                                    xAxis={[
+                                        {
+                                            scaleType: 'band',
+                                            data: xAxisLabels,
+                                            valueFormatter: xAxisValueFormatter,
+                                            label: 'Date'
+                                        }
+                                    ]}
+                                    yAxis={[
+                                        { id: 'nitrate-concentration', label: 'Nitrate Concentration (mg/L)' },
+                                        { id: 'avg-precipitation', label: 'Precipitation (mm)' }
+                                    ]}
+                                >
+                                    <BarPlot />
+                                    <MarkPlot />
+                                    <ChartsTooltip trigger="axis" />
+                                    <ChartsAxisHighlight x="line" />
+                                    <ChartsXAxis />
+                                    <ChartsYAxis axisId="nitrate-concentration" position="right" />
+                                    <LinePlot />
+                                    <LineHighlightPlot />
+                                    <ChartsYAxis axisId="avg-precipitation" position="left" />
+                                    <ChartsLegend />
+                                    <ChartsGrid horizontal />
+                                </ResponsiveChartContainer>
+                            ) : (
+                                <ResponsiveChartContainer
+                                    height={380}
+                                    series={series}
+                                    xAxis={[
+                                        {
+                                            scaleType: 'band',
+                                            data: xAxisLabels,
+                                            valueFormatter: xAxisValueFormatter,
+                                            label: 'Date'
+                                        }
+                                    ]}
+                                    yAxis={[{ id: 'avg-precipitation', label: 'Precipitation (mm)' }]}
+                                >
+                                    <BarPlot />
+                                    <MarkPlot />
+                                    <ChartsTooltip trigger="axis" />
+                                    <ChartsAxisHighlight x="line" />
+                                    <ChartsXAxis />
+                                    <ChartsYAxis axisId="avg-precipitation" position="left" />
+                                    <ChartsLegend />
+                                    <ChartsGrid horizontal />
+                                </ResponsiveChartContainer>
+                            )
                         ) : (
                             <Typography
                                 variant="h6"
@@ -400,7 +744,7 @@ const CropRotationYield = (): JSX.Element => {
                     {cropRotationYieldDataError}
                 </Typography>
             )}
-        </div>
+        </Box>
     );
 };
 

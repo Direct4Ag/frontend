@@ -65,6 +65,7 @@ interface FertilizerDetail {
 interface CropRotationYieldData {
     planting_date: string;
     harvest_date: string;
+    crop: string;
     crop_yield: number;
     yield_unit: string;
     seeding_rate: number;
