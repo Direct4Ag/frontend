@@ -741,7 +741,7 @@ const CropRotationYield = (): JSX.Element => {
                         color: theme.palette.text.primary
                     }}
                 >
-                    {cropRotationYieldDataError}
+                    {cropRotationYieldDataError} : No data found
                 </Typography>
             )}
         </Box>
