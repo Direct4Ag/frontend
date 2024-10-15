@@ -4,12 +4,12 @@ import { useParams } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import { CircularProgress, Typography } from '@mui/material';
 
-import Header from '../childComponents/navigation/Header';
 import { useSelectedResearch } from '@app/utils/hooks';
 import { theme } from '@app/theme';
 
-import ResearchLeftSidebar from '../childComponents/ResearchLeftSidebar';
 import { DataStateContext } from '@app/store/contexts';
+import ResearchLeftSidebar from '../childComponents/ResearchLeftSidebar';
+import Header from '../childComponents/navigation/Header';
 import CropRotationYield from './CropRotationYield';
 
 const CropRotation = (): JSX.Element => {

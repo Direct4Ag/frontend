@@ -104,24 +104,22 @@ const CropRotationYield = (): JSX.Element => {
 
     React.useEffect(() => {
         if (cropRotationYieldData) {
-            let years = Array.from(new Set(cropRotationYieldData.map((data) => data.planting_date.split('-')[0])));
+            const years = Array.from(new Set(cropRotationYieldData.map((data) => data.planting_date.split('-')[0])));
             // TODO: remove this when everything is fixed
             years.push('2023');
-            console.log(cropRotationYieldData);
 
-            let crops = Array.from(new Set(cropRotationYieldData.map((data) => data.crop)));
-            let tempDataset: CropYeildInfo[] = [];
-            let tempCropInfoTable: CropInfoTable = {};
-            let tempCropFertilizerInfoTable: CropFertilizerInfoTable = {};
+            const crops = Array.from(new Set(cropRotationYieldData.map((data) => data.crop)));
+            const tempDataset: CropYeildInfo[] = [];
+            const tempCropInfoTable: CropInfoTable = {};
+            const tempCropFertilizerInfoTable: CropFertilizerInfoTable = {};
             crops.forEach((crop) => {
-                let cropData = cropRotationYieldData.filter((data) => data.crop === crop);
-                let years = Array.from(new Set(cropData.map((data) => data.planting_date.split('-')[0]))).sort();
-                let values = new Array<number>(years.length).fill(0);
-                tempCropInfoTable[crop] = new Array(years.length).fill({});
-                tempCropFertilizerInfoTable[crop] = new Array(years.length);
-                console.log(tempCropFertilizerInfoTable);
+                const cropData = cropRotationYieldData.filter((data) => data.crop === crop);
+                const yearsArr = Array.from(new Set(cropData.map((data) => data.planting_date.split('-')[0]))).sort();
+                const values = new Array<number>(yearsArr.length).fill(0);
+                tempCropInfoTable[crop] = new Array(yearsArr.length).fill({});
+                tempCropFertilizerInfoTable[crop] = new Array(yearsArr.length);
                 cropData.forEach((data) => {
-                    const index = years.indexOf(data.planting_date.split('-')[0]);
+                    const index = yearsArr.indexOf(data.planting_date.split('-')[0]);
                     values[index] = data.crop_yield;
                     tempCropInfoTable[crop][index] = {
                         plantingDate: data.planting_date,
@@ -129,9 +127,8 @@ const CropRotationYield = (): JSX.Element => {
                         seedingRate: `${data.seeding_rate} ${data.seeding_rate_unit}`,
                         totalFertilizer: `${data.total_fertilizer_applied} ${data.total_fertilizer_applied_unit}`
                     };
-                    console.log(index, years[index]);
                     tempCropFertilizerInfoTable[crop][index] = {
-                        year: years[index],
+                        year: yearsArr[index],
                         fertilizer: data.fertilizers.map((fertilizer) => {
                             return {
                                 fertilizerApplicationDate: fertilizer.fertilizer_date,
@@ -141,17 +138,15 @@ const CropRotationYield = (): JSX.Element => {
                             };
                         })
                     };
-                    console.log(tempCropFertilizerInfoTable);
                 });
                 tempDataset.push({
-                    crop: crop,
+                    crop,
                     cropYield: {
-                        xLabels: years,
-                        values: values
+                        xLabels: yearsArr,
+                        values
                     }
                 });
             });
-            console.log(tempCropFertilizerInfoTable);
             setCropInfoTable(tempCropInfoTable);
             setCropFertilizerInfoTable(tempCropFertilizerInfoTable);
             setCropYieldDataset(tempDataset);
@@ -186,7 +181,7 @@ const CropRotationYield = (): JSX.Element => {
             setSelectedMonth(monthSortedArray[0]);
             setNitrateDataFound(true);
         } else {
-            //fallback to default months
+            // fallback to default months
             setNitrateDataFound(false);
             setAvailableMonths(months.map((_, idx) => idx + 1));
             setSelectedMonth(1);
@@ -206,13 +201,13 @@ const CropRotationYield = (): JSX.Element => {
 
     React.useEffect(() => {
         if (selectedMonth !== null && selectedYear !== null && weatherData && nitrateConcentrationData) {
-            let xAxisLabelsTemp = new Set<string>();
+            const xAxisLabelsTemp = new Set<string>();
             if (nitrateConcentrationData.nitrate_concentration_data.length === 0) {
                 // JavaScript months are 0-indexed (0 = January, 11 = December)
-                let date = new Date(parseInt(selectedYear), selectedMonth - 1, 0).getDate(); // Get last day of the previous month (from month + 1)
+                const date = new Date(parseInt(selectedYear, 10), selectedMonth - 1, 0).getDate(); // Get last day of the previous month (from month + 1)
 
                 // Generate an array from 1 to the number of days in the month
-                let days = Array.from({ length: date }, (_, k) => k + 1);
+                const days = Array.from({ length: date }, (_, k) => k + 1);
 
                 days.forEach((day) => {
                     xAxisLabelsTemp.add(
@@ -223,7 +218,7 @@ const CropRotationYield = (): JSX.Element => {
                 });
             } else {
                 nitrateConcentrationData.nitrate_concentration_data.forEach((data) => {
-                    if (data.month === selectedMonth && data.year === parseInt(selectedYear)) {
+                    if (data.month === selectedMonth && data.year === parseInt(selectedYear, 10)) {
                         xAxisLabelsTemp.add(data.label);
                     }
                 });
@@ -244,7 +239,7 @@ const CropRotationYield = (): JSX.Element => {
             });
 
             if (nitrateConcentrationData.nitrate_concentration_data.length !== 0) {
-                let nitrateConcLinePlotData: number[] = [];
+                const nitrateConcLinePlotData: number[] = [];
                 nitrateConcentrationData.nitrate_concentration_data.forEach((data) => {
                     if (data.month === selectedMonth) {
                         const index = xAxisLabelsSortedArray.indexOf(data.label);
@@ -278,14 +273,14 @@ const CropRotationYield = (): JSX.Element => {
         }
     }, [selectedYear, selectedMonth, weatherData, nitrateConcentrationData]);
 
-    const getWeatherYAxisData = (data: GeostreamsData[], xAxisLabels: string[]) => {
-        if (data && xAxisLabels.length !== 0) {
-            const yAxisData = new Array<number>(xAxisLabels.length).fill(0);
-            data.forEach((data) => {
-                if (data.month === selectedMonth) {
-                    const index = xAxisLabels.indexOf(data.label);
+    const getWeatherYAxisData = (data: GeostreamsData[], xAxisLabelsArr: string[]) => {
+        if (data && xAxisLabelsArr.length !== 0) {
+            const yAxisData = new Array<number>(xAxisLabelsArr.length).fill(0);
+            data.forEach((dataVal) => {
+                if (dataVal.month === selectedMonth) {
+                    const index = xAxisLabelsArr.indexOf(dataVal.label);
                     if (index !== -1) {
-                        yAxisData[index] = data.average;
+                        yAxisData[index] = dataVal.average;
                     }
                 }
             });
@@ -527,7 +522,9 @@ const CropRotationYield = (): JSX.Element => {
                             }}
                         >
                             {yearsSelect.map((year) => (
-                                <MenuItem value={year}>Year {year}</MenuItem>
+                                <MenuItem key={year} value={year}>
+                                    Year {year}
+                                </MenuItem>
                             ))}
                         </Select>
                     </FormControl>

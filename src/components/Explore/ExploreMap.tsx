@@ -209,8 +209,8 @@ const ExploreMap = ({ handleInfoOpen }: Props): JSX.Element => {
                 const centerCoordinates = fields.map(({ coordinates }) => coordinates);
 
                 const bounds = centerCoordinates.reduce(
-                    (bounds, coord) => {
-                        return bounds.extend(coord);
+                    (bound, coord) => {
+                        return bound.extend(coord);
                     },
                     new maplibregl.LngLatBounds(centerCoordinates[0], centerCoordinates[0])
                 );

@@ -17,7 +17,7 @@ module.exports = {
         maplibreBasemapsControl: 'maplibre-gl-basemaps/lib/basemaps.css',
         appStyle: './src/styles/main.scss',
         config: './src/config.js',
-        app: './src/App.tsx',
+        app: './src/App.tsx'
     },
 
     output: {

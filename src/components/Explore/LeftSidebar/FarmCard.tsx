@@ -52,7 +52,7 @@ const FarmCard: FC<Props> = ({ farm, idx }): JSX.Element => {
                 >
                     <CardContent>
                         <Box
-                            sx={(theme) => ({
+                            sx={{
                                 display: 'flex',
                                 flexWrap: 'wrap',
                                 flexDirection: 'row',
@@ -61,7 +61,7 @@ const FarmCard: FC<Props> = ({ farm, idx }): JSX.Element => {
                                 fontWeight: 400,
                                 fontSize: '12px',
                                 color: theme.palette.text.secondary
-                            })}
+                            }}
                         >
                             <Typography variant="caption">{`NO. ${idx}`}</Typography>
                             <Typography variant="caption">{farm.farm.location_name}</Typography>
@@ -80,7 +80,7 @@ const FarmCard: FC<Props> = ({ farm, idx }): JSX.Element => {
                             {farm.farm.farm_name}
                         </Typography>
                         <Box
-                            sx={(theme) => ({
+                            sx={{
                                 display: 'flex',
                                 flexDirection: 'row',
                                 justifyContent: 'space-between',
@@ -89,7 +89,7 @@ const FarmCard: FC<Props> = ({ farm, idx }): JSX.Element => {
                                 fontSize: '14px',
                                 lineHeight: '20.02px',
                                 color: theme.palette.text.secondary
-                            })}
+                            }}
                         >
                             <Typography variant="body2">
                                 {fields.length > 2
@@ -110,14 +110,14 @@ const FarmCard: FC<Props> = ({ farm, idx }): JSX.Element => {
                         <Button
                             size="small"
                             variant="contained"
-                            sx={(theme) => ({
+                            sx={{
                                 color: theme.palette.default.contrastText,
                                 backgroundColor: theme.palette.primary.main,
                                 fontWeight: { xs: 300, md: 400 },
                                 fontSize: { xs: 11, md: 13 },
                                 font: 'Roboto',
                                 transition: '0.2s all ease-out'
-                            })}
+                            }}
                             onClick={() => {
                                 setIsExpanded(!isExpanded);
                             }}
@@ -134,12 +134,12 @@ const FarmCard: FC<Props> = ({ farm, idx }): JSX.Element => {
                         Fields
                     </Typography>
                     <Stack direction="row" flexWrap="wrap" useFlexGap spacing={{ xs: 1, sm: 2 }}>
-                        {fields.map((field, idx) => (
+                        {fields.map((field) => (
                             <Button
-                                key={idx}
+                                key={field.field_name}
                                 size="small"
                                 variant="contained"
-                                sx={(theme) => ({
+                                sx={{
                                     color: theme.palette.default.contrastText,
                                     backgroundColor: theme.palette.primary.main,
                                     fontWeight: { xs: 300, md: 400 },
@@ -147,7 +147,7 @@ const FarmCard: FC<Props> = ({ farm, idx }): JSX.Element => {
                                     font: 'Roboto',
                                     minWidth: '90px',
                                     transition: '0.2s all ease-out'
-                                })}
+                                }}
                                 onClick={() => {
                                     dataActionDispatcher({ type: 'updateSelectedField', selectedField: field });
                                 }}

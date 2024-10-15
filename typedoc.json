@@ -1,8 +1,6 @@
 {
-  "entryPoints": [
-    "src"
-  ],
-  "out": "docs",
-  "excludeExternals": true,
-  "excludeNotDocumented": true
+    "entryPoints": ["src"],
+    "out": "docs",
+    "excludeExternals": true,
+    "excludeNotDocumented": true
 }

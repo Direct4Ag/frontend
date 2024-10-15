@@ -19,8 +19,7 @@
   "env": {
     "browser": true,
     "es6": true,
-    "node": true,
-    "jest": true
+    "node": true
   },
   "settings": {
     "import/resolver": {
@@ -30,7 +29,7 @@
           "node_modules"
         ],
         "extensions": [
-          ",js",
+          ".js",
           ".ts",
           ".tsx"
         ]
@@ -99,6 +98,8 @@
         ]
       }
     ],
+    "no-plusplus": "off",
+    "no-nested-ternary": "off",
     "no-mixed-operators": "error",
     "no-multi-spaces": [
       "error",
@@ -197,6 +198,7 @@
       "warn",
       "static public field"
     ],
-    "@typescript-eslint/explicit-function-return-type": "off"
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }]
   }
 }

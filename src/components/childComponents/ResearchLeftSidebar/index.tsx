@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, { FC } from 'react';
 
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -27,16 +27,22 @@ const howToSection = [
 ];
 
 type Props = {
-    selectedResearch: ResearchDetail | null,
-    dataType: string,
-    pi: string,
-    contactInfo: string,
-    introduction: string,
-    conclusion: string
-}
+    selectedResearch: ResearchDetail | null;
+    dataType: string;
+    pi: string;
+    contactInfo: string;
+    introduction: string;
+    conclusion: string;
+};
 
-const ResearchLeftSidebar: FC<Props> = ({selectedResearch, dataType, pi, contactInfo, introduction, conclusion}): JSX.Element => {
-
+const ResearchLeftSidebar: FC<Props> = ({
+    selectedResearch,
+    dataType,
+    pi,
+    contactInfo,
+    introduction,
+    conclusion
+}): JSX.Element => {
     const selectedFieldDetail = selectedResearch !== null ? selectedResearch.field : null;
 
     return (

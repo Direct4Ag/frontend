@@ -10,5 +10,5 @@ export const dataStateInitialValue: DataState = {
     depthSoilMoistureData: null,
     weatherData: null,
     nitrateConcentrationData: null,
-    cropRotationYield: null,
+    cropRotationYield: null
 };

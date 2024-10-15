@@ -4,13 +4,13 @@ import { useParams } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import { CircularProgress, Typography } from '@mui/material';
 
-import Header from '../childComponents/navigation/Header';
 import { useSelectedResearch } from '@app/utils/hooks';
 import { theme } from '@app/theme';
+import { DataStateContext } from '@app/store/contexts';
+import Header from '../childComponents/navigation/Header';
 
 import ResearchLeftSidebar from '../childComponents/ResearchLeftSidebar';
 import DroughtResistantSeedYield from './DroughtResistantSeedYield';
-import { DataStateContext } from '@app/store/contexts';
 
 const DroughtResistantSeed = (): JSX.Element => {
     const { research_id } = useParams<{ research_id: string }>();

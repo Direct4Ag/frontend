@@ -14,8 +14,8 @@ module.exports = merge(commonConfig, {
         minimizer: [
             '...',
             new JsonMinimizerPlugin({
-                test: /\..*json/i,
-            }),
+                test: /\..*json/i
+            })
         ],
         splitChunks: {
             chunks: 'all',
