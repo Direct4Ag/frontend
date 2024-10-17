@@ -274,7 +274,7 @@ const DroughtResistantSeedYield = (): JSX.Element => {
         }
     }, [soilDepthData]);
 
-    const valueFormatter = (value: number | null) => `${value} lb/acre`;
+    const valueFormatter = (value: number | null) => `${value} bu/A`;
     const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' };
     const soilMoistureValueFormatter = (value: string | number | null, axis: string) => {
         if (value !== null) {
@@ -408,6 +408,7 @@ const DroughtResistantSeedYield = (): JSX.Element => {
             valueFormatter: (value: number | null) => `${value} kPa`
         }
     ];
+    console.log(drsYieldData);
 
     return (
         <>
@@ -654,7 +655,7 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                                                                             ml: 1
                                                                         }}
                                                                     >
-                                                                        lb/acre
+                                                                        bu/A
                                                                     </Typography>
                                                                 </Box>
                                                             </DRSYieldDisplay>
@@ -674,7 +675,7 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                                             <BarChart
                                                 dataset={seedYieldChartData}
                                                 yAxis={[{ scaleType: 'band', dataKey: 'name', label: 'Seed name' }]}
-                                                xAxis={[{ label: 'lb/acre' }]}
+                                                xAxis={[{ label: 'bu/A' }]}
                                                 series={[{ dataKey: 'value', valueFormatter, color: '#f28e2c' }]}
                                                 grid={{ vertical: true, horizontal: true }}
                                                 layout="horizontal"

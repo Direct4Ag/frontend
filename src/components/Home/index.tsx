@@ -192,7 +192,7 @@ const Home = (): JSX.Element => {
             <Header />
             {/* Landing image section */}
             <Box>
-                <Container maxWidth="xl" disableGutters>
+                <Container disableGutters sx={{ maxWidth: '100% !important' }}>
                     <Grid
                         container
                         sx={(theme) => ({
@@ -264,7 +264,7 @@ const Home = (): JSX.Element => {
 
             {/* About section */}
             <Box sx={{ mt: '200px' }}>
-                <Container maxWidth="xl" disableGutters>
+                <Container sx={{ maxWidth: '100% !important' }} disableGutters>
                     <Grid container sx={{ alignContent: 'center', textAlign: 'center' }}>
                         <Grid item xs={12} md={6}>
                             <Item elevation={0} sx={(theme) => ({ color: theme.palette.text.primary, p: 2 })}>
@@ -341,7 +341,7 @@ const Home = (): JSX.Element => {
 
             {/* Explore by Research Areas section */}
             <Box sx={{ mt: '200px' }}>
-                <Container maxWidth="xl">
+                <Container sx={{ maxWidth: '100% !important' }}>
                     <Grid container sx={{ alignContent: 'center', textAlign: 'center' }}>
                         <Grid item xs={12} md={12}>
                             <Typography
