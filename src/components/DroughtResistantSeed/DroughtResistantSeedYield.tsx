@@ -408,7 +408,6 @@ const DroughtResistantSeedYield = (): JSX.Element => {
             valueFormatter: (value: number | null) => `${value} kPa`
         }
     ];
-    console.log(drsYieldData);
 
     return (
         <>
