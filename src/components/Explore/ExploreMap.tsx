@@ -164,7 +164,13 @@ const ExploreMap = ({ handleInfoOpen }: Props): JSX.Element => {
                             type: 'updateSelectedResearch',
                             selectedResearch: researchDetail
                         });
-                        navigate('/drought-resistant-seeds');
+                        navigate(`/drought-resistant-seeds/${researchDetail.id}`);
+                    } else if (researchDetail && researchDetail.research_type === gs.CONSTANTS.CROPROT) {
+                        dataActionDispatcher({
+                            type: 'updateSelectedResearch',
+                            selectedResearch: researchDetail
+                        });
+                        navigate(`/crop-rotation/${researchDetail.id}`);
                     } else {
                         handleInfoOpen({
                             message: 'No research data available for this field',
@@ -203,8 +209,8 @@ const ExploreMap = ({ handleInfoOpen }: Props): JSX.Element => {
                 const centerCoordinates = fields.map(({ coordinates }) => coordinates);
 
                 const bounds = centerCoordinates.reduce(
-                    (bounds, coord) => {
-                        return bounds.extend(coord);
+                    (bound, coord) => {
+                        return bound.extend(coord);
                     },
                     new maplibregl.LngLatBounds(centerCoordinates[0], centerCoordinates[0])
                 );

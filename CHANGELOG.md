@@ -14,3 +14,4 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Built interactions with Map component to  navigate to other components [#14](https://github.com/Direct4Ag/frontend/issues/14)
 - Added datalayer on map to display polygons [#15](https://github.com/Direct4Ag/frontend/issues/15)
 - Add Drought Resistant Seed research component [#19](https://github.com/Direct4Ag/frontend/issues/19)
+- Add Crop Rotation research component [#25](https://github.com/Direct4Ag/frontend/issues/25)

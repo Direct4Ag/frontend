@@ -1,4 +1,5 @@
 import React from 'react';
+import { useParams } from 'react-router-dom';
 
 import {
     Box,
@@ -122,9 +123,11 @@ const DepthSwitch = styled(Switch)({
 
 const DroughtResistantSeedYield = (): JSX.Element => {
     const { selectedField, selectedResearch } = React.useContext(DataStateContext);
-    // const dataActionDispatcher = React.useContext(DataActionDispatcherContext);
+    const { research_id } = useParams<{ research_id: string }>();
     const [soilData, soilLoading, soilError] = useSoilTextureData(selectedField?.coordinates);
-    const [drsYieldData, drsYieldDataLoading, drsYieldDataLoadingError] = useDRSYieldData(selectedResearch?.id);
+    const [drsYieldData, drsYieldDataLoading, drsYieldDataLoadingError] = useDRSYieldData(
+        selectedResearch ? selectedResearch.id : research_id
+    );
 
     const yearsSelectDefault = ['2022'];
 
@@ -312,7 +315,7 @@ const DroughtResistantSeedYield = (): JSX.Element => {
             Object.keys(soilDepthData).forEach((depth) => {
                 if (showSoilDepthData[depth]) {
                     soilDepthData[depth].data.forEach((data) => {
-                        if (data.month === selectedMonth && data.year === parseInt(selectedYear)) {
+                        if (data.month === selectedMonth && data.year === parseInt(selectedYear, 10)) {
                             xAxisLabelsTemp.add(data.label);
                         }
                     });
@@ -333,7 +336,7 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                 yAxisKey: 'avg-precipitation'
             });
             Object.keys(showSoilDepthData)
-                .sort((a, b) => parseInt(a.replace('cm', '')) - parseInt(b.replace('cm', '')))
+                .sort((a, b) => parseInt(a.replace('cm', ''), 10) - parseInt(b.replace('cm', ''), 10))
                 .forEach((depth, idx) => {
                     if (showSoilDepthData[depth]) {
                         let yAxisData: number[] = [];
@@ -373,13 +376,13 @@ const DroughtResistantSeedYield = (): JSX.Element => {
         }
     }, [selectedMonth, selectedYear, soilDepthData, showSoilDepthData, weatherData]);
 
-    const getWeatherYAxisData = (data: GeostreamsData[], xAxisLabels: string[]) => {
-        if (data && xAxisLabels.length !== 0) {
-            const yAxisData = new Array<number>(xAxisLabels.length).fill(0);
-            data.forEach((data) => {
-                if (data.month === selectedMonth) {
-                    const index = xAxisLabels.indexOf(data.label);
-                    yAxisData[index] = data.average;
+    const getWeatherYAxisData = (data: GeostreamsData[], xAxisLabelsArr: string[]) => {
+        if (data && xAxisLabelsArr.length !== 0) {
+            const yAxisData = new Array<number>(xAxisLabelsArr.length).fill(0);
+            data.forEach((dataVal) => {
+                if (dataVal.month === selectedMonth) {
+                    const index = xAxisLabelsArr.indexOf(dataVal.label);
+                    yAxisData[index] = dataVal.average;
                 }
             });
             return yAxisData;
@@ -470,7 +473,9 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                                         }}
                                     >
                                         {yearsSelect.map((year) => (
-                                            <MenuItem value={year}>Year {year}</MenuItem>
+                                            <MenuItem key={year} value={year}>
+                                                Year {year}
+                                            </MenuItem>
                                         ))}
                                     </Select>
                                 </FormControl>
@@ -487,7 +492,9 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                                         }}
                                     >
                                         {cropSelect.map((crop) => (
-                                            <MenuItem value={crop}>{crop}</MenuItem>
+                                            <MenuItem key={crop} value={crop}>
+                                                {crop}
+                                            </MenuItem>
                                         ))}
                                     </Select>
                                 </FormControl>
@@ -495,6 +502,7 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                                     {selectedSeed.map((seed) => {
                                         return (
                                             <FormControlLabel
+                                                key={seed.label}
                                                 control={
                                                     <Checkbox
                                                         checked={seed.value}
@@ -597,9 +605,10 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                                                                     ] ===
                                                                     yieldData[selectedCrop][selectedYear]
                                                                         .heighestAvgYield ? (
+                                                                        /* eslint-disable-next-line react/jsx-indent */
                                                                         <Typography
-                                                                                variant="caption"
-                                                                                sx={{
+                                                                            variant="caption"
+                                                                            sx={{
                                                                                 font: 'Roboto',
                                                                                 fontWeight: 400,
                                                                                 fontSize: '12px',
@@ -608,7 +617,7 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                                                                                 color: theme.palette.text.secondary
                                                                             }}
                                                                         >
-                                                                                🏆
+                                                                            🏆
                                                                         </Typography>
                                                                     ) : null}
                                                                 </Box>
@@ -808,7 +817,7 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                                                                     </TableCell>
                                                                     {soilData?.map((data) => {
                                                                         return (
-                                                                            <TableCell>
+                                                                            <TableCell key={data[row]}>
                                                                                 <Typography
                                                                                     variant="caption"
                                                                                     sx={{
@@ -1008,11 +1017,13 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                                         ? Object.keys(showSoilDepthData)
                                               .sort(
                                                   (a, b) =>
-                                                      parseInt(a.replace('cm', '')) - parseInt(b.replace('cm', ''))
+                                                      parseInt(a.replace('cm', ''), 10) -
+                                                      parseInt(b.replace('cm', ''), 10)
                                               )
                                               .map((depthValue, idx) => {
                                                   return (
                                                       <FormControlLabel
+                                                          key={depthValue}
                                                           control={
                                                               <DepthSwitch
                                                                   checked={showSoilDepthData[depthValue]}

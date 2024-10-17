@@ -36,7 +36,6 @@ const palette: PaletteOptions = {
     primary: {
         main: '#1D58A7',
         light: 'rgba(224, 241, 248, 1)'
-
     },
     default: {
         dark: '#d9d9d9',
@@ -51,8 +50,8 @@ const palette: PaletteOptions = {
         primary: 'rgba(19, 41, 75, 0.87)',
         secondary: 'rgba(19, 41, 75, 0.6)',
         disabled: 'rgba(0, 0, 0, 0.38)'
-    },
-}
+    }
+};
 
 export const themeOptions = {
     breakpoints: {
@@ -69,12 +68,12 @@ export const themeOptions = {
         fontFamily: ['Lexend Deca', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'].join(',')
     },
     components: {
-        MuiButton: { 
-          styleOverrides: { 
-            root: { borderRadius: 0 } 
-          } 
+        MuiButton: {
+            styleOverrides: {
+                root: { borderRadius: 0 }
+            }
         }
-      }
+    }
 } as ThemeOptions;
 
 export const theme = createTheme(themeOptions);

@@ -15,7 +15,7 @@ export const layerStyles: { [group: string]: { [state: string]: Partial<maplibre
             paint: {
                 'fill-color': '#FFFFFF',
                 'fill-opacity': 0.8,
-                'fill-outline-color': '#1D58A7',
+                'fill-outline-color': '#1D58A7'
             }
         },
         selectedOutline: {

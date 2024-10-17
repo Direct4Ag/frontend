@@ -6,31 +6,28 @@ import { CircularProgress, Typography } from '@mui/material';
 
 import { useSelectedResearch } from '@app/utils/hooks';
 import { theme } from '@app/theme';
+
 import { DataStateContext } from '@app/store/contexts';
-import Header from '../childComponents/navigation/Header';
-
 import ResearchLeftSidebar from '../childComponents/ResearchLeftSidebar';
-import DroughtResistantSeedYield from './DroughtResistantSeedYield';
+import Header from '../childComponents/navigation/Header';
+import CropRotationYield from './CropRotationYield';
 
-const DroughtResistantSeed = (): JSX.Element => {
+const CropRotation = (): JSX.Element => {
     const { research_id } = useParams<{ research_id: string }>();
     const { selectedResearch } = React.useContext(DataStateContext);
     let loading = false;
     let error = null;
     let research = null;
-
     if (!selectedResearch && research_id) {
         [research, loading, error] = useSelectedResearch(research_id);
     }
     const leftSidebarDetails = {
-        dataType: 'Drought-resistant Seed Performance',
+        dataType: 'Crop Rotation',
         pi: '-',
         contactInfo: '-',
-        introduction:
-            'As changing climate brings more uncertainty with regard to weather patterns, knowing how drought-resistant seed performs in your area is becoming more important. Researchers are growing and testing these lines scientifically to provide you with information you can trust. Location, weather, soil type and soil moisture are collected to produce a clear, unbiased picture of how these seeds perform in various conditions.',
-        conclusion: 'Seed 1 is more drought tolerant than seed 2'
+        introduction: '-',
+        conclusion: '-'
     };
-
     return (
         <Box>
             <Box sx={{ pointerEvents: 'auto' }}>
@@ -46,7 +43,7 @@ const DroughtResistantSeed = (): JSX.Element => {
                         {...{ selectedResearch: selectedResearch ?? research }}
                         {...leftSidebarDetails}
                     />
-                    <DroughtResistantSeedYield />
+                    <CropRotationYield />
                 </Box>
             ) : (
                 <Typography
@@ -68,4 +65,4 @@ const DroughtResistantSeed = (): JSX.Element => {
     );
 };
 
-export default DroughtResistantSeed;
+export default CropRotation;

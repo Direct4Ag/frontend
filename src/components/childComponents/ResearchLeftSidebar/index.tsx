@@ -1,13 +1,11 @@
 import React, { FC } from 'react';
-import { useNavigate } from 'react-router-dom';
+
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-
-import { DataStateContext } from '@app/store/contexts';
 
 import { theme } from '../../../theme';
 
@@ -28,16 +26,24 @@ const howToSection = [
     }
 ];
 
-const LeftSidebar: FC = (): JSX.Element => {
-    const navigate = useNavigate();
-    const { selectedResearch } = React.useContext(DataStateContext);
-    const selectedFieldDetail = selectedResearch !== null ? selectedResearch.field : null;
+type Props = {
+    selectedResearch: ResearchDetail | null;
+    dataType: string;
+    pi: string;
+    contactInfo: string;
+    introduction: string;
+    conclusion: string;
+};
 
-    React.useEffect(() => {
-        if (!selectedFieldDetail) {
-            navigate('/explore');
-        }
-    }, [selectedFieldDetail]);
+const ResearchLeftSidebar: FC<Props> = ({
+    selectedResearch,
+    dataType,
+    pi,
+    contactInfo,
+    introduction,
+    conclusion
+}): JSX.Element => {
+    const selectedFieldDetail = selectedResearch !== null ? selectedResearch.field : null;
 
     return (
         <>
@@ -142,7 +148,7 @@ const LeftSidebar: FC = (): JSX.Element => {
                                     Data Type
                                 </Typography>
                                 <Typography variant="body2" sx={{ font: 'Roboto' }}>
-                                    Drought-resistant Seed Performance
+                                    {dataType}
                                 </Typography>
                             </Stack>
                             <Stack direction="row" spacing={2} justifyContent="flex-start">
@@ -160,7 +166,7 @@ const LeftSidebar: FC = (): JSX.Element => {
                                     PI
                                 </Typography>
                                 <Typography variant="body2" sx={{ fontWeight: 400 }}>
-                                    -
+                                    {pi}
                                 </Typography>
                             </Stack>
                             <Stack direction="row" spacing={2} justifyContent="flex-start">
@@ -178,7 +184,7 @@ const LeftSidebar: FC = (): JSX.Element => {
                                     Contact Info
                                 </Typography>
                                 <Typography variant="body2" sx={{ fontSize: '14px' }}>
-                                    -
+                                    {contactInfo}
                                 </Typography>
                             </Stack>
                         </Box>
@@ -197,11 +203,7 @@ const LeftSidebar: FC = (): JSX.Element => {
                                 Introduction:
                             </Typography>
                             <Typography variant="body2" sx={{ lineHeight: '21.98px' }}>
-                                As changing climate brings more uncertainty with regard to weather patterns, knowing how
-                                drought-resistant seed performs in your area is becoming more important. Researchers are
-                                growing and testing these lines scientifically to provide you with information you can
-                                trust. Location, weather, soil type and soil moisture are collected to produce a clear,
-                                unbiased picture of how these seeds perform in various conditions.
+                                {introduction}
                             </Typography>
                         </Box>
                         <Box>
@@ -219,7 +221,7 @@ const LeftSidebar: FC = (): JSX.Element => {
                                 Take-aways / Conclusions:
                             </Typography>
                             <Typography variant="body2" sx={{ letterSpacing: '0.17px' }}>
-                                Seed 1 is more drought tolerant than seed 2
+                                {conclusion}
                             </Typography>
                         </Box>
                     </Stack>
@@ -274,4 +276,4 @@ const LeftSidebar: FC = (): JSX.Element => {
     );
 };
 
-export default LeftSidebar;
+export default ResearchLeftSidebar;

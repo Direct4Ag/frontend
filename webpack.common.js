@@ -1,5 +1,5 @@
 const path = require('path');
-require('dotenv').config();
+const Dotenv = require('dotenv-webpack');
 const Webpack = require('webpack');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const ESLintPlugin = require('eslint-webpack-plugin');
@@ -17,7 +17,7 @@ module.exports = {
         maplibreBasemapsControl: 'maplibre-gl-basemaps/lib/basemaps.css',
         appStyle: './src/styles/main.scss',
         config: './src/config.js',
-        app: './src/App.tsx',
+        app: './src/App.tsx'
     },
 
     output: {
@@ -119,6 +119,7 @@ module.exports = {
             emitWarning: true,
             failOnError: false
         }),
-        new CleanWebpackPlugin()
+        new CleanWebpackPlugin(),
+        new Dotenv()
     ]
 };
