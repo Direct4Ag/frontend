@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 
 import { styled, alpha } from '@mui/material/styles';
 import AppBar from '@mui/material/AppBar';
@@ -60,7 +60,7 @@ const StyledMenu = styled((props: MenuProps) => (
 // TODO: replace email id dynamically
 const pages = [
     { pg: 'Email Us Questions', url: 'mailto: dir4agteam@illinois.edu' },
-    { pg: 'About Us', url: '/aboutus' }
+    { pg: 'About Us', url: '/#about' }
 ];
 
 const areas = [
@@ -131,9 +131,9 @@ const Header = (): JSX.Element => {
                         >
                             {areas.map((area) => (
                                 <MenuItem key={area.name} onClick={handleCloseAoI} disableRipple>
-                                    <HashLink smooth to={area.url} style={{ textDecoration: 'none' }}>
+                                    <HashLink smooth to={area.url} style={{ textDecoration: 'none', width: '100%' }}>
                                         <Typography
-                                            textAlign="center"
+                                            textAlign="left"
                                             sx={(theme) => ({
                                                 color: theme.palette.text.primary,
                                                 fontSize: theme.typography.pxToRem(16),
@@ -150,25 +150,24 @@ const Header = (): JSX.Element => {
                         {pages.map((page) => (
                             <Button
                                 key={page.pg}
+                                href={page.url}
                                 onClick={handleCloseNavMenu}
                                 sx={{
                                     my: 2,
                                     mx: 1
                                 }}
                             >
-                                <HashLink smooth to={page.url} style={{ textDecoration: 'none' }}>
-                                    <Typography
-                                        textAlign="center"
-                                        sx={(theme) => ({
-                                            color: theme.palette.text.primary,
-                                            fontSize: theme.typography.pxToRem(14),
-                                            fontWeight: theme.typography.fontWeightMedium,
-                                            textDecoration: 'none'
-                                        })}
-                                    >
-                                        {page.pg}
-                                    </Typography>
-                                </HashLink>
+                                <Typography
+                                    textAlign="center"
+                                    sx={(theme) => ({
+                                        color: theme.palette.text.primary,
+                                        fontSize: theme.typography.pxToRem(14),
+                                        fontWeight: theme.typography.fontWeightMedium,
+                                        textDecoration: 'none'
+                                    })}
+                                >
+                                    {page.pg}
+                                </Typography>
                             </Button>
                         ))}
                     </Box>
@@ -216,11 +215,9 @@ const Header = (): JSX.Element => {
                             </MenuItem>
                             {pages.map((page) => (
                                 <MenuItem key={page.pg} onClick={handleCloseNavMenu}>
-                                    <HashLink smooth to={page.url} style={{ textDecoration: 'none' }}>
+                                    <HashLink smooth to={page.url} style={{ textDecoration: 'none', width: '100%' }}>
                                         <Typography
                                             textAlign="center"
-                                            component={Link}
-                                            to={page.url}
                                             sx={(theme) => ({
                                                 color: theme.palette.text.primary,
                                                 fontSize: theme.typography.pxToRem(16),

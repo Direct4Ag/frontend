@@ -474,7 +474,7 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                                     >
                                         {yearsSelect.map((year) => (
                                             <MenuItem key={year} value={year}>
-                                                Year {year}
+                                                {year}
                                             </MenuItem>
                                         ))}
                                     </Select>
@@ -815,9 +815,9 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                                                                             {rowNameMap[row]}
                                                                         </Typography>
                                                                     </TableCell>
-                                                                    {soilData?.map((data) => {
+                                                                    {soilData?.map((data, index) => {
                                                                         return (
-                                                                            <TableCell key={data[row]}>
+                                                                            <TableCell key={`${data[row]}_${index}`}>
                                                                                 <Typography
                                                                                     variant="caption"
                                                                                     sx={{

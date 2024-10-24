@@ -334,7 +334,7 @@ const CropRotationYield = (): JSX.Element => {
                     <Box sx={{ mt: '20px' }}>
                         {cropYieldDataset.map((cropData) => {
                             return (
-                                <>
+                                <Box key={cropData.crop}>
                                     <Box sx={{ mb: '20px' }}>
                                         <Typography
                                             variant="h6"
@@ -460,7 +460,7 @@ const CropRotationYield = (): JSX.Element => {
                                                 <TableBody>
                                                     {cropFertilizerInfoTable[cropData.crop].map((row) => {
                                                         return row.fertilizer.map((fertilizer, index) => (
-                                                            <TableRow key={row.year}>
+                                                            <TableRow key={`${row.year}_index_${index}`}>
                                                                 {index === 0 ? (
                                                                     <TableCell
                                                                         rowSpan={row.fertilizer.length}
@@ -488,7 +488,7 @@ const CropRotationYield = (): JSX.Element => {
                                             </Table>
                                         </TableContainer>
                                     </Box>
-                                </>
+                                </Box>
                             );
                         })}
                     </Box>
@@ -523,7 +523,7 @@ const CropRotationYield = (): JSX.Element => {
                         >
                             {yearsSelect.map((year) => (
                                 <MenuItem key={year} value={year}>
-                                    Year {year}
+                                    {year}
                                 </MenuItem>
                             ))}
                         </Select>
