@@ -171,6 +171,12 @@ const ExploreMap = ({ handleInfoOpen }: Props): JSX.Element => {
                             selectedResearch: researchDetail
                         });
                         navigate(`/crop-rotation/${researchDetail.id}`);
+                    } else if (researchDetail && researchDetail.research_type === gs.CONSTANTS.IRRIGATION) {
+                        dataActionDispatcher({
+                            type: 'updateSelectedResearch',
+                            selectedResearch: researchDetail
+                        });
+                        navigate(`/irrigation-strategies/${researchDetail.id}`);
                     } else {
                         handleInfoOpen({
                             message: 'No research data available for this field',

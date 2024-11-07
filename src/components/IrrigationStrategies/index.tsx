@@ -10,24 +10,27 @@ import { DataStateContext } from '@app/store/contexts';
 import Header from '../childComponents/navigation/Header';
 
 import ResearchLeftSidebar from '../childComponents/ResearchLeftSidebar';
-import CropRotationYield from './CropRotationYield';
+import IrrigationStrategiesPage from './IrrigationStrategiesPage';
 
-const CropRotation = (): JSX.Element => {
+const IrrigationStrategies = (): JSX.Element => {
     const { research_id } = useParams<{ research_id: string }>();
     const { selectedResearch } = React.useContext(DataStateContext);
     let loading = false;
     let error = null;
     let research = null;
+
     if (!selectedResearch && research_id) {
         [research, loading, error] = useSelectedResearch(research_id);
     }
     const leftSidebarDetails = {
-        dataType: 'Crop Rotation',
+        dataType: 'Irrigation Strategies',
         pi: '-',
         contactInfo: '-',
-        introduction: '-',
-        conclusion: '-'
+        introduction:
+            'This is an introduction to the irrigation strategies research. It will be updated with more information soon.',
+        conclusion: 'Seed 1 is more drought tolerant than seed 2'
     };
+
     return (
         <Box>
             <Box sx={{ pointerEvents: 'auto' }}>
@@ -43,7 +46,7 @@ const CropRotation = (): JSX.Element => {
                         {...{ selectedResearch: selectedResearch ?? research }}
                         {...leftSidebarDetails}
                     />
-                    <CropRotationYield />
+                    <IrrigationStrategiesPage />
                 </Box>
             ) : (
                 <Typography
@@ -65,4 +68,4 @@ const CropRotation = (): JSX.Element => {
     );
 };
 
-export default CropRotation;
+export default IrrigationStrategies;
