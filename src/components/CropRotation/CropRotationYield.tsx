@@ -458,7 +458,7 @@ const CropRotationYield = (): JSX.Element => {
                                                 <TableBody>
                                                     {cropFertilizerInfoTable[cropData.crop].map((row) => {
                                                         return row.fertilizer.map((fertilizer, index) => (
-                                                            <TableRow key={`${row.year}_index_${index}`}>
+                                                            <TableRow key={`${row.year}`}>
                                                                 {index === 0 ? (
                                                                     <TableCell
                                                                         rowSpan={row.fertilizer.length}

@@ -816,9 +816,9 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                                                                             {rowNameMap[row]}
                                                                         </Typography>
                                                                     </TableCell>
-                                                                    {soilData?.map((data, index) => {
+                                                                    {soilData?.map((data) => {
                                                                         return (
-                                                                            <TableCell key={`${data[row]}_${index}`}>
+                                                                            <TableCell key={`${data[row]}`}>
                                                                                 <Typography
                                                                                     variant="caption"
                                                                                     sx={{
