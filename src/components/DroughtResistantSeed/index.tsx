@@ -5,12 +5,12 @@ import Box from '@mui/material/Box';
 
 import { useSelectedResearch, useDRSYieldData } from '@app/utils/hooks';
 import { DataStateContext } from '@app/store/contexts';
-import Header from '../childComponents/navigation/Header';
-
-import ResearchLeftSidebar from '../childComponents/ResearchLeftSidebar';
-import DroughtResistantSeedYield from './DroughtResistantSeedYield';
 import withLoading from '@app/components/childComponents/hocs/withLoading';
 import withErrorHandling from '@app/components/childComponents/hocs/withErrorHandling';
+import Header from '@app/components/childComponents/navigation/Header';
+
+import ResearchLeftSidebar from '@app/components/childComponents/ResearchLeftSidebar';
+import DroughtResistantSeedYield from './DroughtResistantSeedYield';
 
 const DroughtResistantSeedYieldWithLoading = withLoading(DroughtResistantSeedYield);
 const DroughtResistantSeedYieldWithErrorHandling = withErrorHandling(DroughtResistantSeedYieldWithLoading);

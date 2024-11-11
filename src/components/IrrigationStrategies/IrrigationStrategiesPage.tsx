@@ -8,7 +8,7 @@ import SoilMoistureDepthWithATMData from '@app/components/childComponents/SoilMo
 import { theme } from '@app/theme';
 
 const IrrigationStrategiesPage = () => {
-    const generateYears = (startYear: number = 2023): string[] => {
+    const generateYears = (startYear = 2023): string[] => {
         const currentYear = new Date().getFullYear();
         const years: string[] = [];
         for (let i = startYear; i <= currentYear; i++) {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useId } from 'react';
 
 import {
     Box,
@@ -132,9 +132,9 @@ const SoilTypeTable: React.FC<{ soilData: SoilData[] | null }> = ({ soilData }):
                                             {rowNameMap[row]}
                                         </Typography>
                                     </TableCell>
-                                    {soilData?.map((data, index) => {
+                                    {soilData?.map((data) => {
                                         return (
-                                            <TableCell key={`${data[row]}_${index}`}>
+                                            <TableCell key={`${data[row]}_${useId()}`}>
                                                 <Typography
                                                     variant="caption"
                                                     sx={{

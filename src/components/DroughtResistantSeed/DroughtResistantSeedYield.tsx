@@ -22,12 +22,12 @@ import { BarChart } from '@mui/x-charts/BarChart';
 import { axisClasses } from '@mui/x-charts/ChartsAxis';
 import { chartsGridClasses } from '@mui/x-charts/ChartsGrid';
 import { DataStateContext } from '@app/store/contexts';
-import SoilTypeTable from './SoilTypeTable';
 import { useSoilTextureData } from '@app/utils/hooks';
 import withErrorHandling from '@app/components/childComponents/hocs/withErrorHandling';
 import withLoading from '@app/components/childComponents/hocs/withLoading';
 import { theme } from '@app/theme';
 import SoilMoistureDepthWithATMData from '@app/components/childComponents/SoilMoistureDepthWithATMData';
+import SoilTypeTable from './SoilTypeTable';
 
 const SoilTypeTableWithLoading = withLoading(SoilTypeTable);
 const SoilTypeTableWithErrorHandling = withErrorHandling(SoilTypeTableWithLoading);

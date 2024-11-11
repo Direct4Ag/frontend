@@ -5,12 +5,12 @@ import Box from '@mui/material/Box';
 
 import { useSelectedResearch, useCropRotationYieldData } from '@app/utils/hooks';
 import { DataStateContext } from '@app/store/contexts';
-import Header from '../childComponents/navigation/Header';
 
 import ResearchLeftSidebar from '@app/components/childComponents/ResearchLeftSidebar';
-import CropRotationYield from './CropRotationYield';
 import withLoading from '@app/components/childComponents/hocs/withLoading';
 import withErrorHandling from '@app/components/childComponents/hocs/withErrorHandling';
+import Header from '@app/components/childComponents/navigation/Header';
+import CropRotationYield from './CropRotationYield';
 
 const CropRotationYieldWithLoading = withLoading(CropRotationYield);
 const CropRotationYieldWithErrorHandling = withErrorHandling(CropRotationYieldWithLoading);

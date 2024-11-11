@@ -8,9 +8,9 @@ import { DataStateContext } from '@app/store/contexts';
 import Header from '@app/components/childComponents/navigation/Header';
 
 import ResearchLeftSidebar from '@app/components/childComponents/ResearchLeftSidebar';
-import IrrigationStrategiesPage from './IrrigationStrategiesPage';
 import withLoading from '@app/components/childComponents/hocs/withLoading';
 import withErrorHandling from '@app/components/childComponents/hocs/withErrorHandling';
+import IrrigationStrategiesPage from './IrrigationStrategiesPage';
 
 const IrrigationStrategiesComponent: React.FC<{ research: ResearchDetail | null; research_id: string | undefined }> = ({
     research

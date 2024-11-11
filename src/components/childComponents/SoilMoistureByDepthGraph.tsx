@@ -33,7 +33,7 @@ const SoilMoistureByDepthGraph: React.FC<SoilMoistureByDepthGraphProps> = ({
                     {
                         scaleType: 'band',
                         data: xAxisLabels,
-                        valueFormatter: valueFormatter,
+                        valueFormatter,
                         label: 'Date'
                     }
                 ]}
@@ -52,32 +52,31 @@ const SoilMoistureByDepthGraph: React.FC<SoilMoistureByDepthGraphProps> = ({
                 <ChartsGrid horizontal />
             </ResponsiveChartContainer>
         );
-    } else {
-        return (
-            <ResponsiveChartContainer
-                height={380}
-                series={series}
-                xAxis={[
-                    {
-                        scaleType: 'band',
-                        data: xAxisLabels,
-                        valueFormatter: valueFormatter,
-                        label: 'Date'
-                    }
-                ]}
-                yAxis={[{ id: 'avg-precipitation', label: 'Precipitation (mm)' }]}
-            >
-                <BarPlot />
-                <MarkPlot />
-                <ChartsTooltip trigger="axis" />
-                <ChartsAxisHighlight x="line" />
-                <ChartsXAxis />
-                <ChartsYAxis axisId="avg-precipitation" position="left" />
-                <ChartsLegend />
-                <ChartsGrid horizontal />
-            </ResponsiveChartContainer>
-        );
     }
+    return (
+        <ResponsiveChartContainer
+            height={380}
+            series={series}
+            xAxis={[
+                {
+                    scaleType: 'band',
+                    data: xAxisLabels,
+                    valueFormatter,
+                    label: 'Date'
+                }
+            ]}
+            yAxis={[{ id: 'avg-precipitation', label: 'Precipitation (mm)' }]}
+        >
+            <BarPlot />
+            <MarkPlot />
+            <ChartsTooltip trigger="axis" />
+            <ChartsAxisHighlight x="line" />
+            <ChartsXAxis />
+            <ChartsYAxis axisId="avg-precipitation" position="left" />
+            <ChartsLegend />
+            <ChartsGrid horizontal />
+        </ResponsiveChartContainer>
+    );
 };
 
 export default SoilMoistureByDepthGraph;

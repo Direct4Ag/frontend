@@ -33,7 +33,7 @@ const AirTempAndVPDPlot: React.FC<AirTempAndVPDPlotProps> = ({
                 {
                     scaleType: 'band',
                     data: xAxisLabels,
-                    valueFormatter: valueFormatter,
+                    valueFormatter,
                     label: 'Date'
                 }
             ]}
