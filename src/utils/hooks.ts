@@ -175,7 +175,7 @@ export const useDRSYieldData = (researchId: string | undefined): [DRSYieldData[]
 export const useDepthSoilMoistureData = (
     year: string | undefined,
     field_id: string | undefined
-): [DepthSoilMoistureData | null, boolean, string | null] => {
+): [DepthSoilMoistureDataWithYear | null, boolean, string | null] => {
     const dataActionDispather = React.useContext(DataActionDispatcherContext);
     const { depthSoilMoistureData } = React.useContext(DataStateContext);
     const [state, setState] = React.useState<{ loading: boolean; error: null | string }>({
@@ -184,13 +184,13 @@ export const useDepthSoilMoistureData = (
     });
 
     React.useEffect(() => {
-        if (field_id && year && !depthSoilMoistureData) {
+        if (field_id && year !== '' && depthSoilMoistureData?.year !== year) {
             getData<{ depth_soil_moisture_data: DepthSoilMoistureData }>(
                 `fields/${field_id}/sensors/get-geostreams-data/soil-moisture/${year}`,
                 (data) => {
                     dataActionDispather({
                         type: 'updateDepthSoilMoistureData',
-                        depthSoilMoistureData: data.depth_soil_moisture_data
+                        depthSoilMoistureData: { year: year, data: data.depth_soil_moisture_data }
                     });
                     setState({ loading: false, error: null });
                 },
