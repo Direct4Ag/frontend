@@ -105,8 +105,6 @@ const CropRotationYield = (): JSX.Element => {
     React.useEffect(() => {
         if (cropRotationYieldData) {
             const years = Array.from(new Set(cropRotationYieldData.map((data) => data.planting_date.split('-')[0])));
-            // TODO: remove this when everything is fixed
-            years.push('2023');
 
             const crops = Array.from(new Set(cropRotationYieldData.map((data) => data.crop)));
             const tempDataset: CropYeildInfo[] = [];
@@ -150,7 +148,7 @@ const CropRotationYield = (): JSX.Element => {
             setCropInfoTable(tempCropInfoTable);
             setCropFertilizerInfoTable(tempCropFertilizerInfoTable);
             setCropYieldDataset(tempDataset);
-            setYearsSelect(years);
+            setYearsSelect(years.sort());
             setSelectedYear(years[0]);
         }
     }, [cropRotationYieldData]);
@@ -334,7 +332,7 @@ const CropRotationYield = (): JSX.Element => {
                     <Box sx={{ mt: '20px' }}>
                         {cropYieldDataset.map((cropData) => {
                             return (
-                                <>
+                                <Box key={cropData.crop}>
                                     <Box sx={{ mb: '20px' }}>
                                         <Typography
                                             variant="h6"
@@ -460,7 +458,7 @@ const CropRotationYield = (): JSX.Element => {
                                                 <TableBody>
                                                     {cropFertilizerInfoTable[cropData.crop].map((row) => {
                                                         return row.fertilizer.map((fertilizer, index) => (
-                                                            <TableRow key={row.year}>
+                                                            <TableRow key={`${row.year}`}>
                                                                 {index === 0 ? (
                                                                     <TableCell
                                                                         rowSpan={row.fertilizer.length}
@@ -488,7 +486,7 @@ const CropRotationYield = (): JSX.Element => {
                                             </Table>
                                         </TableContainer>
                                     </Box>
-                                </>
+                                </Box>
                             );
                         })}
                     </Box>
@@ -523,7 +521,7 @@ const CropRotationYield = (): JSX.Element => {
                         >
                             {yearsSelect.map((year) => (
                                 <MenuItem key={year} value={year}>
-                                    Year {year}
+                                    {year}
                                 </MenuItem>
                             ))}
                         </Select>

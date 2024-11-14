@@ -128,7 +128,7 @@ const Home = (): JSX.Element => {
             title: 'Web Tutorials',
             text: 'Review tutorials about A B C and D anytime.',
             listHeader: '',
-            listItems: ['Cover crops and soil nitrogen availability in maize and soybean systems', '?', '?'],
+            listItems: ['Cover crops and soil nitrogen availability in maize and soybean systems'],
             buttonText: 'Explore Tutorials (Coming Soon)',
             cardHeight: '380px'
         }

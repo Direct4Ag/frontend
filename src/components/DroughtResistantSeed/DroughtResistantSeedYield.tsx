@@ -178,6 +178,7 @@ const DroughtResistantSeedYield = (): JSX.Element => {
             setSelectedCrop(crops[0]);
 
             const years = Array.from(new Set(drsYieldData.map((data) => data.planting_date.split('-')[0])));
+            years.sort();
             setYearsSelect(years);
             setSelectedYear(years[0]);
 
@@ -474,7 +475,7 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                                     >
                                         {yearsSelect.map((year) => (
                                             <MenuItem key={year} value={year}>
-                                                Year {year}
+                                                {year}
                                             </MenuItem>
                                         ))}
                                     </Select>
@@ -817,7 +818,7 @@ const DroughtResistantSeedYield = (): JSX.Element => {
                                                                     </TableCell>
                                                                     {soilData?.map((data) => {
                                                                         return (
-                                                                            <TableCell key={data[row]}>
+                                                                            <TableCell key={`${data[row]}`}>
                                                                                 <Typography
                                                                                     variant="caption"
                                                                                     sx={{
