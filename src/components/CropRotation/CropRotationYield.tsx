@@ -90,8 +90,23 @@ const CropRotationYield: React.FC<{ cropRotationYieldData: CropRotationYieldData
         useNitrateConcentrationData(selectedYear, selectedField?.id);
     const [weatherData, weatherDataLoading, weatherDataLoadError] = useWeatherData(selectedYear, selectedField?.id);
 
+    const months = [
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December'
+    ];
+
     const [availableMonths, setAvailableMonths] = React.useState<number[]>([]);
-    const [selectedMonth, setSelectedMonth] = React.useState<number | null>(null);
+    const [selectedMonth, setSelectedMonth] = React.useState<number | null>(1);
     const [series, setSeries] = React.useState<AllSeriesType[]>([]);
     const [nitrateDataFound, setNitrateDataFound] = React.useState<boolean>(false);
 
@@ -113,6 +128,13 @@ const CropRotationYield: React.FC<{ cropRotationYieldData: CropRotationYieldData
             setSelectedYear(years[0]);
         }
     }, [years]);
+
+    React.useEffect(() => {
+        if (weatherData) {
+            const monthsArr = Array.from(new Set(weatherData.avg_air_temp.map((data) => data.month)));
+            setAvailableMonths(monthsArr.sort((a, b) => a - b));
+        }
+    }, [weatherData]);
 
     React.useEffect(() => {
         if (cropRotationYieldData) {
@@ -161,36 +183,12 @@ const CropRotationYield: React.FC<{ cropRotationYieldData: CropRotationYieldData
         }
     }, [cropRotationYieldData]);
 
-    const months = [
-        'January',
-        'February',
-        'March',
-        'April',
-        'May',
-        'June',
-        'July',
-        'August',
-        'September',
-        'October',
-        'November',
-        'December'
-    ];
-
     React.useEffect(() => {
         if (nitrateConcentrationData?.nitrate_concentration_data.length !== 0) {
-            const monthSet = new Set<number>();
-            nitrateConcentrationData?.nitrate_concentration_data.forEach((data) => {
-                monthSet.add(data.month);
-            });
-            const monthSortedArray = Array.from(monthSet).sort((a, b) => a - b);
-            setAvailableMonths(monthSortedArray);
-            setSelectedMonth(monthSortedArray[0]);
             setNitrateDataFound(true);
         } else {
             // fallback to default months
             setNitrateDataFound(false);
-            setAvailableMonths(months.map((_, idx) => idx + 1));
-            setSelectedMonth(1);
         }
     }, [nitrateConcentrationData]);
 
@@ -208,27 +206,28 @@ const CropRotationYield: React.FC<{ cropRotationYieldData: CropRotationYieldData
     React.useEffect(() => {
         if (selectedMonth !== null && selectedYear !== null && weatherData && nitrateConcentrationData) {
             const xAxisLabelsTemp = new Set<string>();
-            if (nitrateConcentrationData.nitrate_concentration_data.length === 0) {
-                // JavaScript months are 0-indexed (0 = January, 11 = December)
-                const date = new Date(parseInt(selectedYear, 10), selectedMonth - 1, 0).getDate(); // Get last day of the previous month (from month + 1)
+            // if (nitrateConcentrationData.nitrate_concentration_data.length === 0) {
 
-                // Generate an array from 1 to the number of days in the month
-                const days = Array.from({ length: date }, (_, k) => k + 1);
+            // } else {
+            //     nitrateConcentrationData.nitrate_concentration_data.forEach((data) => {
+            //         if (data.month === selectedMonth && data.year === parseInt(selectedYear, 10)) {
+            //             xAxisLabelsTemp.add(data.label);
+            //         }
+            //     });
+            // }
+            // JavaScript months are 0-indexed (0 = January, 11 = December)
+            const date = new Date(parseInt(selectedYear, 10), selectedMonth - 1, 0).getDate(); // Get last day of the previous month (from month + 1)
 
-                days.forEach((day) => {
-                    xAxisLabelsTemp.add(
-                        `${selectedYear}-${selectedMonth < 10 ? `0${selectedMonth}` : selectedMonth}-${
-                            day < 10 ? `0${day}` : day
-                        }`
-                    );
-                });
-            } else {
-                nitrateConcentrationData.nitrate_concentration_data.forEach((data) => {
-                    if (data.month === selectedMonth && data.year === parseInt(selectedYear, 10)) {
-                        xAxisLabelsTemp.add(data.label);
-                    }
-                });
-            }
+            // Generate an array from 1 to the number of days in the month
+            const days = Array.from({ length: date }, (_, k) => k + 1);
+
+            days.forEach((day) => {
+                xAxisLabelsTemp.add(
+                    `${selectedYear}-${selectedMonth < 10 ? `0${selectedMonth}` : selectedMonth}-${
+                        day < 10 ? `0${day}` : day
+                    }`
+                );
+            });
             const xAxisLabelsSortedArray = Array.from(xAxisLabelsTemp).sort();
             // set xAxis State value
             setXAxisLabels(xAxisLabelsSortedArray);
@@ -245,22 +244,32 @@ const CropRotationYield: React.FC<{ cropRotationYieldData: CropRotationYieldData
             });
 
             if (nitrateConcentrationData.nitrate_concentration_data.length !== 0) {
-                const nitrateConcLinePlotData: number[] = [];
+                // const nitrateConcLinePlotData: number[] = [];
+                let yAxisData = new Array<number | null>(xAxisLabelsSortedArray.length).fill(null);
                 nitrateConcentrationData.nitrate_concentration_data.forEach((data) => {
                     if (data.month === selectedMonth) {
                         const index = xAxisLabelsSortedArray.indexOf(data.label);
-                        nitrateConcLinePlotData[index] = data.average;
+                        if (index !== -1) {
+                            // nitrateConcLinePlotData[index] = data.average;
+                            yAxisData[index] = data.average;
+                        }
                     }
                 });
 
-                seriesTemp.push({
-                    type: 'line',
-                    data: nitrateConcLinePlotData,
-                    label: 'Nitrate Concentration',
-                    valueFormatter: (value: number | null) => `${value} mg/L`,
-                    color: '#FFA500',
-                    yAxisKey: 'nitrate-concentration'
-                });
+                if (yAxisData.every((val) => val === null)) {
+                    setNitrateDataFound(false);
+                } else {
+                    setNitrateDataFound(true);
+                    seriesTemp.push({
+                        type: 'line',
+                        // data: nitrateConcLinePlotData,
+                        data: yAxisData,
+                        label: 'Nitrate Concentration',
+                        valueFormatter: (value: number | null) => (value !== null ? `${value} mg/L` : 'No data'),
+                        color: '#FFA500',
+                        yAxisKey: 'nitrate-concentration'
+                    });
+                }
             }
 
             setSeries(seriesTemp);
