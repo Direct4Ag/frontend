@@ -127,7 +127,6 @@ const ExploreMap = ({ handleInfoOpen }: Props): JSX.Element => {
         if (map && isMapLoaded) {
             const fieldSource = map.getSource('fields') as maplibregl.GeoJSONSource;
             if (fieldSource) {
-                console.log('fields', fields);
                 fieldSource.setData({
                     type: 'FeatureCollection',
                     features: fields.map((field) => ({

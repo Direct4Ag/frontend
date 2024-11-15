@@ -245,7 +245,7 @@ const CropRotationYield: React.FC<{ cropRotationYieldData: CropRotationYieldData
 
             if (nitrateConcentrationData.nitrate_concentration_data.length !== 0) {
                 // const nitrateConcLinePlotData: number[] = [];
-                let yAxisData = new Array<number | null>(xAxisLabelsSortedArray.length).fill(null);
+                const yAxisData = new Array<number | null>(xAxisLabelsSortedArray.length).fill(null);
                 nitrateConcentrationData.nitrate_concentration_data.forEach((data) => {
                     if (data.month === selectedMonth) {
                         const index = xAxisLabelsSortedArray.indexOf(data.label);
@@ -470,6 +470,7 @@ const CropRotationYield: React.FC<{ cropRotationYieldData: CropRotationYieldData
                                         <TableBody>
                                             {cropFertilizerInfoTable[cropData.crop].map((row) => {
                                                 return row.fertilizer.map((fertilizer, index) => (
+                                                    // eslint-disable-next-line react/no-array-index-key
                                                     <TableRow key={`${rowId}-${index}`}>
                                                         {index === 0 ? (
                                                             <TableCell rowSpan={row.fertilizer.length} align="center">

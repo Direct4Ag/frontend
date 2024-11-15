@@ -136,7 +136,7 @@ const SoilMoistureDepthWithATMData: React.FC<{ selectedYear: string; sectionHead
                 .sort((a, b) => parseInt(a.replace('cm', ''), 10) - parseInt(b.replace('cm', ''), 10))
                 .forEach((depth, idx) => {
                     if (showSoilDepthData[depth]) {
-                        let yAxisData = new Array<number | null>(xAxisLabelsSortedArray.length).fill(null);
+                        const yAxisData = new Array<number | null>(xAxisLabelsSortedArray.length).fill(null);
                         if (xAxisLabelsSortedArray.length !== 0) {
                             soilDepthData.data[depth].data.forEach((data) => {
                                 if (data.month === selectedMonth) {
