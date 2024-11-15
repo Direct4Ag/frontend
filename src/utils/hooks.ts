@@ -219,7 +219,6 @@ export const useWeatherData = (
 
     React.useEffect(() => {
         if (field_id && year !== '' && weatherData?.year !== Number(year)) {
-            console.log('fetching weather data');
             getData<{ weather_data: DepthSoilMoistureData }>(
                 `fields/${field_id}/sensors/get-geostreams-data/weather/${year}`,
                 (data) => {

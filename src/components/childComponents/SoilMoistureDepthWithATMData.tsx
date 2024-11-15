@@ -71,12 +71,13 @@ const SoilMoistureDepthWithATMData: React.FC<{ selectedYear: string; sectionHead
         }
     }, [soilDepthData]);
 
-    const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: 'numeric' };
+    const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' };
+    const formattedDate = new Intl.DateTimeFormat('en-US', options);
     const soilMoistureValueFormatter = (value: string | number | null, axis: string) => {
         if (value !== null) {
             return axis === 'y'
                 ? `${Math.round((value as number) * 1000) / 1000} %`
-                : `${new Date(value).toLocaleDateString('en-US', options)}`;
+                : `${formattedDate.format(new Date(`${value}T00:00:00`))}`;
         }
         return '';
     };
@@ -101,9 +102,11 @@ const SoilMoistureDepthWithATMData: React.FC<{ selectedYear: string; sectionHead
         return months[monthNumber - 1];
     };
 
-    const [xAxisLabels, setXAxisLabels] = React.useState<string[]>([]);
-    const [series, setSeries] = React.useState<AllSeriesType[]>([]);
-    const [compositionWeatherData, setCompositionWeatherData] = React.useState<DatasetType>([]);
+    const [chartsData, setChartsData] = React.useState<{
+        xAxisLabels: string[];
+        series: AllSeriesType[];
+        compositionWeatherData: DatasetType;
+    }>({ xAxisLabels: [], series: [], compositionWeatherData: [] });
 
     React.useEffect(() => {
         if (selectedMonth !== null && soilDepthData && showSoilDepthData && weatherData) {
@@ -118,8 +121,6 @@ const SoilMoistureDepthWithATMData: React.FC<{ selectedYear: string; sectionHead
                 }
             });
             const xAxisLabelsSortedArray = Array.from(xAxisLabelsTemp).sort();
-            // set xAxis State value
-            setXAxisLabels(xAxisLabelsSortedArray);
 
             const seriesTemp: AllSeriesType[] = [];
             const avgPrecipitationData = getWeatherYAxisData(weatherData.precipitation, xAxisLabelsSortedArray);
@@ -135,13 +136,14 @@ const SoilMoistureDepthWithATMData: React.FC<{ selectedYear: string; sectionHead
                 .sort((a, b) => parseInt(a.replace('cm', ''), 10) - parseInt(b.replace('cm', ''), 10))
                 .forEach((depth, idx) => {
                     if (showSoilDepthData[depth]) {
-                        let yAxisData: number[] = [];
+                        let yAxisData = new Array<number | null>(xAxisLabelsSortedArray.length).fill(null);
                         if (xAxisLabelsSortedArray.length !== 0) {
-                            yAxisData = new Array<number>(xAxisLabelsSortedArray.length).fill(0);
                             soilDepthData.data[depth].data.forEach((data) => {
                                 if (data.month === selectedMonth) {
                                     const index = xAxisLabelsSortedArray.indexOf(data.label);
-                                    yAxisData[index] = data.average;
+                                    if (index !== -1) {
+                                        yAxisData[index] = data.average;
+                                    }
                                 }
                             });
                         }
@@ -155,8 +157,6 @@ const SoilMoistureDepthWithATMData: React.FC<{ selectedYear: string; sectionHead
                         });
                     }
                 });
-            // set series state value
-            setSeries(seriesTemp);
 
             const dataset: DatasetType = [];
             const avgAirTempData = getWeatherYAxisData(weatherData.avg_air_temp, xAxisLabelsSortedArray);
@@ -168,17 +168,24 @@ const SoilMoistureDepthWithATMData: React.FC<{ selectedYear: string; sectionHead
                     day: label
                 });
             });
-            setCompositionWeatherData(dataset);
+
+            setChartsData({
+                xAxisLabels: xAxisLabelsSortedArray,
+                series: seriesTemp,
+                compositionWeatherData: dataset
+            });
         }
     }, [selectedMonth, selectedYear, soilDepthData, showSoilDepthData, weatherData]);
 
     const getWeatherYAxisData = (data: GeostreamsData[], xAxisLabelsArr: string[]) => {
         if (data && xAxisLabelsArr.length !== 0) {
-            const yAxisData = new Array<number>(xAxisLabelsArr.length).fill(0);
+            const yAxisData = new Array<number | null>(xAxisLabelsArr.length).fill(null);
             data.forEach((dataVal) => {
                 if (dataVal.month === selectedMonth) {
                     const index = xAxisLabelsArr.indexOf(dataVal.label);
-                    yAxisData[index] = dataVal.average;
+                    if (index !== -1) {
+                        yAxisData[index] = dataVal.average;
+                    }
                 }
             });
             return yAxisData;
@@ -277,9 +284,9 @@ const SoilMoistureDepthWithATMData: React.FC<{ selectedYear: string; sectionHead
             <Box>
                 <Box sx={{ width: '100%', marginTop: '20px', marginBottom: '20px' }}>
                     <AirTempAndVPDPlotWithErrorHandling
-                        dataset={compositionWeatherData}
+                        dataset={chartsData.compositionWeatherData}
                         series={weatherDataSeries}
-                        xAxisLabels={xAxisLabels}
+                        xAxisLabels={chartsData.xAxisLabels}
                         valueFormatter={(value: string) => soilMoistureValueFormatter(value, 'x')}
                         isLoading={weatherDataLoading}
                         error={weatherDataLoadError}
@@ -342,8 +349,8 @@ const SoilMoistureDepthWithATMData: React.FC<{ selectedYear: string; sectionHead
                 </Box>
                 <Box sx={{ width: '100%', marginTop: '20px', marginBottom: '20px' }}>
                     <SoilMoistureByDepthGraphWithErrorHandling
-                        series={series}
-                        xAxisLabels={xAxisLabels}
+                        series={chartsData.series}
+                        xAxisLabels={chartsData.xAxisLabels}
                         valueFormatter={(value: string) => soilMoistureValueFormatter(value, 'x')}
                         yAxis={[
                             { id: 'depth', label: 'Soil Moisture (%)' },
