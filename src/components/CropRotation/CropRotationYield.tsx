@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useId } from 'react';
 
 import {
     Alert,
@@ -7,17 +7,13 @@ import {
     Container,
     Typography,
     Stack,
-    FormControl,
-    Select,
-    InputLabel,
     Table,
     TableBody,
     TableCell,
     TableContainer,
     TableHead,
     TableRow,
-    Paper,
-    MenuItem
+    Paper
 } from '@mui/material';
 
 import { DatasetType } from '@mui/x-charts/models/seriesType/config';
@@ -33,9 +29,10 @@ import { ChartsXAxis } from '@mui/x-charts/ChartsXAxis';
 import { ChartsYAxis } from '@mui/x-charts/ChartsYAxis';
 import { AllSeriesType, AxisConfig } from '@mui/x-charts';
 
-import { useNitrateConcentrationData, useWeatherData } from '@app/utils/hooks';
+import { useNitrateConcentrationData, useWeatherData, useAvailableYears } from '@app/utils/hooks';
 import SoilMoistureByDepthGraph from '@app/components/childComponents/SoilMoistureByDepthGraph';
 import AirTempAndVPDPlot from '@app/components/childComponents/AirTempAndVPDPlot';
+import YearsSelect from '@app/components/childComponents/YearsSelect';
 import withLoading from '@app/components/childComponents/hocs/withLoading';
 import withErrorHandling from '@app/components/childComponents/hocs/withErrorHandling';
 
@@ -47,6 +44,9 @@ const SoilMoistureByDepthGraphWithErrorHandling = withErrorHandling(SoilMoisture
 
 const AirTempAndVPDPlotWithLoading = withLoading(AirTempAndVPDPlot);
 const AirTempAndVPDPlotWithErrorHandling = withErrorHandling(AirTempAndVPDPlotWithLoading);
+
+const YearSelectWithLoading = withLoading(YearsSelect);
+const YearSelectWithErrorHandling = withErrorHandling(YearSelectWithLoading);
 
 interface CropYeildInfo {
     crop: string;
@@ -82,9 +82,9 @@ const CropRotationYield: React.FC<{ cropRotationYieldData: CropRotationYieldData
 }): JSX.Element => {
     const { selectedField } = React.useContext(DataStateContext);
 
-    const [yearsSelect, setYearsSelect] = React.useState<string[]>(['']);
-
     const [selectedYear, setSelectedYear] = React.useState<string>('');
+
+    const [years, yearsLoading, yearsError] = useAvailableYears(selectedField?.id);
 
     const [nitrateConcentrationData, nitrateConcentrationDataLoading, nitrateConcentrationDataError] =
         useNitrateConcentrationData(selectedYear, selectedField?.id);
@@ -109,9 +109,13 @@ const CropRotationYield: React.FC<{ cropRotationYieldData: CropRotationYieldData
     ];
 
     React.useEffect(() => {
-        if (cropRotationYieldData) {
-            const years = Array.from(new Set(cropRotationYieldData.map((data) => data.planting_date.split('-')[0])));
+        if (years) {
+            setSelectedYear(years[0]);
+        }
+    }, [years]);
 
+    React.useEffect(() => {
+        if (cropRotationYieldData) {
             const crops = Array.from(new Set(cropRotationYieldData.map((data) => data.crop)));
             const tempDataset: CropYeildInfo[] = [];
             const tempCropInfoTable: CropInfoTable = {};
@@ -154,8 +158,6 @@ const CropRotationYield: React.FC<{ cropRotationYieldData: CropRotationYieldData
             setCropInfoTable(tempCropInfoTable);
             setCropFertilizerInfoTable(tempCropFertilizerInfoTable);
             setCropYieldDataset(tempDataset);
-            setYearsSelect(years.sort());
-            setSelectedYear(years[0]);
         }
     }, [cropRotationYieldData]);
 
@@ -312,6 +314,8 @@ const CropRotationYield: React.FC<{ cropRotationYieldData: CropRotationYieldData
         }
     ];
 
+    const rowId = useId();
+
     return (
         <Container>
             <Box sx={{ my: '10px' }}>
@@ -457,7 +461,7 @@ const CropRotationYield: React.FC<{ cropRotationYieldData: CropRotationYieldData
                                         <TableBody>
                                             {cropFertilizerInfoTable[cropData.crop].map((row) => {
                                                 return row.fertilizer.map((fertilizer, index) => (
-                                                    <TableRow key={`${row.year}`}>
+                                                    <TableRow key={`${rowId}-${index}`}>
                                                         {index === 0 ? (
                                                             <TableCell rowSpan={row.fertilizer.length} align="center">
                                                                 {row.year}
@@ -501,27 +505,13 @@ const CropRotationYield: React.FC<{ cropRotationYieldData: CropRotationYieldData
                     Nitrogen Loss
                 </Typography>
             </Box>
-            <FormControl>
-                <InputLabel id="year-select-label">Choose a Year</InputLabel>
-                <Select
-                    labelId="year-select-label"
-                    id="year-select"
-                    value={selectedYear}
-                    label="Choose a Year"
-                    onChange={(e) => {
-                        setSelectedYear(e.target.value);
-                    }}
-                    sx={{
-                        width: '200px'
-                    }}
-                >
-                    {yearsSelect.map((year) => (
-                        <MenuItem key={year} value={year}>
-                            {year}
-                        </MenuItem>
-                    ))}
-                </Select>
-            </FormControl>
+            <YearSelectWithErrorHandling
+                error={yearsError}
+                isLoading={yearsLoading}
+                yearsSelect={years}
+                selectedYear={selectedYear}
+                setSelectedYear={setSelectedYear}
+            />
             <Box sx={{ marginTop: '20px' }}>
                 <Box sx={{ marginBottom: '30px' }}>
                     <Typography

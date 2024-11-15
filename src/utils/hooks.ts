@@ -206,6 +206,37 @@ export const useDepthSoilMoistureData = (
     return [depthSoilMoistureData, loading, error];
 };
 
+export const useAvailableYears = (field_id: string | undefined): [string[] | null, boolean, string | null] => {
+    const dataActionDispather = React.useContext(DataActionDispatcherContext);
+    const { cropRotationWeatherYears } = React.useContext(DataStateContext);
+    const [state, setState] = React.useState<{ loading: boolean; error: null | string }>({
+        loading: true,
+        error: null
+    });
+
+    React.useEffect(() => {
+        if (field_id && !cropRotationWeatherYears) {
+            getData<{ years: string[] }>(
+                `fields/${field_id}/sensors/get-years`,
+                (data) => {
+                    dataActionDispather({
+                        type: 'updateCropRotationWeatherYears',
+                        cropRotationWeatherYears: data.years
+                    });
+                    setState({ loading: false, error: null });
+                },
+                () => setState({ loading: false, error: 'Failed to fetch available years' })
+            );
+        } else if (cropRotationWeatherYears) {
+            setState({ loading: false, error: null });
+        }
+    }, [field_id]);
+
+    const { loading, error } = state;
+
+    return [cropRotationWeatherYears, loading, error];
+};
+
 export const useWeatherData = (
     year: string | undefined | null,
     field_id: string | undefined
