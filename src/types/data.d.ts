@@ -83,6 +83,11 @@ interface DepthSoilMoistureData {
     };
 }
 
+interface DepthSoilMoistureDataWithYear {
+    year: string;
+    data: DepthSoilMoistureData;
+}
+
 interface WeatherData {
     year: number;
     avg_air_temp: GeostreamsData[];
@@ -110,7 +115,7 @@ interface DataState {
     selectedResearch: ResearchDetail | null;
     soilData: SoilData[] | null;
     drsYieldData: DRSYieldData[] | null;
-    depthSoilMoistureData: DepthSoilMoistureData | null;
+    depthSoilMoistureData: DepthSoilMoistureDataWithYear | null;
     weatherData: WeatherData | null;
     nitrateConcentrationData: NitrateConcData | null;
     cropRotationYield: CropRotationYieldData[] | null;
