@@ -88,7 +88,8 @@ const Home = (): JSX.Element => {
                 },
                 {
                     title: 'Irrigation Strategies',
-                    description: 'Coming soon: here will be explanations.',
+                    description:
+                        'As changing climate brings more uncertainty with regard to weather patterns, knowing how different irrigation and water management strategies performs in your area is becoming more important for optimal crop growth and yield.',
                     researchLink: '#',
                     dataToolLink: '#',
                     exploreFilter: gs.CONSTANTS.IRRIGATION,

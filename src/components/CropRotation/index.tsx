@@ -25,10 +25,10 @@ const CropRotationComponent: React.FC<{ research: ResearchDetail | null; researc
     );
     const leftSidebarDetails = {
         dataType: 'Crop Rotation',
-        pi: '-',
-        contactInfo: '-',
-        introduction: '-',
-        conclusion: '-'
+        pi: selectedResearch?.research_pi ?? '-',
+        contactInfo: selectedResearch?.research_contact_info ?? '-',
+        introduction: selectedResearch?.research_introduction ?? '-',
+        conclusion: selectedResearch?.research_conclusion ?? '-'
     };
 
     return (

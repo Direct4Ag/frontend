@@ -53,6 +53,11 @@ interface UpdateCropRotationYieldData {
     cropRotationYield: CropRotationYieldData;
 }
 
+interface UpdateCropRotationWeatherYears {
+    type: 'updateCropRotationWeatherYears';
+    cropRotationWeatherYears: string[];
+}
+
 type DataAction =
     | LoadResearches
     | UpdateExploreFilter

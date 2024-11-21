@@ -19,6 +19,10 @@ interface ResearchSummary {
     research_name: string;
     research_area: string;
     research_type: string;
+    research_pi: string;
+    research_contact_info: string;
+    research_introduction: string;
+    research_conclusion: string;
 }
 
 interface FieldDetail extends FieldsSummary {
@@ -119,6 +123,7 @@ interface DataState {
     weatherData: WeatherData | null;
     nitrateConcentrationData: NitrateConcData | null;
     cropRotationYield: CropRotationYieldData[] | null;
+    cropRotationWeatherYears: string[] | null;
 }
 
 type ExploreFilter = 'All' | 'Cover Crop' | 'Crop Rotation' | 'Drought-resistant Seeds' | 'Irrigation Strategies';

@@ -20,11 +20,10 @@ const IrrigationStrategiesComponent: React.FC<{ research: ResearchDetail | null;
 
     const leftSidebarDetails = {
         dataType: 'Irrigation Strategies',
-        pi: '-',
-        contactInfo: '-',
-        introduction:
-            'This is an introduction to the irrigation strategies research. It will be updated with more information soon.',
-        conclusion: 'Seed 1 is more drought tolerant than seed 2'
+        pi: selectedResearch?.research_pi ?? '-',
+        contactInfo: selectedResearch?.research_contact_info ?? '-',
+        introduction: selectedResearch?.research_introduction ?? '-',
+        conclusion: selectedResearch?.research_conclusion ?? '-'
     };
 
     return (
