@@ -6,6 +6,7 @@ const LazyExplore = lazy(() => import('./components/Explore'));
 const LazyDroughtResistantSeed = lazy(() => import('./components/DroughtResistantSeed'));
 const LazyCropRotation = lazy(() => import('./components/CropRotation'));
 const LazyIrrigationStrategies = lazy(() => import('./components/IrrigationStrategies'));
+const LazyCoverCrop = lazy(() => import('./components/CoverCrop'));
 
 /**
  A mapping of routes to `RouteProps`.
@@ -46,6 +47,13 @@ const routes: { [key: string]: import('react-router-dom').RouteProps } = {
         element: (
             <Suspense fallback={<Loading />}>
                 <LazyIrrigationStrategies />
+            </Suspense>
+        )
+    },
+    'cover-crop/:research_id': {
+        element: (
+            <Suspense fallback={<Loading />}>
+                <LazyCoverCrop />
             </Suspense>
         )
     }

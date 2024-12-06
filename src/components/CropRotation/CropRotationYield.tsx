@@ -186,7 +186,6 @@ const CropRotationYield: React.FC<{ cropRotationYieldData: CropRotationYieldData
     React.useEffect(() => {
         if (nitrateConcentrationData?.nitrate_concentration_data.length !== 0) {
             setNitrateDataFound(true);
-            console.log(nitrateConcentrationData);
         } else {
             // fallback to default months
             setNitrateDataFound(false);
@@ -258,7 +257,6 @@ const CropRotationYield: React.FC<{ cropRotationYieldData: CropRotationYieldData
                 });
 
                 if (yAxisData.every((val) => val === null)) {
-                    console.log(yAxisData);
                     setNitrateDataFound(false);
                 } else {
                     setNitrateDataFound(true);

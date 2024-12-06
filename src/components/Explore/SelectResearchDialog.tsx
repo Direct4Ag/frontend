@@ -48,12 +48,12 @@ const SelectResearchDialog = ({ open, handleClose, researches, handleUpdateSelec
             <IconButton
                 aria-label="close"
                 onClick={handleClose}
-                sx={(theme) => ({
+                sx={{
                     position: 'absolute',
                     right: 8,
                     top: 8,
                     color: theme.palette.grey[500]
-                })}
+                }}
             >
                 <CloseIcon />
             </IconButton>

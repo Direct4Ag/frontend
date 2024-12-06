@@ -135,7 +135,7 @@ const FarmCard: FC<Props> = ({ farm, idx }): JSX.Element => {
                         Fields
                     </Typography>
                     <Stack direction="row" flexWrap="wrap" useFlexGap spacing={{ xs: 1, sm: 2 }}>
-                        {fields.map((field, idx) => (
+                        {fields.map((field, idex) => (
                             <Button
                                 key={field.field_name}
                                 size="small"
@@ -153,7 +153,7 @@ const FarmCard: FC<Props> = ({ farm, idx }): JSX.Element => {
                                     dataActionDispatcher({ type: 'updateSelectedField', selectedField: field });
                                     dataActionDispatcher({
                                         type: 'updateSelectedResearch',
-                                        selectedResearch: farm.fields[idx].res_detail
+                                        selectedResearch: farm.fields[idex].res_detail
                                     });
                                 }}
                                 endIcon={<ChevronRightIcon />}

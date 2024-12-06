@@ -141,6 +141,39 @@ export const useSoilTextureData = (
     return [soilData, loading, error];
 };
 
+export const useCoverCropData = (
+    researchId: string | undefined
+): [CoverCropYieldData[] | null, boolean, string | null] => {
+    const dataActionDispatcher = React.useContext(DataActionDispatcherContext);
+    const { coverCropYield } = React.useContext(DataStateContext);
+    const [state, setState] = React.useState<{ loading: boolean; error: null | string }>({
+        loading: true,
+        error: null
+    });
+
+    React.useEffect(() => {
+        if (researchId && !coverCropYield) {
+            getData<CoverCropYieldData[]>(
+                'cover-crop/by_research_id/' + researchId,
+                (data) => {
+                    dataActionDispatcher({
+                        type: 'updateCoverCropYieldData',
+                        coverCropYield: data
+                    });
+                    setState({ loading: false, error: null });
+                },
+                () => setState({ loading: false, error: 'Failed to fetch cover crop data' })
+            );
+        } else if (coverCropYield) {
+            setState({ loading: false, error: null });
+        }
+    }, [researchId]);
+
+    const { loading, error } = state;
+
+    return [coverCropYield, loading, error];
+};
+
 export const useDRSYieldData = (researchId: string | undefined): [DRSYieldData[] | null, boolean, string | null] => {
     const dataActionDispatcher = React.useContext(DataActionDispatcherContext);
     const { drsYieldData } = React.useContext(DataStateContext);

@@ -58,6 +58,11 @@ interface UpdateCropRotationWeatherYears {
     cropRotationWeatherYears: string[];
 }
 
+interface UpdateCoverCropYieldData {
+    type: 'updateCoverCropYieldData';
+    coverCropYield: CoverCropYieldData[];
+}
+
 type DataAction =
     | LoadResearches
     | UpdateExploreFilter
@@ -69,4 +74,6 @@ type DataAction =
     | UpdateDepthSoilMoistureData
     | UpdateNitrateConcentrationData
     | UpdateCropRotationYieldData
-    | UpdateWeatherData;
+    | UpdateWeatherData
+    | UpdateCropRotationWeatherYears
+    | UpdateCoverCropYieldData;

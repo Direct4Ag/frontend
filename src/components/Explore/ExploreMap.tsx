@@ -154,6 +154,12 @@ const ExploreMap = ({ handleInfoOpen }: Props): JSX.Element => {
                 selectedResearch: research
             });
             navigate(`/irrigation-strategies/${research.id}`);
+        } else if (research && research.research_type === gs.CONSTANTS.COVERCROP) {
+            dataActionDispatcher({
+                type: 'updateSelectedResearch',
+                selectedResearch: research
+            });
+            navigate(`/cover-crop/${research.id}`);
         } else {
             handleInfoOpen({
                 message: 'No research data available for this field',

@@ -68,8 +68,14 @@ const SoilMoistureDepthWithATMData: React.FC<{ selectedYear: string; sectionHead
             setAvailableMonths(monthSortedArray);
             setSelectedMonth(monthSortedArray[0]);
             setShowSoilDepthData(soilDepthDataTemp);
+        } else if (soilDepthData === null && weatherData !== null) {
+            const monthsArr = Array.from(new Set(weatherData.avg_air_temp.map((data) => data.month))).sort(
+                (a, b) => a - b
+            );
+            setAvailableMonths(monthsArr);
+            setSelectedMonth(monthsArr[0]);
         }
-    }, [soilDepthData]);
+    }, [soilDepthData, weatherData]);
 
     const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' };
     const formattedDate = new Intl.DateTimeFormat('en-US', options);
@@ -231,7 +237,7 @@ const SoilMoistureDepthWithATMData: React.FC<{ selectedYear: string; sectionHead
                 </Typography>
             </Box>
             <Box>
-                {soilDepthData !== null && weatherData !== null ? (
+                {soilDepthData !== null || weatherData !== null ? (
                     <Box sx={{ marginBottom: '30px' }}>
                         <Typography
                             variant="subtitle2"
