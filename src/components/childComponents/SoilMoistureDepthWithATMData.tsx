@@ -43,19 +43,19 @@ const SoilMoistureDepthWithATMData: React.FC<{ selectedYear: string; sectionHead
     selectedYear,
     sectionHeader
 }) => {
-    const { selectedField } = React.useContext(DataStateContext);
+    const { selectedResearch } = React.useContext(DataStateContext);
 
     const [soilDepthData, soilMoistureLoading, soilMoistureLoadError] = useDepthSoilMoistureData(
         selectedYear,
-        selectedField?.id
+        selectedResearch?.id
     );
-    const [weatherData, weatherDataLoading, weatherDataLoadError] = useWeatherData(selectedYear, selectedField?.id);
+    const [weatherData, weatherDataLoading, weatherDataLoadError] = useWeatherData(selectedYear, selectedResearch?.id);
     const [showSoilDepthData, setShowSoilDepthData] = React.useState<ShowSoilDepthData | null>(null);
     const [availableMonths, setAvailableMonths] = React.useState<number[]>([]);
     const [selectedMonth, setSelectedMonth] = React.useState<number | null>(null);
 
     React.useEffect(() => {
-        if (soilDepthData) {
+        if (soilDepthData !== null) {
             const monthSet = new Set<number>();
             const soilDepthDataTemp: ShowSoilDepthData = {};
             Object.keys(soilDepthData.data).forEach((depth) => {
@@ -231,58 +231,76 @@ const SoilMoistureDepthWithATMData: React.FC<{ selectedYear: string; sectionHead
                 </Typography>
             </Box>
             <Box>
-                <Box sx={{ marginBottom: '30px' }}>
-                    <Typography
-                        variant="subtitle2"
-                        sx={{
-                            font: 'Roboto',
-                            fontWeight: 500,
-                            fontSize: '14px',
-                            lineHeight: '24px',
-                            letterSpacing: '0.1px',
-                            color: theme.palette.text.primary,
-                            marginBottom: '10px'
-                        }}
-                    >
-                        Choose a Month
-                    </Typography>
-                    <Stack direction="row" flexWrap="wrap" useFlexGap spacing={2}>
-                        {availableMonths.length !== 0 ? (
-                            availableMonths.map((monthNum) => {
-                                return (
-                                    <Chip
-                                        key={monthNum}
-                                        label={getMonthName(monthNum)}
-                                        sx={{
-                                            'backgroundColor':
-                                                selectedMonth === monthNum
-                                                    ? theme.palette.default.btnLightBackground
-                                                    : theme.palette.primary.light,
-                                            'color': theme.palette.default.chipTextColor,
-                                            '&&:hover': {
-                                                backgroundColor: theme.palette.default.btnLightBackground
-                                            },
-                                            '&&:focus': {
-                                                backgroundColor: theme.palette.default.btnLightBackground
-                                            }
-                                        }}
-                                        variant="filled"
-                                        onClick={() => {
-                                            setSelectedMonth(monthNum);
-                                        }}
-                                    />
-                                );
-                            })
-                        ) : (
-                            <Box display="flex" justifyContent="center" justifyItems="center">
-                                <CircularProgress />
-                            </Box>
-                        )}
-                    </Stack>
-                </Box>
+                {soilDepthData !== null && weatherData !== null ? (
+                    <Box sx={{ marginBottom: '30px' }}>
+                        <Typography
+                            variant="subtitle2"
+                            sx={{
+                                font: 'Roboto',
+                                fontWeight: 500,
+                                fontSize: '14px',
+                                lineHeight: '24px',
+                                letterSpacing: '0.1px',
+                                color: theme.palette.text.primary,
+                                marginBottom: '10px'
+                            }}
+                        >
+                            Choose a Month
+                        </Typography>
+                        <Stack direction="row" flexWrap="wrap" useFlexGap spacing={2}>
+                            {availableMonths.length !== 0 ? (
+                                availableMonths.map((monthNum) => {
+                                    return (
+                                        <Chip
+                                            key={monthNum}
+                                            label={getMonthName(monthNum)}
+                                            sx={{
+                                                'backgroundColor':
+                                                    selectedMonth === monthNum
+                                                        ? theme.palette.default.btnLightBackground
+                                                        : theme.palette.primary.light,
+                                                'color': theme.palette.default.chipTextColor,
+                                                '&&:hover': {
+                                                    backgroundColor: theme.palette.default.btnLightBackground
+                                                },
+                                                '&&:focus': {
+                                                    backgroundColor: theme.palette.default.btnLightBackground
+                                                }
+                                            }}
+                                            variant="filled"
+                                            onClick={() => {
+                                                setSelectedMonth(monthNum);
+                                            }}
+                                        />
+                                    );
+                                })
+                            ) : (
+                                <Box display="flex" justifyContent="center" justifyItems="center">
+                                    <CircularProgress />
+                                </Box>
+                            )}
+                        </Stack>
+                    </Box>
+                ) : null}
             </Box>
             <Box>
                 <Box sx={{ width: '100%', marginTop: '20px', marginBottom: '20px' }}>
+                    <Box sx={{ marginBottom: '20px' }}>
+                        <Typography
+                            variant="caption"
+                            sx={{
+                                font: 'Poppins',
+                                fontWeight: 400,
+                                fontSize: '16px',
+                                lineHeight: '25.6px',
+                                letterSpacing: '0.15px',
+                                marginRight: '5px',
+                                color: theme.palette.text.primary
+                            }}
+                        >
+                            Air Temperature and Vapor Pressure Deficit
+                        </Typography>
+                    </Box>
                     <AirTempAndVPDPlotWithErrorHandling
                         dataset={chartsData.compositionWeatherData}
                         series={weatherDataSeries}

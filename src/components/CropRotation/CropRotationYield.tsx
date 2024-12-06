@@ -80,15 +80,15 @@ interface CropFertilizerInfoTable {
 const CropRotationYield: React.FC<{ cropRotationYieldData: CropRotationYieldData[] | null }> = ({
     cropRotationYieldData
 }): JSX.Element => {
-    const { selectedField } = React.useContext(DataStateContext);
+    const { selectedResearch } = React.useContext(DataStateContext);
 
     const [selectedYear, setSelectedYear] = React.useState<string>('');
 
-    const [years, yearsLoading, yearsError] = useAvailableYears(selectedField?.id);
+    const [years, yearsLoading, yearsError] = useAvailableYears(selectedResearch?.id);
 
     const [nitrateConcentrationData, nitrateConcentrationDataLoading, nitrateConcentrationDataError] =
-        useNitrateConcentrationData(selectedYear, selectedField?.id);
-    const [weatherData, weatherDataLoading, weatherDataLoadError] = useWeatherData(selectedYear, selectedField?.id);
+        useNitrateConcentrationData(selectedYear, selectedResearch?.id);
+    const [weatherData, weatherDataLoading, weatherDataLoadError] = useWeatherData(selectedYear, selectedResearch?.id);
 
     const months = [
         'January',
@@ -186,6 +186,7 @@ const CropRotationYield: React.FC<{ cropRotationYieldData: CropRotationYieldData
     React.useEffect(() => {
         if (nitrateConcentrationData?.nitrate_concentration_data.length !== 0) {
             setNitrateDataFound(true);
+            console.log(nitrateConcentrationData);
         } else {
             // fallback to default months
             setNitrateDataFound(false);
@@ -257,6 +258,7 @@ const CropRotationYield: React.FC<{ cropRotationYieldData: CropRotationYieldData
                 });
 
                 if (yAxisData.every((val) => val === null)) {
+                    console.log(yAxisData);
                     setNitrateDataFound(false);
                 } else {
                     setNitrateDataFound(true);

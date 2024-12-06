@@ -14,6 +14,7 @@ type Props = {
         farm: FarmSummary;
         fields: {
             res_id: string;
+            res_detail: ResearchDetail;
             research_name: string;
             field: FieldsSummary;
         }[];
@@ -134,7 +135,7 @@ const FarmCard: FC<Props> = ({ farm, idx }): JSX.Element => {
                         Fields
                     </Typography>
                     <Stack direction="row" flexWrap="wrap" useFlexGap spacing={{ xs: 1, sm: 2 }}>
-                        {fields.map((field) => (
+                        {fields.map((field, idx) => (
                             <Button
                                 key={field.field_name}
                                 size="small"
@@ -150,6 +151,10 @@ const FarmCard: FC<Props> = ({ farm, idx }): JSX.Element => {
                                 }}
                                 onClick={() => {
                                     dataActionDispatcher({ type: 'updateSelectedField', selectedField: field });
+                                    dataActionDispatcher({
+                                        type: 'updateSelectedResearch',
+                                        selectedResearch: farm.fields[idx].res_detail
+                                    });
                                 }}
                                 endIcon={<ChevronRightIcon />}
                             >
