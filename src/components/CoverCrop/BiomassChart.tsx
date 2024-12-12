@@ -85,14 +85,13 @@ const BiomassChart: React.FC<{ data: CoverCropData[] }> = ({ data }) => {
                         label: 'Date'
                     }
                 ]}
-                yAxis={[{ label: 'Predicted Biomass' }]}
+                yAxis={[{ label: `Predicted Biomass ${data[0].cover_crop_biomass_unit ?? ''}` }]}
                 sx={{
                     [`.${axisClasses.left} .${axisClasses.label}`]: {
                         // Move the y-axis label with CSS
-                        transform: 'translateX(-10px)'
+                        transform: 'translateX(-12px)'
                     }
                 }}
-                // yAxis={[{ id: 'predicted-biomass', label: 'Predicted Biomass' }, { id: 'actual-biomass', label: 'Observed Biomass' }]}
             >
                 <LinePlot />
                 <MarkPlot />

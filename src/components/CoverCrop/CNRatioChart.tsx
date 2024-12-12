@@ -58,7 +58,7 @@ const CNRatioChart: React.FC<{ data: CoverCropData[] }> = ({ data }) => {
                     textTransform: 'capitalize'
                 }}
             >
-                C:N Ratio
+                C:N Ratio (Carbon-to-Nitrogen Ratio)
             </Typography>
             <ResponsiveChartContainer
                 height={380}
