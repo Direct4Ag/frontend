@@ -1,7 +1,7 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 import { Box } from '@mui/system';
-import Typography from '@mui/material/Typography';
 
 import logo from './D4ALogo.png';
 
@@ -17,16 +17,24 @@ const Footer = (): JSX.Element => {
                 background: 'linear-gradient(292.79deg, rgba(232, 245, 250, 0.75) 0%, rgba(243, 248, 253, 0.37) 100%)'
             })}
         >
-            <img alt="Direct4Ag Logo" src={logo} style={{ marginRight: '10px' }} />
-            <Typography variant="body1" sx={{ mx: '10px' }}>
-                Copyright Statement
-            </Typography>
-            <Typography variant="body1" sx={{ mx: '10px' }}>
-                API
-            </Typography>
-            <Typography variant="body1" sx={{ marginLeft: '10px' }}>
-                Ask a Question
-            </Typography>
+            <Box>
+                <img alt="Direct4Ag Logo" src={logo} style={{ marginRight: '10px' }} />
+            </Box>
+            <Box sx={{ mx: '10px' }}>
+                <a
+                    href={`${window.COVERCROP_API}/api/docs`}
+                    style={{ textDecoration: 'none', color: 'black' }}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    API
+                </a>
+            </Box>
+            <Box sx={{ mx: '10px' }}>
+                <Link to="mailto: dir4agteam@illinois.edu" style={{ textDecoration: 'none', color: 'black' }}>
+                    Ask a Question
+                </Link>
+            </Box>
         </Box>
     );
 };
