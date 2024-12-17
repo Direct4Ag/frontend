@@ -1,6 +1,16 @@
 import React from 'react';
 
-import { Box, CircularProgress, Chip, Container, FormControlLabel, Stack, Switch, Typography } from '@mui/material';
+import {
+    Alert,
+    Box,
+    CircularProgress,
+    Chip,
+    Container,
+    FormControlLabel,
+    Stack,
+    Switch,
+    Typography
+} from '@mui/material';
 
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import { alpha, styled } from '@mui/material/styles';
@@ -113,6 +123,7 @@ const SoilMoistureDepthWithATMData: React.FC<{ selectedYear: string; sectionHead
         series: AllSeriesType[];
         compositionWeatherData: DatasetType;
     }>({ xAxisLabels: [], series: [], compositionWeatherData: [] });
+    console.log(soilDepthData);
 
     React.useEffect(() => {
         if (selectedMonth !== null && soilDepthData && showSoilDepthData && weatherData) {
@@ -163,6 +174,42 @@ const SoilMoistureDepthWithATMData: React.FC<{ selectedYear: string; sectionHead
                         });
                     }
                 });
+
+            const dataset: DatasetType = [];
+            const avgAirTempData = getWeatherYAxisData(weatherData.avg_air_temp, xAxisLabelsSortedArray);
+            const avgVpdData = getWeatherYAxisData(weatherData.avg_vpd, xAxisLabelsSortedArray);
+            xAxisLabelsSortedArray.forEach((label, idx) => {
+                dataset.push({
+                    avgAirTemp: avgAirTempData[idx],
+                    avgVpd: avgVpdData[idx],
+                    day: label
+                });
+            });
+
+            setChartsData({
+                xAxisLabels: xAxisLabelsSortedArray,
+                series: seriesTemp,
+                compositionWeatherData: dataset
+            });
+        } else if (selectedMonth !== null && soilDepthData === null && weatherData) {
+            const xAxisLabelsTemp = new Set<string>();
+            weatherData.avg_air_temp.forEach((data) => {
+                if (data.month === selectedMonth) {
+                    xAxisLabelsTemp.add(data.label);
+                }
+            });
+            const xAxisLabelsSortedArray = Array.from(xAxisLabelsTemp).sort();
+
+            const seriesTemp: AllSeriesType[] = [];
+            const avgPrecipitationData = getWeatherYAxisData(weatherData.precipitation, xAxisLabelsSortedArray);
+            seriesTemp.push({
+                type: 'bar',
+                data: avgPrecipitationData,
+                label: 'Precipitation',
+                valueFormatter: (value: number | null) => `${value} mm`,
+                color: '#28D0DE',
+                yAxisKey: 'avg-precipitation'
+            });
 
             const dataset: DatasetType = [];
             const avgAirTempData = getWeatherYAxisData(weatherData.avg_air_temp, xAxisLabelsSortedArray);
@@ -372,16 +419,25 @@ const SoilMoistureDepthWithATMData: React.FC<{ selectedYear: string; sectionHead
                     </Box>
                 </Box>
                 <Box sx={{ width: '100%', marginTop: '20px', marginBottom: '20px' }}>
+                    {soilDepthData === null ? (
+                        <Box sx={{ my: '10px' }}>
+                            <Alert severity="info">No Soil moisture data found for the selected year and month.</Alert>
+                        </Box>
+                    ) : null}
                     <SoilMoistureByDepthGraphWithErrorHandling
                         series={chartsData.series}
                         xAxisLabels={chartsData.xAxisLabels}
                         valueFormatter={(value: string) => soilMoistureValueFormatter(value, 'x')}
-                        yAxis={[
-                            { id: 'depth', label: 'Soil Moisture (%)' },
-                            { id: 'avg-precipitation', label: 'Precipitation (mm)' }
-                        ]}
-                        isLoading={soilMoistureLoading}
-                        error={soilMoistureLoadError}
+                        yAxis={
+                            soilDepthData !== null
+                                ? [
+                                      { id: 'depth', label: 'Soil Moisture (%)' },
+                                      { id: 'avg-precipitation', label: 'Precipitation (mm)' }
+                                  ]
+                                : [{ id: 'avg-precipitation', label: 'Precipitation (mm)' }]
+                        }
+                        isLoading={soilMoistureLoading && weatherDataLoading}
+                        error={soilMoistureLoadError || weatherDataLoadError}
                     />
                 </Box>
             </Box>

@@ -229,7 +229,7 @@ export const useDepthSoilMoistureData = (
                 `research/${research_id}/sensors/get-geostreams-data/soil-moisture/${year}`,
                 (data) => {
                     if (isEmptyData(data.depth_soil_moisture_data)) {
-                        setState({ loading: false, error: 'No Sensor data available for this year' });
+                        setState({ loading: false, error: null });
                         dataActionDispather({
                             type: 'updateDepthSoilMoistureData',
                             depthSoilMoistureData: null
