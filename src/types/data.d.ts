@@ -111,6 +111,29 @@ interface FieldSensors {
     sensor_id: number;
 }
 
+interface CoverCropYieldData {
+    crop: string;
+    planting_date: string;
+    planting_method: string;
+    seeding_rate: number;
+    seeding_rate_unit: string;
+    termination_date: string;
+    cover_crop_research_ref_id: string;
+    research: ResearchSummary;
+    cover_crop_data: CoverCropData[];
+}
+
+interface CoverCropData {
+    sampling_date: string;
+    observed_cover_crop_biomass: number | null;
+    predicted_cover_crop_biomass: number | null;
+    cover_crop_biomass_unit: string;
+    observed_CN_ratio: number | null;
+    predicted_CN_ratio: number | null;
+    cover_crop_data_ref_id: string;
+    id: string;
+}
+
 interface DataState {
     researches: ResearchDetail[];
     selectedFilter: ExploreFilter;
@@ -124,6 +147,7 @@ interface DataState {
     nitrateConcentrationData: NitrateConcData | null;
     cropRotationYield: CropRotationYieldData[] | null;
     cropRotationWeatherYears: string[] | null;
+    coverCropYield: CoverCropYieldData[] | null;
 }
 
 type ExploreFilter = 'All' | 'Cover Crop' | 'Crop Rotation' | 'Drought-resistant Seeds' | 'Irrigation Strategies';

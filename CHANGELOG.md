@@ -18,6 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Bug fixes [#30](https://github.com/Direct4Ag/frontend/issues/30)
 - Irrigation Strategies Page [#34](https://github.com/Direct4Ag/frontend/issues/34)
 - Year dropdown for weather data in crop roatation. [#36](https://github.com/Direct4Ag/frontend/issues/36)
+- Cover Crop Research Page [#38](https://github.com/Direct4Ag/frontend/issues/38)
 
 ### Fixed
 

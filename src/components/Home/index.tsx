@@ -33,6 +33,7 @@ import droughtResistantImg from './drought_resistant.png';
 import irrigationStratImg from './irrigation_strategy.png';
 import avatar from './avatar.png';
 import collaboratorsImg from './affiliations.png';
+import PersonOutlineRoundedIcon from '@mui/icons-material/PersonOutlineRounded';
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: 'transparent',
@@ -644,17 +645,18 @@ const Home = (): JSX.Element => {
                         </Grid>
                     </Grid>
 
-                    <Stack spacing={4} direction="row" flexWrap="wrap" justifyContent="center" alignItems="center">
+                    <Stack spacing={2} direction="row" flexWrap="wrap" justifyContent="center" alignItems="center">
                         {collaborators.map((collaborator) => {
                             return (
                                 <Stack
                                     key={collaborator.name}
                                     spacing={2}
                                     direction="column"
-                                    sx={{ width: 180, height: 380, textAlign: 'center' }}
+                                    sx={{ width: 180, height: 200, textAlign: 'center' }}
                                 >
                                     <Box>
-                                        <img src={collaborator.image} alt={collaborator.name} />
+                                        {/* <img src={collaborator.image} alt={collaborator.name} /> */}
+                                        <PersonOutlineRoundedIcon sx={{ fontSize: '50px' }} />
                                     </Box>
                                     <Box>
                                         <Typography
@@ -795,6 +797,7 @@ const Home = (): JSX.Element => {
                                     >
                                         <Button
                                             variant="contained"
+                                            href="mailto: dir4agteam@illinois.edu"
                                             sx={(theme) => ({
                                                 color: theme.palette.default.contrastText,
                                                 backgroundColor: theme.palette.primary.main,
@@ -881,6 +884,7 @@ const Home = (): JSX.Element => {
                                 <CardActions sx={{ display: 'flex', justifyContent: 'center' }}>
                                     <Button
                                         variant="contained"
+                                        href="mailto: dir4agteam@illinois.edu"
                                         sx={(theme) => ({
                                             color: theme.palette.default.contrastText,
                                             backgroundColor: theme.palette.primary.main,

@@ -6,7 +6,7 @@ import { DataActionDispatcherContext, DataStateContext } from '@app/store/contex
 
 export const useNitrateConcentrationData = (
     year: string | undefined | null,
-    field_id: string | undefined
+    research_id: string | undefined
 ): [NitrateConcData | null, boolean, string | null] => {
     const dataActionDispatcher = React.useContext(DataActionDispatcherContext);
     const { nitrateConcentrationData } = React.useContext(DataStateContext);
@@ -16,9 +16,9 @@ export const useNitrateConcentrationData = (
     });
 
     React.useEffect(() => {
-        if (field_id && year !== '' && nitrateConcentrationData?.year !== Number(year)) {
+        if (research_id && year !== '' && nitrateConcentrationData?.year !== Number(year)) {
             getData<NitrateConcData>(
-                `fields/${field_id}/sensors/get-geostreams-data/nitrate-conc/${year}`,
+                `research/${research_id}/sensors/get-geostreams-data/nitrate-conc/${year}`,
                 (data) => {
                     dataActionDispatcher({
                         type: 'updateNitrateConcentrationData',
@@ -34,7 +34,7 @@ export const useNitrateConcentrationData = (
         } else if (nitrateConcentrationData) {
             setState({ loading: false, error: null });
         }
-    }, [year, field_id]);
+    }, [year, research_id]);
 
     const { loading, error } = state;
 
@@ -141,6 +141,39 @@ export const useSoilTextureData = (
     return [soilData, loading, error];
 };
 
+export const useCoverCropData = (
+    researchId: string | undefined
+): [CoverCropYieldData[] | null, boolean, string | null] => {
+    const dataActionDispatcher = React.useContext(DataActionDispatcherContext);
+    const { coverCropYield } = React.useContext(DataStateContext);
+    const [state, setState] = React.useState<{ loading: boolean; error: null | string }>({
+        loading: true,
+        error: null
+    });
+
+    React.useEffect(() => {
+        if (researchId && !coverCropYield) {
+            getData<CoverCropYieldData[]>(
+                'cover-crop/by_research_id/' + researchId,
+                (data) => {
+                    dataActionDispatcher({
+                        type: 'updateCoverCropYieldData',
+                        coverCropYield: data
+                    });
+                    setState({ loading: false, error: null });
+                },
+                () => setState({ loading: false, error: 'Failed to fetch cover crop data' })
+            );
+        } else if (coverCropYield) {
+            setState({ loading: false, error: null });
+        }
+    }, [researchId]);
+
+    const { loading, error } = state;
+
+    return [coverCropYield, loading, error];
+};
+
 export const useDRSYieldData = (researchId: string | undefined): [DRSYieldData[] | null, boolean, string | null] => {
     const dataActionDispatcher = React.useContext(DataActionDispatcherContext);
     const { drsYieldData } = React.useContext(DataStateContext);
@@ -172,9 +205,16 @@ export const useDRSYieldData = (researchId: string | undefined): [DRSYieldData[]
     return [drsYieldData, loading, error];
 };
 
+const isEmptyData = (data: DepthSoilMoistureData | WeatherData): boolean => {
+    if (Object.keys(data).length !== 0) {
+        return false;
+    }
+    return true;
+};
+
 export const useDepthSoilMoistureData = (
     year: string | undefined,
-    field_id: string | undefined
+    research_id: string | undefined
 ): [DepthSoilMoistureDataWithYear | null, boolean, string | null] => {
     const dataActionDispather = React.useContext(DataActionDispatcherContext);
     const { depthSoilMoistureData } = React.useContext(DataStateContext);
@@ -184,10 +224,18 @@ export const useDepthSoilMoistureData = (
     });
 
     React.useEffect(() => {
-        if (field_id && year !== '' && depthSoilMoistureData?.year !== year) {
+        if (research_id && year !== '' && depthSoilMoistureData?.year !== year) {
             getData<{ depth_soil_moisture_data: DepthSoilMoistureData }>(
-                `fields/${field_id}/sensors/get-geostreams-data/soil-moisture/${year}`,
+                `research/${research_id}/sensors/get-geostreams-data/soil-moisture/${year}`,
                 (data) => {
+                    if (isEmptyData(data.depth_soil_moisture_data)) {
+                        setState({ loading: false, error: null });
+                        dataActionDispather({
+                            type: 'updateDepthSoilMoistureData',
+                            depthSoilMoistureData: null
+                        });
+                        return;
+                    }
                     dataActionDispather({
                         type: 'updateDepthSoilMoistureData',
                         depthSoilMoistureData: { year: year, data: data.depth_soil_moisture_data }
@@ -199,14 +247,14 @@ export const useDepthSoilMoistureData = (
         } else if (depthSoilMoistureData) {
             setState({ loading: false, error: null });
         }
-    }, [year, field_id]);
+    }, [year, research_id]);
 
     const { loading, error } = state;
 
     return [depthSoilMoistureData, loading, error];
 };
 
-export const useAvailableYears = (field_id: string | undefined): [string[] | null, boolean, string | null] => {
+export const useAvailableYears = (research_id: string | undefined): [string[] | null, boolean, string | null] => {
     const dataActionDispather = React.useContext(DataActionDispatcherContext);
     const { cropRotationWeatherYears } = React.useContext(DataStateContext);
     const [state, setState] = React.useState<{ loading: boolean; error: null | string }>({
@@ -215,9 +263,9 @@ export const useAvailableYears = (field_id: string | undefined): [string[] | nul
     });
 
     React.useEffect(() => {
-        if (field_id && !cropRotationWeatherYears) {
+        if (research_id && !cropRotationWeatherYears) {
             getData<{ years: string[] }>(
-                `fields/${field_id}/sensors/get-years`,
+                `research/${research_id}/sensors/get-years`,
                 (data) => {
                     dataActionDispather({
                         type: 'updateCropRotationWeatherYears',
@@ -230,7 +278,7 @@ export const useAvailableYears = (field_id: string | undefined): [string[] | nul
         } else if (cropRotationWeatherYears) {
             setState({ loading: false, error: null });
         }
-    }, [field_id]);
+    }, [research_id]);
 
     const { loading, error } = state;
 
@@ -239,7 +287,7 @@ export const useAvailableYears = (field_id: string | undefined): [string[] | nul
 
 export const useWeatherData = (
     year: string | undefined | null,
-    field_id: string | undefined
+    research_id: string | undefined
 ): [WeatherData | null, boolean, string | null] => {
     const dataActionDispather = React.useContext(DataActionDispatcherContext);
     const { weatherData } = React.useContext(DataStateContext);
@@ -249,10 +297,18 @@ export const useWeatherData = (
     });
 
     React.useEffect(() => {
-        if (field_id && year !== '' && weatherData?.year !== Number(year)) {
-            getData<{ weather_data: DepthSoilMoistureData }>(
-                `fields/${field_id}/sensors/get-geostreams-data/weather/${year}`,
+        if (research_id && year !== '' && weatherData?.year !== Number(year)) {
+            getData<{ weather_data: WeatherData }>(
+                `research/${research_id}/sensors/get-geostreams-data/weather/${year}`,
                 (data) => {
+                    if (isEmptyData(data.weather_data)) {
+                        setState({ loading: false, error: 'No Sensor data available for this year' });
+                        dataActionDispather({
+                            type: 'updateWeatherData',
+                            weatherData: null
+                        });
+                        return;
+                    }
                     dataActionDispather({
                         type: 'updateWeatherData',
                         weatherData: data.weather_data
@@ -264,7 +320,7 @@ export const useWeatherData = (
         } else if (weatherData) {
             setState({ loading: false, error: null });
         }
-    }, [year, field_id]);
+    }, [year, research_id]);
 
     const { loading, error } = state;
 

@@ -62,6 +62,11 @@ export const dataReducers = (state: DataState, action: DataAction): DataState =>
                 ...state,
                 cropRotationWeatherYears: action.cropRotationWeatherYears
             };
+        case 'updateCoverCropYieldData':
+            return {
+                ...state,
+                coverCropYield: action.coverCropYield
+            };
     }
     throw Error(`Received invalid action: ${action}`);
 };

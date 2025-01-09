@@ -23,6 +23,7 @@ interface RestructuredResearches {
                 farm: FarmSummary;
                 fields: {
                     res_id: string;
+                    res_detail: ResearchDetail;
                     research_name: string;
                     field: FieldsSummary;
                 }[];
@@ -138,6 +139,7 @@ const LeftSidebar: FC = (): JSX.Element => {
                         fields: [
                             {
                                 res_id: id,
+                                res_detail: research,
                                 research_name,
                                 field: {
                                     id: field.id,
@@ -156,6 +158,7 @@ const LeftSidebar: FC = (): JSX.Element => {
                     fields: [
                         {
                             res_id: id,
+                            res_detail: research,
                             research_name,
                             field: {
                                 id: field.id,
@@ -172,6 +175,7 @@ const LeftSidebar: FC = (): JSX.Element => {
                 fields: [
                     {
                         res_id: id,
+                        res_detail: research,
                         research_name,
                         field: {
                             id: field.id,
@@ -184,6 +188,7 @@ const LeftSidebar: FC = (): JSX.Element => {
         } else {
             resetructuredResearches[research_area][research_type][farm_name].fields.push({
                 res_id: id,
+                res_detail: research,
                 research_name,
                 field: {
                     id: field.id,

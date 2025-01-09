@@ -8,6 +8,7 @@ import Map from '@app/components/childComponents/Map';
 import { layerStyles, mapStyle } from '@app/components/childComponents/Map/styles';
 
 import { DataActionDispatcherContext, DataStateContext, MapContext } from '@app/store/contexts';
+import SelectResearchDialog from './SelectResearchDialog';
 
 interface Props {
     handleInfoOpen: (newInfo: { message: string; severity: 'success' | 'info' | 'warning' | 'error' }) => void;
@@ -19,6 +20,18 @@ const ExploreMap = ({ handleInfoOpen }: Props): JSX.Element => {
     const { fields, selectedField, researches } = React.useContext(DataStateContext);
     const dataActionDispatcher = React.useContext(DataActionDispatcherContext);
     const mapRef = React.useContext(MapContext);
+    const [open, setOpen] = React.useState(false);
+    const [selectedResearch, setSelectedResearch] = React.useState<ResearchDetail | null>(null);
+    const [filteredResearches, setFilteredResearches] = React.useState<ResearchDetail[]>([]);
+
+    const handleClose = () => {
+        setOpen(false);
+    };
+
+    const handleUpdateSelectedResearch = (research: string) => {
+        setSelectedResearch(researches.find(({ id }) => id === research) ?? null);
+        setOpen(false);
+    };
 
     let hoveredFieldId: number | string | undefined;
 
@@ -122,6 +135,39 @@ const ExploreMap = ({ handleInfoOpen }: Props): JSX.Element => {
         setIsMapLoaded(true);
     };
 
+    const handleRedirect = (research: ResearchDetail | undefined) => {
+        if (research && research.research_type === gs.CONSTANTS.DROUGHT) {
+            dataActionDispatcher({
+                type: 'updateSelectedResearch',
+                selectedResearch: research
+            });
+            navigate(`/drought-resistant-seeds/${research.id}`);
+        } else if (research && research.research_type === gs.CONSTANTS.CROPROT) {
+            dataActionDispatcher({
+                type: 'updateSelectedResearch',
+                selectedResearch: research
+            });
+            navigate(`/crop-rotation/${research.id}`);
+        } else if (research && research.research_type === gs.CONSTANTS.IRRIGATION) {
+            dataActionDispatcher({
+                type: 'updateSelectedResearch',
+                selectedResearch: research
+            });
+            navigate(`/irrigation-strategies/${research.id}`);
+        } else if (research && research.research_type === gs.CONSTANTS.COVERCROP) {
+            dataActionDispatcher({
+                type: 'updateSelectedResearch',
+                selectedResearch: research
+            });
+            navigate(`/cover-crop/${research.id}`);
+        } else {
+            handleInfoOpen({
+                message: 'No research data available for this field',
+                severity: 'info'
+            });
+        }
+    };
+
     React.useEffect(() => {
         const map = mapRef.current;
         if (map && isMapLoaded) {
@@ -153,36 +199,23 @@ const ExploreMap = ({ handleInfoOpen }: Props): JSX.Element => {
                     const researchDetail = researches.find(
                         ({ field }) => field.field_name === newSelectedField?.field_name
                     );
+                    // find all researches for the selected field
+                    const fieldResearches = researches.filter(
+                        ({ field }) => field.field_name === newSelectedField?.field_name
+                    );
 
                     dataActionDispatcher({
                         type: 'updateSelectedField',
                         selectedField: newSelectedField
                     });
 
-                    if (researchDetail && researchDetail.research_type === gs.CONSTANTS.DROUGHT) {
-                        dataActionDispatcher({
-                            type: 'updateSelectedResearch',
-                            selectedResearch: researchDetail
-                        });
-                        navigate(`/drought-resistant-seeds/${researchDetail.id}`);
-                    } else if (researchDetail && researchDetail.research_type === gs.CONSTANTS.CROPROT) {
-                        dataActionDispatcher({
-                            type: 'updateSelectedResearch',
-                            selectedResearch: researchDetail
-                        });
-                        navigate(`/crop-rotation/${researchDetail.id}`);
-                    } else if (researchDetail && researchDetail.research_type === gs.CONSTANTS.IRRIGATION) {
-                        dataActionDispatcher({
-                            type: 'updateSelectedResearch',
-                            selectedResearch: researchDetail
-                        });
-                        navigate(`/irrigation-strategies/${researchDetail.id}`);
-                    } else {
-                        handleInfoOpen({
-                            message: 'No research data available for this field',
-                            severity: 'info'
-                        });
+                    if (fieldResearches.length > 1) {
+                        setFilteredResearches(fieldResearches);
+                        setOpen(true);
+                        return;
                     }
+
+                    handleRedirect(researchDetail);
                 }
             };
             ['fields-poly-fill'].forEach((layerName) => {
@@ -197,6 +230,12 @@ const ExploreMap = ({ handleInfoOpen }: Props): JSX.Element => {
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         return () => {};
     }, [fields, selectedField, isMapLoaded]);
+
+    React.useEffect(() => {
+        if (selectedResearch !== null) {
+            handleRedirect(selectedResearch);
+        }
+    }, [selectedResearch]);
 
     React.useEffect(() => {
         // Update the filter on `field-selected` when selected station changes
@@ -229,24 +268,32 @@ const ExploreMap = ({ handleInfoOpen }: Props): JSX.Element => {
     }, [selectedField, isMapLoaded]);
 
     return (
-        <Map
-            mapOptions={{
-                style: mapStyle,
-                minZoom: 1
-            }}
-            initialBounds={[-180, -90, 180, 90]}
-            // center={[-88.24341191425448, 40.1164071212825]}
-            init_zoom={10}
-            attribution
-            help
-            navigation
-            basemaps={{
-                basemaps: [basemapsArray.OSM],
-                initialBasemap: 'OSM',
-                expandDirection: 'top'
-            }}
-            onLoad={onMapLoad}
-        />
+        <>
+            <Map
+                mapOptions={{
+                    style: mapStyle,
+                    minZoom: 1
+                }}
+                initialBounds={[-180, -90, 180, 90]}
+                // center={[-88.24341191425448, 40.1164071212825]}
+                init_zoom={10}
+                attribution
+                help
+                navigation
+                basemaps={{
+                    basemaps: [basemapsArray.OSM],
+                    initialBasemap: 'OSM',
+                    expandDirection: 'top'
+                }}
+                onLoad={onMapLoad}
+            />
+            <SelectResearchDialog
+                open={open}
+                handleClose={handleClose}
+                researches={filteredResearches}
+                handleUpdateSelectedResearch={handleUpdateSelectedResearch}
+            />
+        </>
     );
 };
 
