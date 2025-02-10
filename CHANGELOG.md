@@ -23,3 +23,4 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Fixed
 
 - Change unit from lbs/acre to bu/A in drought resistant seed page [#26](https://github.com/Direct4Ag/frontend/issues/26)
+- Rounding error in drought resistant seed yeild information [#23](https://github.com/Direct4Ag/frontend/issues/23)
