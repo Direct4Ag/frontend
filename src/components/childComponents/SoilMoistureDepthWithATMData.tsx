@@ -123,7 +123,6 @@ const SoilMoistureDepthWithATMData: React.FC<{ selectedYear: string; sectionHead
         series: AllSeriesType[];
         compositionWeatherData: DatasetType;
     }>({ xAxisLabels: [], series: [], compositionWeatherData: [] });
-    console.log(soilDepthData);
 
     React.useEffect(() => {
         if (selectedMonth !== null && soilDepthData && showSoilDepthData && weatherData) {
