@@ -26,6 +26,7 @@ import { basemapsArray } from '@app/components/childComponents/Map/utils';
 import { DataActionDispatcherContext } from '@app/store/contexts';
 import { globals as gs } from '@app/globals';
 
+import PersonOutlineRoundedIcon from '@mui/icons-material/PersonOutlineRounded';
 import maizeTopImg from './maize_top.png';
 import coverCroppingImg from './cover_cropping.png';
 import cropRotationImg from './crop_rotation.png';
@@ -33,7 +34,6 @@ import droughtResistantImg from './drought_resistant.png';
 import irrigationStratImg from './irrigation_strategy.png';
 import avatar from './avatar.png';
 import collaboratorsImg from './affiliations.png';
-import PersonOutlineRoundedIcon from '@mui/icons-material/PersonOutlineRounded';
 
 const Item = styled(Paper)(({ theme }) => ({
     backgroundColor: 'transparent',

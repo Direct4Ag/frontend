@@ -160,7 +160,7 @@ const DroughtResistantSeedYield: React.FC<{ drsYieldData: DRSYieldData[] | null 
 
                 Object.keys(avgByLineArr).forEach((line) => {
                     avgByLine[line] = avgByLineArr[line].reduce((a, b) => a + b, 0) / avgByLineArr[line].length;
-                    avgByLine[line] = Math.ceil(avgByLine[line]);
+                    avgByLine[line] = Math.round(avgByLine[line]);
                     if (avgByLine[line] >= largestYeild) {
                         largestYeild = avgByLine[line];
                     }
