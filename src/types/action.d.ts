@@ -33,16 +33,6 @@ interface UpdateDRSYieldData {
     drsYieldData: DRSYieldData[] | null;
 }
 
-interface UpdateDepthSoilMoistureData {
-    type: 'updateDepthSoilMoistureData';
-    depthSoilMoistureData: DepthSoilMoistureData;
-}
-
-interface UpdateWeatherData {
-    type: 'updateWeatherData';
-    weatherData: WeatherData;
-}
-
 interface UpdateNitrateConcentrationData {
     type: 'updateNitrateConcentrationData';
     nitrateConcentrationData: GeostreamsData[];
@@ -71,9 +61,7 @@ type DataAction =
     | UpdateSelectedResearch
     | UpdateSoilData
     | UpdateDRSYieldData
-    | UpdateDepthSoilMoistureData
     | UpdateNitrateConcentrationData
     | UpdateCropRotationYieldData
-    | UpdateWeatherData
     | UpdateCropRotationWeatherYears
     | UpdateCoverCropYieldData;

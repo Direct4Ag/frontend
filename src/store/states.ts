@@ -7,8 +7,6 @@ export const dataStateInitialValue: DataState = {
     selectedResearch: null,
     soilData: null,
     drsYieldData: null,
-    depthSoilMoistureData: null,
-    weatherData: null,
     nitrateConcentrationData: null,
     cropRotationYield: null,
     cropRotationWeatherYears: null,

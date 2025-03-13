@@ -49,10 +49,13 @@ const DepthSwitch = styled(Switch)({
     }
 });
 
-const SoilMoistureDepthWithATMData: React.FC<{ selectedYear: string; sectionHeader: string }> = ({
+const SoilMoistureDepthWithATMData: React.FC<{ selectedYear: string | null; sectionHeader: string }> = ({
     selectedYear,
     sectionHeader
 }) => {
+    if (selectedYear === null) {
+        return null;
+    }
     const { selectedResearch } = React.useContext(DataStateContext);
 
     const [soilDepthData, soilMoistureLoading, soilMoistureLoadError] = useDepthSoilMoistureData(
@@ -63,6 +66,29 @@ const SoilMoistureDepthWithATMData: React.FC<{ selectedYear: string; sectionHead
     const [showSoilDepthData, setShowSoilDepthData] = React.useState<ShowSoilDepthData | null>(null);
     const [availableMonths, setAvailableMonths] = React.useState<number[]>([]);
     const [selectedMonth, setSelectedMonth] = React.useState<number | null>(null);
+    console.log(soilMoistureLoading, weatherDataLoading, selectedYear);
+    console.log(availableMonths);
+
+    React.useEffect(() => {
+        // set available months
+        if (soilDepthData !== null) {
+            const monthSet = new Set<number>();
+            Object.keys(soilDepthData.data).forEach((depth) => {
+                soilDepthData.data[depth].data.forEach((data) => {
+                    monthSet.add(data.month);
+                });
+            });
+            const monthSortedArray = Array.from(monthSet).sort((a, b) => a - b);
+            setAvailableMonths(monthSortedArray);
+            setSelectedMonth(monthSortedArray[0]);
+        } else if (soilDepthData === null && weatherData !== null) {
+            const monthsArr = Array.from(new Set(weatherData.avg_air_temp.map((data) => data.month))).sort(
+                (a, b) => a - b
+            );
+            setAvailableMonths(monthsArr);
+            setSelectedMonth(monthsArr[0]);
+        }
+    }, []);
 
     React.useEffect(() => {
         if (soilDepthData !== null) {
@@ -130,7 +156,7 @@ const SoilMoistureDepthWithATMData: React.FC<{ selectedYear: string; sectionHead
             Object.keys(soilDepthData.data).forEach((depth) => {
                 if (showSoilDepthData[depth]) {
                     soilDepthData.data[depth].data.forEach((data) => {
-                        if (data.month === selectedMonth && data.year === parseInt(selectedYear, 10)) {
+                        if (data.month === selectedMonth) {
                             xAxisLabelsTemp.add(data.label);
                         }
                     });
@@ -227,7 +253,7 @@ const SoilMoistureDepthWithATMData: React.FC<{ selectedYear: string; sectionHead
                 compositionWeatherData: dataset
             });
         }
-    }, [selectedMonth, selectedYear, soilDepthData, showSoilDepthData, weatherData]);
+    }, [selectedMonth, soilDepthData, showSoilDepthData, weatherData]);
 
     const getWeatherYAxisData = (data: GeostreamsData[], xAxisLabelsArr: string[]) => {
         if (data && xAxisLabelsArr.length !== 0) {

@@ -106,7 +106,7 @@ const CropRotationYield: React.FC<{ cropRotationYieldData: CropRotationYieldData
     ];
 
     const [availableMonths, setAvailableMonths] = React.useState<number[]>([]);
-    const [selectedMonth, setSelectedMonth] = React.useState<number | null>(1);
+    const [selectedMonth, setSelectedMonth] = React.useState<number>(1);
     const [series, setSeries] = React.useState<AllSeriesType[]>([]);
     const [nitrateDataFound, setNitrateDataFound] = React.useState<boolean>(false);
 
@@ -131,8 +131,13 @@ const CropRotationYield: React.FC<{ cropRotationYieldData: CropRotationYieldData
 
     React.useEffect(() => {
         if (weatherData) {
-            const monthsArr = Array.from(new Set(weatherData.avg_air_temp.map((data) => data.month)));
-            setAvailableMonths(monthsArr.sort((a, b) => a - b));
+            const monthsArr = Array.from(new Set(weatherData.avg_air_temp.map((data) => data.month))).sort(
+                (a, b) => a - b
+            );
+            if (selectedMonth < monthsArr[0] || selectedMonth > monthsArr[monthsArr.length - 1]) {
+                setSelectedMonth(monthsArr[0]);
+            }
+            setAvailableMonths(monthsArr);
         }
     }, [weatherData]);
 
@@ -204,18 +209,8 @@ const CropRotationYield: React.FC<{ cropRotationYieldData: CropRotationYieldData
     const [compositionWeatherData, setCompositionWeatherData] = React.useState<DatasetType>([]);
 
     React.useEffect(() => {
-        if (selectedMonth !== null && selectedYear !== null && weatherData && nitrateConcentrationData) {
+        if (selectedYear !== null && weatherData && nitrateConcentrationData) {
             const xAxisLabelsTemp = new Set<string>();
-            // if (nitrateConcentrationData.nitrate_concentration_data.length === 0) {
-
-            // } else {
-            //     nitrateConcentrationData.nitrate_concentration_data.forEach((data) => {
-            //         if (data.month === selectedMonth && data.year === parseInt(selectedYear, 10)) {
-            //             xAxisLabelsTemp.add(data.label);
-            //         }
-            //     });
-            // }
-            // JavaScript months are 0-indexed (0 = January, 11 = December)
             const date = new Date(parseInt(selectedYear, 10), selectedMonth - 1, 0).getDate(); // Get last day of the previous month (from month + 1)
 
             // Generate an array from 1 to the number of days in the month
