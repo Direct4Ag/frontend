@@ -66,8 +66,6 @@ const SoilMoistureDepthWithATMData: React.FC<{ selectedYear: string | null; sect
     const [showSoilDepthData, setShowSoilDepthData] = React.useState<ShowSoilDepthData | null>(null);
     const [availableMonths, setAvailableMonths] = React.useState<number[]>([]);
     const [selectedMonth, setSelectedMonth] = React.useState<number | null>(null);
-    console.log(soilMoistureLoading, weatherDataLoading, selectedYear);
-    console.log(availableMonths);
 
     React.useEffect(() => {
         // set available months
