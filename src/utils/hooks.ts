@@ -205,11 +205,20 @@ export const useDRSYieldData = (researchId: string | undefined): [DRSYieldData[]
     return [drsYieldData, loading, error];
 };
 
-const isEmptyData = (data: DepthSoilMoistureData | WeatherData): boolean => {
-    if (Object.keys(data).length !== 0) {
-        return false;
+const isEmptyDepthSoilMoistureData = (data: DepthSoilMoistureData): boolean => {
+    // check if data with these keys are empty
+    if (Object.values(data).every((value) => value.data && value.data.length === 0)) {
+        return true;
     }
-    return true;
+    return false;
+};
+
+const isEmptyWeatherData = (data: WeatherData): boolean => {
+    // check if data with these keys are empty
+    if (Object.values(data).every((value) => value.length === 0)) {
+        return true;
+    }
+    return false;
 };
 
 export const useDepthSoilMoistureData = (
@@ -232,7 +241,7 @@ export const useDepthSoilMoistureData = (
         getData<{ depth_soil_moisture_data: DepthSoilMoistureData }>(
             `research/${research_id}/sensors/get-geostreams-data/soil-moisture/${year}`,
             (data) => {
-                if (!isEmptyData(data.depth_soil_moisture_data)) {
+                if (!isEmptyDepthSoilMoistureData(data.depth_soil_moisture_data)) {
                     setDepthSoilMoistureData({
                         year,
                         data: data.depth_soil_moisture_data
@@ -305,7 +314,8 @@ export const useWeatherData = (
         getData<{ weather_data: WeatherData }>(
             `research/${research_id}/sensors/get-geostreams-data/weather/${year}`,
             (data) => {
-                if (!isEmptyData(data.weather_data)) {
+                if (!isEmptyWeatherData(data.weather_data)) {
+                    console.log(data.weather_data);
                     setWeatherData(data.weather_data);
                 }
                 setLoading(false);
@@ -328,4 +338,93 @@ export const useWeatherData = (
     }, [year, research_id, fetchWeatherData]);
 
     return [weatherData, loading, error];
+};
+
+export type CombinedSensorData = {
+    depthSoilMoistureData: DepthSoilMoistureDataWithYear | null;
+    weatherData: WeatherData | null;
+};
+
+export const useCombinedSensorData = (
+    year: string | null,
+    research_id: string | undefined
+): [CombinedSensorData | null, boolean, string | null] => {
+    const [combinedData, setCombinedData] = React.useState<CombinedSensorData | null>(null);
+    const [loading, setLoading] = React.useState<boolean>(true);
+    const [error, setError] = React.useState<string | null>(null);
+
+    React.useEffect(() => {
+        // If year or research_id is missing, we stop loading and clear any previous data/error.
+        if (!year || !research_id) {
+            setCombinedData(null);
+            setLoading(false);
+            setError(null);
+            return;
+        }
+
+        let isCancelled = false;
+        setLoading(true);
+        setError(null);
+
+        // Wrap each getData call in a Promise
+        const fetchDepthData = new Promise<DepthSoilMoistureDataWithYear | null>((resolve, reject) => {
+            getData<{ depth_soil_moisture_data: DepthSoilMoistureData }>(
+                `research/${research_id}/sensors/get-geostreams-data/soil-moisture/${year}`,
+                (data) => {
+                    if (!isEmptyDepthSoilMoistureData(data.depth_soil_moisture_data)) {
+                        resolve({
+                            year,
+                            data: data.depth_soil_moisture_data
+                        });
+                    } else {
+                        resolve(null);
+                    }
+                },
+                () => {
+                    reject('Failed to fetch soil data');
+                }
+            );
+        });
+
+        const fetchWeatherData = new Promise<WeatherData | null>((resolve, reject) => {
+            getData<{ weather_data: WeatherData }>(
+                `research/${research_id}/sensors/get-geostreams-data/weather/${year}`,
+                (data) => {
+                    if (!isEmptyWeatherData(data.weather_data)) {
+                        resolve(data.weather_data);
+                    } else {
+                        resolve(null);
+                    }
+                },
+                () => {
+                    reject('Failed to fetch weather data');
+                }
+            );
+        });
+
+        // Run both calls concurrently
+        Promise.all([fetchDepthData, fetchWeatherData])
+            .then(([depthData, weatherData]) => {
+                if (!isCancelled) {
+                    setCombinedData({
+                        depthSoilMoistureData: depthData,
+                        weatherData: weatherData
+                    });
+                    setLoading(false);
+                    setError(null);
+                }
+            })
+            .catch((err) => {
+                if (!isCancelled) {
+                    setError(err);
+                    setLoading(false);
+                }
+            });
+
+        return () => {
+            isCancelled = true;
+        };
+    }, [year, research_id]);
+
+    return [combinedData, loading, error];
 };
