@@ -315,7 +315,6 @@ export const useWeatherData = (
             `research/${research_id}/sensors/get-geostreams-data/weather/${year}`,
             (data) => {
                 if (!isEmptyWeatherData(data.weather_data)) {
-                    console.log(data.weather_data);
                     setWeatherData(data.weather_data);
                 }
                 setLoading(false);
