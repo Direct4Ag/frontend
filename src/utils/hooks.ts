@@ -205,51 +205,66 @@ export const useDRSYieldData = (researchId: string | undefined): [DRSYieldData[]
     return [drsYieldData, loading, error];
 };
 
-const isEmptyData = (data: DepthSoilMoistureData | WeatherData): boolean => {
-    if (Object.keys(data).length !== 0) {
-        return false;
+const isEmptyDepthSoilMoistureData = (data: DepthSoilMoistureData): boolean => {
+    // check if data with these keys are empty
+    if (Object.values(data).every((value) => value.data && value.data.length === 0)) {
+        return true;
     }
-    return true;
+    return false;
+};
+
+const isEmptyWeatherData = (data: WeatherData): boolean => {
+    // check if data with these keys are empty
+    if (Object.values(data).every((value) => value.length === 0)) {
+        return true;
+    }
+    return false;
 };
 
 export const useDepthSoilMoistureData = (
-    year: string | undefined,
+    year: string | null,
     research_id: string | undefined
 ): [DepthSoilMoistureDataWithYear | null, boolean, string | null] => {
-    const dataActionDispather = React.useContext(DataActionDispatcherContext);
-    const { depthSoilMoistureData } = React.useContext(DataStateContext);
-    const [state, setState] = React.useState<{ loading: boolean; error: null | string }>({
-        loading: true,
-        error: null
-    });
+    const [depthSoilMoistureData, setDepthSoilMoistureData] = React.useState<DepthSoilMoistureDataWithYear | null>(
+        null
+    );
+    const [loading, setLoading] = React.useState<boolean>(true);
+    const [error, setError] = React.useState<string | null>(null);
 
-    React.useEffect(() => {
-        if (research_id && year !== '' && depthSoilMoistureData?.year !== year) {
-            getData<{ depth_soil_moisture_data: DepthSoilMoistureData }>(
-                `research/${research_id}/sensors/get-geostreams-data/soil-moisture/${year}`,
-                (data) => {
-                    if (isEmptyData(data.depth_soil_moisture_data)) {
-                        setState({ loading: false, error: null });
-                        dataActionDispather({
-                            type: 'updateDepthSoilMoistureData',
-                            depthSoilMoistureData: null
-                        });
-                        return;
-                    }
-                    dataActionDispather({
-                        type: 'updateDepthSoilMoistureData',
-                        depthSoilMoistureData: { year: year, data: data.depth_soil_moisture_data }
-                    });
-                    setState({ loading: false, error: null });
-                },
-                () => setState({ loading: false, error: 'Failed to fetch soil data' })
-            );
-        } else if (depthSoilMoistureData) {
-            setState({ loading: false, error: null });
+    const fetchDepthSoilMoistureData = React.useCallback(() => {
+        if (!year || !research_id) {
+            setLoading(false);
+            setError(null);
+            return;
         }
+
+        getData<{ depth_soil_moisture_data: DepthSoilMoistureData }>(
+            `research/${research_id}/sensors/get-geostreams-data/soil-moisture/${year}`,
+            (data) => {
+                if (!isEmptyDepthSoilMoistureData(data.depth_soil_moisture_data)) {
+                    setDepthSoilMoistureData({
+                        year,
+                        data: data.depth_soil_moisture_data
+                    });
+                }
+                setLoading(false);
+            },
+            () => {
+                setError('Failed to fetch soil data');
+                setLoading(false);
+            }
+        );
     }, [year, research_id]);
 
-    const { loading, error } = state;
+    React.useEffect(() => {
+        if (!year || !research_id) {
+            setLoading(false);
+            setError(null);
+            return;
+        }
+
+        fetchDepthSoilMoistureData();
+    }, [year, research_id, fetchDepthSoilMoistureData]);
 
     return [depthSoilMoistureData, loading, error];
 };
@@ -289,40 +304,126 @@ export const useWeatherData = (
     year: string | undefined | null,
     research_id: string | undefined
 ): [WeatherData | null, boolean, string | null] => {
-    const dataActionDispather = React.useContext(DataActionDispatcherContext);
-    const { weatherData } = React.useContext(DataStateContext);
-    const [state, setState] = React.useState<{ loading: boolean; error: null | string }>({
-        loading: true,
-        error: null
-    });
+    const [weatherData, setWeatherData] = React.useState<WeatherData | null>(null);
+    const [loading, setLoading] = React.useState<boolean>(true);
+    const [error, setError] = React.useState<string | null>(null);
+
+    const fetchWeatherData = React.useCallback(async () => {
+        if (!year || !research_id) return;
+
+        getData<{ weather_data: WeatherData }>(
+            `research/${research_id}/sensors/get-geostreams-data/weather/${year}`,
+            (data) => {
+                if (!isEmptyWeatherData(data.weather_data)) {
+                    setWeatherData(data.weather_data);
+                }
+                setLoading(false);
+            },
+            () => {
+                setError('Failed to fetch weather data');
+                setLoading(false);
+            }
+        );
+    }, [year, research_id]);
 
     React.useEffect(() => {
-        if (research_id && year !== '' && weatherData?.year !== Number(year)) {
+        if (!year || !research_id) {
+            setLoading(false);
+            setError(null);
+            return;
+        }
+
+        fetchWeatherData();
+    }, [year, research_id, fetchWeatherData]);
+
+    return [weatherData, loading, error];
+};
+
+export type CombinedSensorData = {
+    depthSoilMoistureData: DepthSoilMoistureDataWithYear | null;
+    weatherData: WeatherData | null;
+};
+
+export const useCombinedSensorData = (
+    year: string | null,
+    research_id: string | undefined
+): [CombinedSensorData | null, boolean, string | null] => {
+    const [combinedData, setCombinedData] = React.useState<CombinedSensorData | null>(null);
+    const [loading, setLoading] = React.useState<boolean>(true);
+    const [error, setError] = React.useState<string | null>(null);
+
+    React.useEffect(() => {
+        // If year or research_id is missing, we stop loading and clear any previous data/error.
+        if (!year || !research_id) {
+            setCombinedData(null);
+            setLoading(false);
+            setError(null);
+            return;
+        }
+
+        let isCancelled = false;
+        setLoading(true);
+        setError(null);
+
+        // Wrap each getData call in a Promise
+        const fetchDepthData = new Promise<DepthSoilMoistureDataWithYear | null>((resolve, reject) => {
+            getData<{ depth_soil_moisture_data: DepthSoilMoistureData }>(
+                `research/${research_id}/sensors/get-geostreams-data/soil-moisture/${year}`,
+                (data) => {
+                    if (!isEmptyDepthSoilMoistureData(data.depth_soil_moisture_data)) {
+                        resolve({
+                            year,
+                            data: data.depth_soil_moisture_data
+                        });
+                    } else {
+                        resolve(null);
+                    }
+                },
+                () => {
+                    reject('Failed to fetch soil data');
+                }
+            );
+        });
+
+        const fetchWeatherData = new Promise<WeatherData | null>((resolve, reject) => {
             getData<{ weather_data: WeatherData }>(
                 `research/${research_id}/sensors/get-geostreams-data/weather/${year}`,
                 (data) => {
-                    if (isEmptyData(data.weather_data)) {
-                        setState({ loading: false, error: 'No Sensor data available for this year' });
-                        dataActionDispather({
-                            type: 'updateWeatherData',
-                            weatherData: null
-                        });
-                        return;
+                    if (!isEmptyWeatherData(data.weather_data)) {
+                        resolve(data.weather_data);
+                    } else {
+                        resolve(null);
                     }
-                    dataActionDispather({
-                        type: 'updateWeatherData',
-                        weatherData: data.weather_data
-                    });
-                    setState({ loading: false, error: null });
                 },
-                () => setState({ loading: false, error: 'Failed to fetch weather data' })
+                () => {
+                    reject('Failed to fetch weather data');
+                }
             );
-        } else if (weatherData) {
-            setState({ loading: false, error: null });
-        }
+        });
+
+        // Run both calls concurrently
+        Promise.all([fetchDepthData, fetchWeatherData])
+            .then(([depthData, weatherData]) => {
+                if (!isCancelled) {
+                    setCombinedData({
+                        depthSoilMoistureData: depthData,
+                        weatherData: weatherData
+                    });
+                    setLoading(false);
+                    setError(null);
+                }
+            })
+            .catch((err) => {
+                if (!isCancelled) {
+                    setError(err);
+                    setLoading(false);
+                }
+            });
+
+        return () => {
+            isCancelled = true;
+        };
     }, [year, research_id]);
 
-    const { loading, error } = state;
-
-    return [weatherData, loading, error];
+    return [combinedData, loading, error];
 };

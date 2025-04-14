@@ -35,16 +35,6 @@ export const dataReducers = (state: DataState, action: DataAction): DataState =>
                 ...state,
                 drsYieldData: action.drsYieldData
             };
-        case 'updateDepthSoilMoistureData':
-            return {
-                ...state,
-                depthSoilMoistureData: action.depthSoilMoistureData
-            };
-        case 'updateWeatherData':
-            return {
-                ...state,
-                weatherData: action.weatherData
-            };
         case 'updateNitrateConcentrationData':
             return {
                 ...state,

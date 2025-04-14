@@ -87,8 +87,6 @@ const DroughtResistantSeedYield: React.FC<{ drsYieldData: DRSYieldData[] | null 
     const { selectedField } = React.useContext(DataStateContext);
     const [soilData, soilLoading, soilError] = useSoilTextureData(selectedField?.coordinates);
 
-    const yearsSelectDefault = ['2022'];
-
     const cropSelectDefault = ['Corn'];
 
     const seedSelectDefault = [
@@ -101,11 +99,11 @@ const DroughtResistantSeedYield: React.FC<{ drsYieldData: DRSYieldData[] | null 
             value: true
         }
     ];
-    const [yearsSelect, setYearsSelect] = React.useState<string[]>(yearsSelectDefault);
+    const [yearsSelect, setYearsSelect] = React.useState<string[] | null>(null);
     const [cropSelect, setCropSelect] = React.useState<string[]>(cropSelectDefault);
     const [yieldData, setYieldData] = React.useState<YeildData>({});
 
-    const [selectedYear, setSelectedYear] = React.useState<string>(yearsSelectDefault[0]);
+    const [selectedYear, setSelectedYear] = React.useState<string | null>(null);
     const [selectedSeed, setSelectedSeed] = React.useState<SeedSelect[]>(seedSelectDefault);
     const [selectedCrop, setSelectedCrop] = React.useState<string>('');
 
@@ -121,7 +119,7 @@ const DroughtResistantSeedYield: React.FC<{ drsYieldData: DRSYieldData[] | null 
             const years = Array.from(new Set(drsYieldData.map((data) => data.planting_date.split('-')[0])));
             years.sort();
             setYearsSelect(years);
-            setSelectedYear(years[0]);
+            setSelectedYear(String(years[0]));
 
             const seeds = Array.from(
                 new Set(
@@ -180,7 +178,7 @@ const DroughtResistantSeedYield: React.FC<{ drsYieldData: DRSYieldData[] | null 
     }, [drsYieldData]);
 
     React.useEffect(() => {
-        if (yieldData[selectedCrop] !== undefined) {
+        if (yieldData[selectedCrop] !== undefined && selectedYear !== null) {
             const seedYieldChartDataTemp: ChartData[] = [
                 {
                     name: '',
@@ -203,290 +201,317 @@ const DroughtResistantSeedYield: React.FC<{ drsYieldData: DRSYieldData[] | null 
 
     return (
         <Container disableGutters>
-            <Container
-                sx={{
-                    backgroundColor: '#F8FAFC',
-                    padding: '32px',
-                    height: '70vh',
-                    width: '100%'
-                }}
-            >
-                <Box>
-                    <Typography
-                        variant="h6"
+            {drsYieldData === null ? (
+                <Box display="flex" justifyContent="center" justifyItems="center">
+                    <CircularProgress />
+                </Box>
+            ) : (
+                <>
+                    <Container
                         sx={{
-                            font: 'Poppins',
-                            fontWeight: 700,
-                            fontSize: '20px',
-                            lineHeight: '32px',
-                            letterSpacing: '0.15px',
-                            color: theme.palette.text.primary,
-                            textTransform: 'capitalize'
+                            backgroundColor: '#F8FAFC',
+                            padding: '32px',
+                            height: '70vh',
+                            width: '100%'
                         }}
                     >
-                        Drought-resistant Seed Yields
-                    </Typography>
-                </Box>
-                <Box
-                    sx={{
-                        mt: 4
-                    }}
-                >
-                    <Stack direction="row" spacing={3}>
-                        <FormControl>
-                            <InputLabel id="year-select-label">Choose a Year</InputLabel>
-                            <Select
-                                labelId="year-select-label"
-                                id="year-select"
-                                value={selectedYear}
-                                label="Choose a Year"
-                                onChange={(e) => {
-                                    setSelectedYear(e.target.value);
-                                    const seeds = Array.from(
-                                        new Set(
-                                            drsYieldData
-                                                ?.filter((data) => data.planting_date.split('-')[0] === e.target.value)
-                                                .map((data) => data.line)
-                                        )
-                                    );
-                                    setSelectedSeed(seeds.map((seed) => ({ label: seed, value: true })));
-                                }}
+                        <Box>
+                            <Typography
+                                variant="h6"
                                 sx={{
-                                    width: '200px'
+                                    font: 'Poppins',
+                                    fontWeight: 700,
+                                    fontSize: '20px',
+                                    lineHeight: '32px',
+                                    letterSpacing: '0.15px',
+                                    color: theme.palette.text.primary,
+                                    textTransform: 'capitalize'
                                 }}
                             >
-                                {yearsSelect.map((year) => (
-                                    <MenuItem key={year} value={year}>
-                                        {year}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                        <FormControl>
-                            <InputLabel id="crop-and-seeds-select-label">Choose a Crop and Seed</InputLabel>
-                            <Select
-                                labelId="crop-and-seeds-select-label"
-                                id="crop-and-seeds-select"
-                                value={selectedCrop}
-                                label="Choose a Crop and Seed"
-                                onChange={(e) => setSelectedCrop(e.target.value)}
-                                sx={{
-                                    width: '200px'
-                                }}
-                            >
-                                {cropSelect.map((crop) => (
-                                    <MenuItem key={crop} value={crop}>
-                                        {crop}
-                                    </MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                        <FormGroup row>
-                            {selectedSeed.map((seed) => {
-                                return (
-                                    <FormControlLabel
-                                        key={seed.label}
-                                        control={
-                                            <Checkbox
-                                                checked={seed.value}
+                                Drought-resistant Seed Yields
+                            </Typography>
+                        </Box>
+                        <Box
+                            sx={{
+                                mt: 4
+                            }}
+                        >
+                            <Stack direction="row" spacing={3}>
+                                <FormControl>
+                                    {yearsSelect !== null ? (
+                                        <>
+                                            <InputLabel id="year-select-label">Choose a Year</InputLabel>
+                                            <Select
+                                                labelId="year-select-label"
+                                                id="year-select"
+                                                value={selectedYear}
+                                                label="Choose a Year"
                                                 onChange={(e) => {
-                                                    const newSelectedSeed = selectedSeed.map((selected) => {
-                                                        if (selected.label === seed.label) {
-                                                            return {
-                                                                ...selected,
-                                                                value: e.target.checked
-                                                            };
-                                                        }
-                                                        return selected;
-                                                    });
-                                                    setSelectedSeed(newSelectedSeed);
+                                                    setSelectedYear(e.target.value);
+                                                    const seeds = Array.from(
+                                                        new Set(
+                                                            drsYieldData
+                                                                ?.filter(
+                                                                    (data) =>
+                                                                        data.planting_date.split('-')[0] ===
+                                                                        e.target.value
+                                                                )
+                                                                .map((data) => data.line)
+                                                        )
+                                                    );
+                                                    setSelectedSeed(
+                                                        seeds.map((seed) => ({ label: seed, value: true }))
+                                                    );
+                                                }}
+                                                sx={{
+                                                    width: '200px'
+                                                }}
+                                            >
+                                                {yearsSelect.map((year) => (
+                                                    <MenuItem key={year} value={year}>
+                                                        {year}
+                                                    </MenuItem>
+                                                ))}
+                                            </Select>
+                                        </>
+                                    ) : null}
+                                </FormControl>
+                                <FormControl>
+                                    <InputLabel id="crop-and-seeds-select-label">Choose a Crop and Seed</InputLabel>
+                                    <Select
+                                        labelId="crop-and-seeds-select-label"
+                                        id="crop-and-seeds-select"
+                                        value={selectedCrop}
+                                        label="Choose a Crop and Seed"
+                                        onChange={(e) => setSelectedCrop(e.target.value)}
+                                        sx={{
+                                            width: '200px'
+                                        }}
+                                    >
+                                        {cropSelect.map((crop) => (
+                                            <MenuItem key={crop} value={crop}>
+                                                {crop}
+                                            </MenuItem>
+                                        ))}
+                                    </Select>
+                                </FormControl>
+                                <FormGroup row>
+                                    {selectedSeed.map((seed) => {
+                                        return (
+                                            <FormControlLabel
+                                                key={seed.label}
+                                                control={
+                                                    <Checkbox
+                                                        checked={seed.value}
+                                                        onChange={(e) => {
+                                                            const newSelectedSeed = selectedSeed.map((selected) => {
+                                                                if (selected.label === seed.label) {
+                                                                    return {
+                                                                        ...selected,
+                                                                        value: e.target.checked
+                                                                    };
+                                                                }
+                                                                return selected;
+                                                            });
+                                                            setSelectedSeed(newSelectedSeed);
+                                                        }}
+                                                    />
+                                                }
+                                                label={seed.label}
+                                            />
+                                        );
+                                    })}
+                                </FormGroup>
+                            </Stack>
+                        </Box>
+                        <Box
+                            sx={{
+                                mt: 3
+                            }}
+                        >
+                            <Stack direction="row" spacing={5}>
+                                <DRSYieldCard elevation={0}>
+                                    <Box
+                                        justifyContent="space-between"
+                                        alignItems="center"
+                                        display="flex"
+                                        flexDirection="row"
+                                    >
+                                        <Box alignItems="center" display="flex" flexDirection="row">
+                                            <Typography
+                                                variant="h6"
+                                                sx={{
+                                                    font: 'Poppins',
+                                                    fontWeight: 400,
+                                                    fontSize: '16px',
+                                                    lineHeight: '25.6px',
+                                                    letterSpacing: '0.15px',
+                                                    marginRight: '5px',
+                                                    color: theme.palette.text.primary
+                                                }}
+                                            >
+                                                Yield
+                                            </Typography>
+                                            <IconButton size="small" aria-label="info">
+                                                <InfoOutlinedIcon />
+                                            </IconButton>
+                                        </Box>
+                                        <Box>
+                                            <Typography
+                                                variant="h6"
+                                                sx={{
+                                                    font: 'Inter',
+                                                    fontWeight: 400,
+                                                    fontSize: '12px',
+                                                    lineHeight: '14.52px',
+                                                    color: '#1D58A7'
+                                                }}
+                                            >
+                                                Learn Replicates Yields
+                                            </Typography>
+                                        </Box>
+                                    </Box>
+                                    <Box sx={{ mt: 1 }}>
+                                        <Stack flexWrap="wrap" direction="row" spacing={{ xs: 1, sm: 2, md: 3 }}>
+                                            {yieldData[selectedCrop] !== undefined ? (
+                                                selectedSeed.map((seed) => {
+                                                    if (seed.value && selectedYear !== null) {
+                                                        return (
+                                                            <DRSYieldDisplay key={seed.label} elevation={0}>
+                                                                <Box
+                                                                    alignItems="center"
+                                                                    justifyContent="space-between"
+                                                                    display="flex"
+                                                                    flexDirection="row"
+                                                                >
+                                                                    <Typography
+                                                                        variant="caption"
+                                                                        sx={{
+                                                                            font: 'Roboto',
+                                                                            fontWeight: 400,
+                                                                            fontSize: '12px',
+                                                                            lineHeight: '19.92px',
+                                                                            letterSpacing: '0.4px',
+                                                                            color: theme.palette.text.secondary
+                                                                        }}
+                                                                    >
+                                                                        {seed.label}
+                                                                    </Typography>
+                                                                    {yieldData[selectedCrop][selectedYear].byLine[
+                                                                        seed.label
+                                                                    ] ===
+                                                                    yieldData[selectedCrop][selectedYear]
+                                                                        .heighestAvgYield ? (
+                                                                        /* eslint-disable-next-line react/jsx-indent */
+                                                                        <Typography
+                                                                            variant="caption"
+                                                                            sx={{
+                                                                                font: 'Roboto',
+                                                                                fontWeight: 400,
+                                                                                fontSize: '12px',
+                                                                                lineHeight: '19.92px',
+                                                                                letterSpacing: '0.4px',
+                                                                                color: theme.palette.text.secondary
+                                                                            }}
+                                                                        >
+                                                                            🏆
+                                                                        </Typography>
+                                                                    ) : null}
+                                                                </Box>
+                                                                <Box
+                                                                    alignItems="baseline"
+                                                                    display="flex"
+                                                                    flexDirection="row"
+                                                                >
+                                                                    <Typography
+                                                                        variant="h6"
+                                                                        sx={{
+                                                                            font: 'Poppins',
+                                                                            fontWeight: 600,
+                                                                            fontSize: '36px',
+                                                                            lineHeight: '54px',
+                                                                            letterSpacing: '0.15px',
+                                                                            color: theme.palette.text.primary
+                                                                        }}
+                                                                    >
+                                                                        {
+                                                                            yieldData[selectedCrop][selectedYear]
+                                                                                .byLine[seed.label]
+                                                                        }
+                                                                    </Typography>
+                                                                    <Typography
+                                                                        variant="caption"
+                                                                        sx={{
+                                                                            font: 'Roboto',
+                                                                            fontWeight: 400,
+                                                                            fontSize: '12px',
+                                                                            lineHeight: '19.92px',
+                                                                            letterSpacing: '0.4px',
+                                                                            color: theme.palette.text.secondary,
+                                                                            ml: 1
+                                                                        }}
+                                                                    >
+                                                                        bu/A
+                                                                    </Typography>
+                                                                </Box>
+                                                            </DRSYieldDisplay>
+                                                        );
+                                                    }
+                                                    return null;
+                                                })
+                                            ) : (
+                                                <Box display="flex" justifyContent="center" justifyItems="center">
+                                                    <CircularProgress />
+                                                </Box>
+                                            )}
+                                        </Stack>
+                                    </Box>
+                                    <Box>
+                                        {seedYieldChartData.length !== 0 ? (
+                                            <BarChart
+                                                dataset={seedYieldChartData}
+                                                yAxis={[{ scaleType: 'band', dataKey: 'name', label: 'Seed name' }]}
+                                                xAxis={[{ label: 'bu/A' }]}
+                                                series={[{ dataKey: 'value', valueFormatter, color: '#f28e2c' }]}
+                                                grid={{ vertical: true, horizontal: true }}
+                                                layout="horizontal"
+                                                height={200}
+                                                width={369}
+                                                margin={{ left: 100 }}
+                                                sx={{
+                                                    [`& .${chartsGridClasses.line}`]: {
+                                                        strokeDasharray: '5 3',
+                                                        strokeWidth: 2
+                                                    },
+                                                    [`.${axisClasses.left} .${axisClasses.label}`]: {
+                                                        // Move the y-axis label with CSS
+                                                        transform: 'translateX(-45px)'
+                                                    }
                                                 }}
                                             />
-                                        }
-                                        label={seed.label}
-                                    />
-                                );
-                            })}
-                        </FormGroup>
-                    </Stack>
-                </Box>
-                <Box
-                    sx={{
-                        mt: 3
-                    }}
-                >
-                    <Stack direction="row" spacing={5}>
-                        <DRSYieldCard elevation={0}>
-                            <Box justifyContent="space-between" alignItems="center" display="flex" flexDirection="row">
-                                <Box alignItems="center" display="flex" flexDirection="row">
-                                    <Typography
-                                        variant="h6"
-                                        sx={{
-                                            font: 'Poppins',
-                                            fontWeight: 400,
-                                            fontSize: '16px',
-                                            lineHeight: '25.6px',
-                                            letterSpacing: '0.15px',
-                                            marginRight: '5px',
-                                            color: theme.palette.text.primary
-                                        }}
-                                    >
-                                        Yield
-                                    </Typography>
-                                    <IconButton size="small" aria-label="info">
-                                        <InfoOutlinedIcon />
-                                    </IconButton>
-                                </Box>
-                                <Box>
-                                    <Typography
-                                        variant="h6"
-                                        sx={{
-                                            font: 'Inter',
-                                            fontWeight: 400,
-                                            fontSize: '12px',
-                                            lineHeight: '14.52px',
-                                            color: '#1D58A7'
-                                        }}
-                                    >
-                                        Learn Replicates Yields
-                                    </Typography>
-                                </Box>
-                            </Box>
-                            <Box sx={{ mt: 1 }}>
-                                <Stack flexWrap="wrap" direction="row" spacing={{ xs: 1, sm: 2, md: 3 }}>
-                                    {yieldData[selectedCrop] !== undefined ? (
-                                        selectedSeed.map((seed) => {
-                                            if (seed.value) {
-                                                return (
-                                                    <DRSYieldDisplay key={seed.label} elevation={0}>
-                                                        <Box
-                                                            alignItems="center"
-                                                            justifyContent="space-between"
-                                                            display="flex"
-                                                            flexDirection="row"
-                                                        >
-                                                            <Typography
-                                                                variant="caption"
-                                                                sx={{
-                                                                    font: 'Roboto',
-                                                                    fontWeight: 400,
-                                                                    fontSize: '12px',
-                                                                    lineHeight: '19.92px',
-                                                                    letterSpacing: '0.4px',
-                                                                    color: theme.palette.text.secondary
-                                                                }}
-                                                            >
-                                                                {seed.label}
-                                                            </Typography>
-                                                            {yieldData[selectedCrop][selectedYear].byLine[
-                                                                seed.label
-                                                            ] ===
-                                                            yieldData[selectedCrop][selectedYear].heighestAvgYield ? (
-                                                                /* eslint-disable-next-line react/jsx-indent */
-                                                                <Typography
-                                                                    variant="caption"
-                                                                    sx={{
-                                                                        font: 'Roboto',
-                                                                        fontWeight: 400,
-                                                                        fontSize: '12px',
-                                                                        lineHeight: '19.92px',
-                                                                        letterSpacing: '0.4px',
-                                                                        color: theme.palette.text.secondary
-                                                                    }}
-                                                                >
-                                                                    🏆
-                                                                </Typography>
-                                                            ) : null}
-                                                        </Box>
-                                                        <Box alignItems="baseline" display="flex" flexDirection="row">
-                                                            <Typography
-                                                                variant="h6"
-                                                                sx={{
-                                                                    font: 'Poppins',
-                                                                    fontWeight: 600,
-                                                                    fontSize: '36px',
-                                                                    lineHeight: '54px',
-                                                                    letterSpacing: '0.15px',
-                                                                    color: theme.palette.text.primary
-                                                                }}
-                                                            >
-                                                                {
-                                                                    yieldData[selectedCrop][selectedYear].byLine[
-                                                                        seed.label
-                                                                    ]
-                                                                }
-                                                            </Typography>
-                                                            <Typography
-                                                                variant="caption"
-                                                                sx={{
-                                                                    font: 'Roboto',
-                                                                    fontWeight: 400,
-                                                                    fontSize: '12px',
-                                                                    lineHeight: '19.92px',
-                                                                    letterSpacing: '0.4px',
-                                                                    color: theme.palette.text.secondary,
-                                                                    ml: 1
-                                                                }}
-                                                            >
-                                                                bu/A
-                                                            </Typography>
-                                                        </Box>
-                                                    </DRSYieldDisplay>
-                                                );
-                                            }
-                                            return null;
-                                        })
-                                    ) : (
-                                        <Box display="flex" justifyContent="center" justifyItems="center">
-                                            <CircularProgress />
-                                        </Box>
-                                    )}
-                                </Stack>
-                            </Box>
-                            <Box>
-                                {seedYieldChartData.length !== 0 ? (
-                                    <BarChart
-                                        dataset={seedYieldChartData}
-                                        yAxis={[{ scaleType: 'band', dataKey: 'name', label: 'Seed name' }]}
-                                        xAxis={[{ label: 'bu/A' }]}
-                                        series={[{ dataKey: 'value', valueFormatter, color: '#f28e2c' }]}
-                                        grid={{ vertical: true, horizontal: true }}
-                                        layout="horizontal"
-                                        height={200}
-                                        width={369}
-                                        margin={{ left: 100 }}
-                                        sx={{
-                                            [`& .${chartsGridClasses.line}`]: {
-                                                strokeDasharray: '5 3',
-                                                strokeWidth: 2
-                                            },
-                                            [`.${axisClasses.left} .${axisClasses.label}`]: {
-                                                // Move the y-axis label with CSS
-                                                transform: 'translateX(-45px)'
-                                            }
-                                        }}
-                                    />
-                                ) : (
-                                    <Box display="flex" justifyContent="center" justifyItems="center">
-                                        <CircularProgress />
+                                        ) : (
+                                            <Box display="flex" justifyContent="center" justifyItems="center">
+                                                <CircularProgress />
+                                            </Box>
+                                        )}
                                     </Box>
-                                )}
-                            </Box>
-                        </DRSYieldCard>
-                        <DRSYieldCard elevation={0}>
-                            <SoilTypeTableWithErrorHandling
-                                soilData={soilData}
-                                isLoading={soilLoading}
-                                error={soilError}
-                            />
-                        </DRSYieldCard>
-                    </Stack>
-                </Box>
-            </Container>
-            <SoilMoistureDepthWithATMData
-                selectedYear={selectedYear}
-                sectionHeader="Water Data for Drought-resistant Performances"
-            />
+                                </DRSYieldCard>
+                                <DRSYieldCard elevation={0}>
+                                    <SoilTypeTableWithErrorHandling
+                                        soilData={soilData}
+                                        isLoading={soilLoading}
+                                        error={soilError}
+                                    />
+                                </DRSYieldCard>
+                            </Stack>
+                        </Box>
+                    </Container>
+                    <SoilMoistureDepthWithATMData
+                        selectedYear={selectedYear}
+                        sectionHeader="Water Data for Drought-resistant Performances"
+                    />
+                </>
+            )}
         </Container>
     );
 };

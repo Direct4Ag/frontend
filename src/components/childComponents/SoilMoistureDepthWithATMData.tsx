@@ -1,16 +1,6 @@
 import React from 'react';
 
-import {
-    Alert,
-    Box,
-    CircularProgress,
-    Chip,
-    Container,
-    FormControlLabel,
-    Stack,
-    Switch,
-    Typography
-} from '@mui/material';
+import { Alert, Box, Chip, Container, FormControlLabel, Stack, Switch, Typography } from '@mui/material';
 
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import { alpha, styled } from '@mui/material/styles';
@@ -20,16 +10,10 @@ import { DatasetType } from '@mui/x-charts/models/seriesType/config';
 import SoilMoistureByDepthGraph from '@app/components/childComponents/SoilMoistureByDepthGraph';
 import AirTempAndVPDPlot from '@app/components/childComponents/AirTempAndVPDPlot';
 import { DataStateContext } from '@app/store/contexts';
-import { useDepthSoilMoistureData, useWeatherData } from '@app/utils/hooks';
+import { useCombinedSensorData } from '@app/utils/hooks';
 import withErrorHandling from '@app/components/childComponents/hocs/withErrorHandling';
 import withLoading from '@app/components/childComponents/hocs/withLoading';
 import { theme } from '@app/theme';
-
-const SoilMoistureByDepthGraphWithLoading = withLoading(SoilMoistureByDepthGraph);
-const SoilMoistureByDepthGraphWithErrorHandling = withErrorHandling(SoilMoistureByDepthGraphWithLoading);
-
-const AirTempAndVPDPlotWithLoading = withLoading(AirTempAndVPDPlot);
-const AirTempAndVPDPlotWithErrorHandling = withErrorHandling(AirTempAndVPDPlotWithLoading);
 
 interface ShowSoilDepthData {
     [key: string]: boolean;
@@ -49,28 +33,21 @@ const DepthSwitch = styled(Switch)({
     }
 });
 
-const SoilMoistureDepthWithATMData: React.FC<{ selectedYear: string; sectionHeader: string }> = ({
-    selectedYear,
-    sectionHeader
-}) => {
-    const { selectedResearch } = React.useContext(DataStateContext);
-
-    const [soilDepthData, soilMoistureLoading, soilMoistureLoadError] = useDepthSoilMoistureData(
-        selectedYear,
-        selectedResearch?.id
-    );
-    const [weatherData, weatherDataLoading, weatherDataLoadError] = useWeatherData(selectedYear, selectedResearch?.id);
+const SoilMoistureDepthWithATMDataComponent: React.FC<{
+    depthSoilMoistureData: DepthSoilMoistureDataWithYear | null;
+    weatherData: WeatherData | null;
+}> = ({ depthSoilMoistureData, weatherData }) => {
     const [showSoilDepthData, setShowSoilDepthData] = React.useState<ShowSoilDepthData | null>(null);
     const [availableMonths, setAvailableMonths] = React.useState<number[]>([]);
     const [selectedMonth, setSelectedMonth] = React.useState<number | null>(null);
 
     React.useEffect(() => {
-        if (soilDepthData !== null) {
+        if (depthSoilMoistureData !== null) {
             const monthSet = new Set<number>();
             const soilDepthDataTemp: ShowSoilDepthData = {};
-            Object.keys(soilDepthData.data).forEach((depth) => {
+            Object.keys(depthSoilMoistureData.data).forEach((depth) => {
                 soilDepthDataTemp[depth] = true;
-                soilDepthData.data[depth].data.forEach((data) => {
+                depthSoilMoistureData.data[depth].data.forEach((data) => {
                     monthSet.add(data.month);
                 });
             });
@@ -78,14 +55,14 @@ const SoilMoistureDepthWithATMData: React.FC<{ selectedYear: string; sectionHead
             setAvailableMonths(monthSortedArray);
             setSelectedMonth(monthSortedArray[0]);
             setShowSoilDepthData(soilDepthDataTemp);
-        } else if (soilDepthData === null && weatherData !== null) {
+        } else if (depthSoilMoistureData === null && weatherData !== null) {
             const monthsArr = Array.from(new Set(weatherData.avg_air_temp.map((data) => data.month))).sort(
                 (a, b) => a - b
             );
             setAvailableMonths(monthsArr);
             setSelectedMonth(monthsArr[0]);
         }
-    }, [soilDepthData, weatherData]);
+    }, [depthSoilMoistureData, weatherData]);
 
     const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: 'short', day: 'numeric', timeZone: 'UTC' };
     const formattedDate = new Intl.DateTimeFormat('en-US', options);
@@ -124,13 +101,29 @@ const SoilMoistureDepthWithATMData: React.FC<{ selectedYear: string; sectionHead
         compositionWeatherData: DatasetType;
     }>({ xAxisLabels: [], series: [], compositionWeatherData: [] });
 
+    const getWeatherYAxisData = (data: GeostreamsData[], xAxisLabelsArr: string[]) => {
+        if (data && xAxisLabelsArr.length !== 0) {
+            const yAxisData = new Array<number | null>(xAxisLabelsArr.length).fill(null);
+            data.forEach((dataVal) => {
+                if (dataVal.month === selectedMonth) {
+                    const index = xAxisLabelsArr.indexOf(dataVal.label);
+                    if (index !== -1) {
+                        yAxisData[index] = dataVal.average;
+                    }
+                }
+            });
+            return yAxisData;
+        }
+        return [];
+    };
+
     React.useEffect(() => {
-        if (selectedMonth !== null && soilDepthData && showSoilDepthData && weatherData) {
+        if (selectedMonth !== null && depthSoilMoistureData && showSoilDepthData && weatherData) {
             const xAxisLabelsTemp = new Set<string>();
-            Object.keys(soilDepthData.data).forEach((depth) => {
+            Object.keys(depthSoilMoistureData.data).forEach((depth) => {
                 if (showSoilDepthData[depth]) {
-                    soilDepthData.data[depth].data.forEach((data) => {
-                        if (data.month === selectedMonth && data.year === parseInt(selectedYear, 10)) {
+                    depthSoilMoistureData.data[depth].data.forEach((data) => {
+                        if (data.month === selectedMonth) {
                             xAxisLabelsTemp.add(data.label);
                         }
                     });
@@ -154,7 +147,7 @@ const SoilMoistureDepthWithATMData: React.FC<{ selectedYear: string; sectionHead
                     if (showSoilDepthData[depth]) {
                         const yAxisData = new Array<number | null>(xAxisLabelsSortedArray.length).fill(null);
                         if (xAxisLabelsSortedArray.length !== 0) {
-                            soilDepthData.data[depth].data.forEach((data) => {
+                            depthSoilMoistureData.data[depth].data.forEach((data) => {
                                 if (data.month === selectedMonth) {
                                     const index = xAxisLabelsSortedArray.indexOf(data.label);
                                     if (index !== -1) {
@@ -190,7 +183,7 @@ const SoilMoistureDepthWithATMData: React.FC<{ selectedYear: string; sectionHead
                 series: seriesTemp,
                 compositionWeatherData: dataset
             });
-        } else if (selectedMonth !== null && soilDepthData === null && weatherData) {
+        } else if (selectedMonth !== null && depthSoilMoistureData === null && weatherData) {
             const xAxisLabelsTemp = new Set<string>();
             weatherData.avg_air_temp.forEach((data) => {
                 if (data.month === selectedMonth) {
@@ -227,23 +220,7 @@ const SoilMoistureDepthWithATMData: React.FC<{ selectedYear: string; sectionHead
                 compositionWeatherData: dataset
             });
         }
-    }, [selectedMonth, selectedYear, soilDepthData, showSoilDepthData, weatherData]);
-
-    const getWeatherYAxisData = (data: GeostreamsData[], xAxisLabelsArr: string[]) => {
-        if (data && xAxisLabelsArr.length !== 0) {
-            const yAxisData = new Array<number | null>(xAxisLabelsArr.length).fill(null);
-            data.forEach((dataVal) => {
-                if (dataVal.month === selectedMonth) {
-                    const index = xAxisLabelsArr.indexOf(dataVal.label);
-                    if (index !== -1) {
-                        yAxisData[index] = dataVal.average;
-                    }
-                }
-            });
-            return yAxisData;
-        }
-        return [];
-    };
+    }, [selectedMonth, depthSoilMoistureData, showSoilDepthData, weatherData]);
 
     const weatherDataSeries: AllSeriesType[] = [
         {
@@ -265,25 +242,9 @@ const SoilMoistureDepthWithATMData: React.FC<{ selectedYear: string; sectionHead
     ];
 
     return (
-        <Container>
-            <Box sx={{ marginTop: '40px', marginBottom: '30px' }}>
-                <Typography
-                    variant="h6"
-                    sx={{
-                        font: 'Poppins',
-                        fontWeight: 700,
-                        fontSize: '20px',
-                        lineHeight: '32px',
-                        letterSpacing: '0.15px',
-                        color: theme.palette.text.primary,
-                        textTransform: 'capitalize'
-                    }}
-                >
-                    {sectionHeader}
-                </Typography>
-            </Box>
+        <Box>
             <Box>
-                {soilDepthData !== null || weatherData !== null ? (
+                {availableMonths.length !== 0 ? (
                     <Box sx={{ marginBottom: '30px' }}>
                         <Typography
                             variant="subtitle2"
@@ -300,37 +261,31 @@ const SoilMoistureDepthWithATMData: React.FC<{ selectedYear: string; sectionHead
                             Choose a Month
                         </Typography>
                         <Stack direction="row" flexWrap="wrap" useFlexGap spacing={2}>
-                            {availableMonths.length !== 0 ? (
-                                availableMonths.map((monthNum) => {
-                                    return (
-                                        <Chip
-                                            key={monthNum}
-                                            label={getMonthName(monthNum)}
-                                            sx={{
-                                                'backgroundColor':
-                                                    selectedMonth === monthNum
-                                                        ? theme.palette.default.btnLightBackground
-                                                        : theme.palette.primary.light,
-                                                'color': theme.palette.default.chipTextColor,
-                                                '&&:hover': {
-                                                    backgroundColor: theme.palette.default.btnLightBackground
-                                                },
-                                                '&&:focus': {
-                                                    backgroundColor: theme.palette.default.btnLightBackground
-                                                }
-                                            }}
-                                            variant="filled"
-                                            onClick={() => {
-                                                setSelectedMonth(monthNum);
-                                            }}
-                                        />
-                                    );
-                                })
-                            ) : (
-                                <Box display="flex" justifyContent="center" justifyItems="center">
-                                    <CircularProgress />
-                                </Box>
-                            )}
+                            {availableMonths.map((monthNum) => {
+                                return (
+                                    <Chip
+                                        key={monthNum}
+                                        label={getMonthName(monthNum)}
+                                        sx={{
+                                            'backgroundColor':
+                                                selectedMonth === monthNum
+                                                    ? theme.palette.default.btnLightBackground
+                                                    : theme.palette.primary.light,
+                                            'color': theme.palette.default.chipTextColor,
+                                            '&&:hover': {
+                                                backgroundColor: theme.palette.default.btnLightBackground
+                                            },
+                                            '&&:focus': {
+                                                backgroundColor: theme.palette.default.btnLightBackground
+                                            }
+                                        }}
+                                        variant="filled"
+                                        onClick={() => {
+                                            setSelectedMonth(monthNum);
+                                        }}
+                                    />
+                                );
+                            })}
                         </Stack>
                     </Box>
                 ) : null}
@@ -353,13 +308,11 @@ const SoilMoistureDepthWithATMData: React.FC<{ selectedYear: string; sectionHead
                             Air Temperature and Vapor Pressure Deficit
                         </Typography>
                     </Box>
-                    <AirTempAndVPDPlotWithErrorHandling
+                    <AirTempAndVPDPlot
                         dataset={chartsData.compositionWeatherData}
                         series={weatherDataSeries}
                         xAxisLabels={chartsData.xAxisLabels}
                         valueFormatter={(value: string) => soilMoistureValueFormatter(value, 'x')}
-                        isLoading={weatherDataLoading}
-                        error={weatherDataLoadError}
                     />
                 </Box>
                 <Box alignItems="center" justifyContent="space-between" display="flex" flexDirection="row">
@@ -418,27 +371,69 @@ const SoilMoistureDepthWithATMData: React.FC<{ selectedYear: string; sectionHead
                     </Box>
                 </Box>
                 <Box sx={{ width: '100%', marginTop: '20px', marginBottom: '20px' }}>
-                    {soilDepthData === null ? (
+                    {depthSoilMoistureData === null ? (
                         <Box sx={{ my: '10px' }}>
                             <Alert severity="info">No Soil moisture data found for the selected year and month.</Alert>
                         </Box>
                     ) : null}
-                    <SoilMoistureByDepthGraphWithErrorHandling
+                    <SoilMoistureByDepthGraph
                         series={chartsData.series}
                         xAxisLabels={chartsData.xAxisLabels}
                         valueFormatter={(value: string) => soilMoistureValueFormatter(value, 'x')}
                         yAxis={
-                            soilDepthData !== null
+                            depthSoilMoistureData !== null
                                 ? [
                                       { id: 'depth', label: 'Soil Moisture (%)' },
                                       { id: 'avg-precipitation', label: 'Precipitation (mm)' }
                                   ]
                                 : [{ id: 'avg-precipitation', label: 'Precipitation (mm)' }]
                         }
-                        isLoading={soilMoistureLoading && weatherDataLoading}
-                        error={soilMoistureLoadError || weatherDataLoadError}
                     />
                 </Box>
+            </Box>
+        </Box>
+    );
+};
+
+const SoilMoistureDepthWithATMDataWithLoading = withLoading(SoilMoistureDepthWithATMDataComponent);
+const SoilMoistureDepthWithATMDataWithErrorHandling = withErrorHandling(SoilMoistureDepthWithATMDataWithLoading);
+
+const SoilMoistureDepthWithATMData: React.FC<{ selectedYear: string | null; sectionHeader: string }> = ({
+    selectedYear,
+    sectionHeader
+}) => {
+    const { selectedResearch } = React.useContext(DataStateContext);
+
+    const [combinedData, combinedDataLoading, combinedDataLoadError] = useCombinedSensorData(
+        selectedYear,
+        selectedResearch?.id
+    );
+
+    return (
+        <Container>
+            <Box sx={{ marginTop: '40px', marginBottom: '30px' }}>
+                <Typography
+                    variant="h6"
+                    sx={{
+                        font: 'Poppins',
+                        fontWeight: 700,
+                        fontSize: '20px',
+                        lineHeight: '32px',
+                        letterSpacing: '0.15px',
+                        color: theme.palette.text.primary,
+                        textTransform: 'capitalize'
+                    }}
+                >
+                    {sectionHeader}
+                </Typography>
+            </Box>
+            <Box>
+                <SoilMoistureDepthWithATMDataWithErrorHandling
+                    depthSoilMoistureData={combinedData !== null ? combinedData.depthSoilMoistureData : null}
+                    weatherData={combinedData !== null ? combinedData.weatherData : null}
+                    isLoading={combinedDataLoading}
+                    error={combinedDataLoadError}
+                />
             </Box>
         </Container>
     );

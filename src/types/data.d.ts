@@ -142,8 +142,6 @@ interface DataState {
     selectedResearch: ResearchDetail | null;
     soilData: SoilData[] | null;
     drsYieldData: DRSYieldData[] | null;
-    depthSoilMoistureData: DepthSoilMoistureDataWithYear | null;
-    weatherData: WeatherData | null;
     nitrateConcentrationData: NitrateConcData | null;
     cropRotationYield: CropRotationYieldData[] | null;
     cropRotationWeatherYears: string[] | null;
