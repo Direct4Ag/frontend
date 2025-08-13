@@ -120,13 +120,10 @@ const SoilMoistureDepthWithATMDataComponent: React.FC<{
     React.useEffect(() => {
         if (selectedMonth !== null && depthSoilMoistureData && showSoilDepthData && weatherData) {
             const xAxisLabelsTemp = new Set<string>();
-            Object.keys(depthSoilMoistureData.data).forEach((depth) => {
-                if (showSoilDepthData[depth]) {
-                    depthSoilMoistureData.data[depth].data.forEach((data) => {
-                        if (data.month === selectedMonth) {
-                            xAxisLabelsTemp.add(data.label);
-                        }
-                    });
+
+            weatherData.avg_air_temp.forEach((data) => {
+                if (data.month === selectedMonth) {
+                    xAxisLabelsTemp.add(data.label);
                 }
             });
             const xAxisLabelsSortedArray = Array.from(xAxisLabelsTemp).sort();

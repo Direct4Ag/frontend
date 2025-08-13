@@ -25,3 +25,4 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Change unit from lbs/acre to bu/A in drought resistant seed page [#26](https://github.com/Direct4Ag/frontend/issues/26)
 - Rounding error in drought resistant seed yeild information [#23](https://github.com/Direct4Ag/frontend/issues/23)
 - Graph stuck in loading state when data is not present or because of stale state [#40](https://github.com/Direct4Ag/frontend/issues/40)
+- Weather data not showing for the entire month where we have only few days of soil moisture data. [#45](https://github.com/Direct4Ag/frontend/issues/45)
