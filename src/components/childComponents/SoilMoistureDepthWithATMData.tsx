@@ -39,7 +39,8 @@ const SoilMoistureDepthWithATMDataComponent: React.FC<{
 }> = ({ depthSoilMoistureData, weatherData }) => {
     const [showSoilDepthData, setShowSoilDepthData] = React.useState<ShowSoilDepthData | null>(null);
     const [availableMonths, setAvailableMonths] = React.useState<number[]>([]);
-    const [selectedMonth, setSelectedMonth] = React.useState<number | null>(null);
+    // CHANGED: multi-select months
+    const [selectedMonths, setSelectedMonths] = React.useState<number[]>([]);
 
     React.useEffect(() => {
         if (depthSoilMoistureData !== null) {
@@ -53,14 +54,14 @@ const SoilMoistureDepthWithATMDataComponent: React.FC<{
             });
             const monthSortedArray = Array.from(monthSet).sort((a, b) => a - b);
             setAvailableMonths(monthSortedArray);
-            setSelectedMonth(monthSortedArray[0]);
+            setSelectedMonths(monthSortedArray.length ? [monthSortedArray[0]] : []);
             setShowSoilDepthData(soilDepthDataTemp);
         } else if (depthSoilMoistureData === null && weatherData !== null) {
             const monthsArr = Array.from(new Set(weatherData.avg_air_temp.map((data) => data.month))).sort(
                 (a, b) => a - b
             );
             setAvailableMonths(monthsArr);
-            setSelectedMonth(monthsArr[0]);
+            setSelectedMonths(monthsArr.length ? [monthsArr[0]] : []);
         }
     }, [depthSoilMoistureData, weatherData]);
 
@@ -105,7 +106,7 @@ const SoilMoistureDepthWithATMDataComponent: React.FC<{
         if (data && xAxisLabelsArr.length !== 0) {
             const yAxisData = new Array<number | null>(xAxisLabelsArr.length).fill(null);
             data.forEach((dataVal) => {
-                if (dataVal.month === selectedMonth) {
+                if (selectedMonths.includes(dataVal.month)) {
                     const index = xAxisLabelsArr.indexOf(dataVal.label);
                     if (index !== -1) {
                         yAxisData[index] = dataVal.average;
@@ -118,14 +119,13 @@ const SoilMoistureDepthWithATMDataComponent: React.FC<{
     };
 
     React.useEffect(() => {
-        if (selectedMonth !== null && depthSoilMoistureData && showSoilDepthData && weatherData) {
+        if (selectedMonths.length && depthSoilMoistureData && showSoilDepthData && weatherData) {
             const xAxisLabelsTemp = new Set<string>();
 
-            weatherData.avg_air_temp.forEach((data) => {
-                if (data.month === selectedMonth) {
-                    xAxisLabelsTemp.add(data.label);
-                }
+            weatherData.avg_air_temp.forEach((d) => {
+                if (selectedMonths.includes(d.month)) xAxisLabelsTemp.add(d.label);
             });
+
             const xAxisLabelsSortedArray = Array.from(xAxisLabelsTemp).sort();
 
             const seriesTemp: AllSeriesType[] = [];
@@ -145,7 +145,7 @@ const SoilMoistureDepthWithATMDataComponent: React.FC<{
                         const yAxisData = new Array<number | null>(xAxisLabelsSortedArray.length).fill(null);
                         if (xAxisLabelsSortedArray.length !== 0) {
                             depthSoilMoistureData.data[depth].data.forEach((data) => {
-                                if (data.month === selectedMonth) {
+                                if (selectedMonths.includes(data.month)) {
                                     const index = xAxisLabelsSortedArray.indexOf(data.label);
                                     if (index !== -1) {
                                         yAxisData[index] = data.average;
@@ -180,12 +180,10 @@ const SoilMoistureDepthWithATMDataComponent: React.FC<{
                 series: seriesTemp,
                 compositionWeatherData: dataset
             });
-        } else if (selectedMonth !== null && depthSoilMoistureData === null && weatherData) {
+        } else if (selectedMonths.length && depthSoilMoistureData === null && weatherData) {
             const xAxisLabelsTemp = new Set<string>();
-            weatherData.avg_air_temp.forEach((data) => {
-                if (data.month === selectedMonth) {
-                    xAxisLabelsTemp.add(data.label);
-                }
+            weatherData.avg_air_temp.forEach((d) => {
+                if (selectedMonths.includes(d.month)) xAxisLabelsTemp.add(d.label);
             });
             const xAxisLabelsSortedArray = Array.from(xAxisLabelsTemp).sort();
 
@@ -217,7 +215,7 @@ const SoilMoistureDepthWithATMDataComponent: React.FC<{
                 compositionWeatherData: dataset
             });
         }
-    }, [selectedMonth, depthSoilMoistureData, showSoilDepthData, weatherData]);
+    }, [selectedMonths, depthSoilMoistureData, showSoilDepthData, weatherData]);
 
     const weatherDataSeries: AllSeriesType[] = [
         {
@@ -238,6 +236,19 @@ const SoilMoistureDepthWithATMDataComponent: React.FC<{
         }
     ];
 
+    const toggleMonth = (monthNum: number) => {
+        setSelectedMonths((prev) => {
+            const isSelected = prev.includes(monthNum);
+            if (isSelected) {
+                // do not allow removing the last remaining month
+                if (prev.length === 1) return prev;
+                return prev.filter((m) => m !== monthNum);
+            }
+            // add and keep sorted
+            return [...prev, monthNum].sort((a, b) => a - b);
+        });
+    };
+
     return (
         <Box>
             <Box>
@@ -255,7 +266,7 @@ const SoilMoistureDepthWithATMDataComponent: React.FC<{
                                 marginBottom: '10px'
                             }}
                         >
-                            Choose a Month
+                            Choose a Month(s)
                         </Typography>
                         <Stack direction="row" flexWrap="wrap" useFlexGap spacing={2}>
                             {availableMonths.map((monthNum) => {
@@ -263,22 +274,35 @@ const SoilMoistureDepthWithATMDataComponent: React.FC<{
                                     <Chip
                                         key={monthNum}
                                         label={getMonthName(monthNum)}
+                                        color={selectedMonths.includes(monthNum) ? 'primary' : 'default'}
+                                        onMouseDown={(e) => e.preventDefault()}
                                         sx={{
-                                            'backgroundColor':
-                                                selectedMonth === monthNum
-                                                    ? theme.palette.default.btnLightBackground
-                                                    : theme.palette.primary.light,
-                                            'color': theme.palette.default.chipTextColor,
-                                            '&&:hover': {
-                                                backgroundColor: theme.palette.default.btnLightBackground
-                                            },
-                                            '&&:focus': {
-                                                backgroundColor: theme.palette.default.btnLightBackground
-                                            }
+                                            // base (unselected)
+                                            ...(selectedMonths.includes(monthNum)
+                                                ? {
+                                                      'backgroundColor': theme.palette.default.btnLightBackground,
+                                                      'color': theme.palette.default.chipTextColor,
+                                                      '&:hover': {
+                                                          backgroundColor: theme.palette.default.btnLightBackground
+                                                      },
+                                                      '&.Mui-focusVisible': {
+                                                          backgroundColor: theme.palette.default.btnLightBackground
+                                                      }
+                                                  }
+                                                : {
+                                                      // keep it clearly unselected; do NOT use selected bg on hover/focus
+                                                      'backgroundColor': theme.palette.background.paper,
+                                                      'color': theme.palette.text.primary,
+                                                      'borderColor': theme.palette.divider,
+                                                      '&:hover': { backgroundColor: theme.palette.action.hover },
+                                                      '&.Mui-focusVisible': {
+                                                          backgroundColor: theme.palette.action.focus
+                                                      }
+                                                  })
                                         }}
                                         variant="filled"
                                         onClick={() => {
-                                            setSelectedMonth(monthNum);
+                                            toggleMonth(monthNum);
                                         }}
                                     />
                                 );
