@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 - Irrigation Strategies Page [#34](https://github.com/Direct4Ag/frontend/issues/34)
 - Year dropdown for weather data in crop roatation. [#36](https://github.com/Direct4Ag/frontend/issues/36)
 - Cover Crop Research Page [#38](https://github.com/Direct4Ag/frontend/issues/38)
+- Add multi month select in graph component. [#48](https://github.com/Direct4Ag/frontend/issues/48)
 
 ### Fixed
 
